@@ -5,7 +5,7 @@ class db
 	function conecta()
 	{
 		$localhost = "localhost";
-		$db ="pb";
+		$db ="customworkflow";
 		$username = "postgres";
 		$password = "rodr1gues";
 		
