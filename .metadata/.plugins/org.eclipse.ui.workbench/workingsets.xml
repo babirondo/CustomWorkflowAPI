@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workingSetManager>
+<workingSet editPageId="org.eclipse.jdt.ui.JavaWorkingSetPage" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1450321887606_1" label="jbhv" name="jbhv">
+<item elementID="=testeadt" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+<item elementID="=testeadt/C:\/Users\/Bruno\/git\/mobile\/libs\/android-support-v4.jar" factoryID="org.eclipse.jdt.ui.PersistableJavaElementFactory"/>
+</workingSet>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1450321797689_0" label="Window Working Set" name="Aggregate for window 1450321797689"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1450322420153_2" label="Window Working Set" name="Aggregate for window 1450322420153"/>
+<workingSet aggregate="true" factoryID="org.eclipse.ui.internal.WorkingSetFactory" id="1450323122415_3" label="Window Working Set" name="Aggregate for window 1450323122415"/>
+<mruList name="jbhv"/>
+</workingSetManager>

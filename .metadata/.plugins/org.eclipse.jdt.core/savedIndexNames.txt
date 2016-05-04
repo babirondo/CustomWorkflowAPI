@@ -1,0 +1,2 @@
+INDEX VERSION 1.126+C:\Bitnami\wappstack-5.5.30-0\apache2\htdocs\api\.metadata\.plugins\org.eclipse.jdt.core
+285990436.index
