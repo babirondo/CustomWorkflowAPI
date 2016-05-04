@@ -2,6 +2,8 @@
 error_reporting(E_ALL ^ E_DEPRECATED);
  
 
+// testando o commit do github
+
 //adt for windows 64 http://dl.google.com/android/adt/adt-bundle-windows-x86_64-20140702.zip
 // commit feito pelo mac
 require_Once("classes/globais.php");
