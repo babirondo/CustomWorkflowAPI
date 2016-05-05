@@ -8,6 +8,7 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 // commit feito pelo mac
 require_Once("classes/globais.php");
 require_Once("classes/class_workflow.php");
+require_Once("classes/class_postos.php");
 
 require 'vendor/autoload.php';
 // tentando commitar pro github 
@@ -24,7 +25,28 @@ $app = new \Slim\Slim( array(
 $app->get('/getWorkflows/', function () use ($app)  {
 	$Workflow = new Workflow();
 	$Workflow->getWorkflows($app );
-}  ); 
- 
+}  );
+
+
+$app->get('/:idworkflow/getPostos/', function ( $idworkflow ) use ($app)  {
+	$Postos = new Postos(  );
+	$Postos->getPostos($app, $idworkflow );
+}  );
+
+$app->get('/:idworkflow/getPosto/:idposto', function ( $idworkflow , $idposto) use ($app)  {
+	$Postos = new Postos(  );
+	$Postos->getCampos($app, $idworkflow, $idposto );
+}  );
+$app->get('/:idworkflow/getPosto/Lista/:idposto', function ( $idworkflow , $idposto) use ($app)  {
+	$Postos = new Postos(  );
+	$Postos->getLista($app, $idposto );
+}  );
+
+$app->post('/Registrar/:idworkflow/:idposto', function ( $idworkflow , $idposto) use ($app)  {
+	$Workflow = new Workflow(  );
+	$Workflow->Registrar($app, $app->request->getBody(), $idposto );
+}  );
+
+
 //rode a aplicação Slim 
 $app->run();

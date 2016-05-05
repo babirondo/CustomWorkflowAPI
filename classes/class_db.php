@@ -1,8 +1,10 @@
 <?php
-class db
+class db  
 {
 
-	function conecta()
+	
+	
+	function conecta() 
 	{
 		$localhost = "localhost";
 		$db ="customworkflow";
@@ -20,11 +22,12 @@ class db
 	}
 	
 	
-	function executa($sql)
+	function executa($sql, $prepared=0)
 	{
-	//	 echo "\n".$sql;
 		$this->dados = null;
+	
 		
+	//	$show_sql = 1;
 		 
 		 if (substr(TRIM(STRTOUPPER($sql)),0,strpos(TRIM(STRTOUPPER($sql)), " " )  ) == "SELECT")
 		 {
@@ -32,15 +35,30 @@ class db
 		 	//select
 		 	$select = 1;
 		 	$this->res = $this->pdo->query($sql);
-		 	
+		 	$this->nrw = $this->res->rowCount();
 		 }
 		 else{
-		 
-		 	//others
-		 	$this->res = $this->pdo->exec($sql);
-		 	
+		 	if ($prepared == 1)
+		 	{
+		 		$stmt = $this->pdo->prepare($sql);
+		 		//$stmt->bindParam(":val", $prepared, PDO::PARAM_STR);
+		 		if ($stmt->execute()){
+		 			$this->res = true;
+		 			$this->dados = $stmt->fetch(PDO::FETCH_ASSOC);
+		 			
+		 		}
+		 		else
+		 			$this->res = false;				
+		 	}
+		 	else{
+		 		//others
+		 		$this->res = $this->pdo->exec($sql);
+		 		//$a =  $this->pdo->fetchAll(); var_dump($a);
+		 				 
+		 	}		 	
 		 }
-		 	 
+		 if ($show_sql) echo "\n BBBBBB ".$sql;
+		 		
    		
 	//	var_dump($this->res);
    		
@@ -48,6 +66,7 @@ class db
 		
    		
    		if ( $this->res > 0 ){
+   			
 
    			//if ($select == 1)
    			//	$this->navega(0);
