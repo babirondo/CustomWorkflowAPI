@@ -104,12 +104,13 @@ WHere pc.idposto = $idposto and wd.idprocesso = $idprocesso  ");
 		 
 		// BUSCANDO DADOS DO FILHO
 		$sql = "
-				SELECT pc.campo, w.valor, w.idprocesso, p.idpai
+				SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao
 				FROM postos_campo_lista pcl 
 						INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
 						INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
 						INNER JOIN processos p ON (p.idtipoprocesso =  wp.idtipoprocesso)
 						INNER JOIN workflow_dados w ON (w.idpostocampo = pcl.idpostocampo and p.id = w.idprocesso)
+						INNER JOIN workflow_tramitacao wt ON (wt.idworkflowposto = pcl.idposto and wt.idprocesso = p.id and wt.fim is null)
 						
 				WHERE pcl.idposto =$idposto   ";
 		$this->con->executa( $sql);
@@ -124,6 +125,8 @@ WHere pc.idposto = $idposto and wd.idprocesso = $idprocesso  ");
 
 
 			$array["FETCH"][$this->con->dados["idprocesso"]][$this->con->dados["campo"] ]   = $this->con->dados["valor"];
+			$array["FETCH"][$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"];
+			
 			if (is_array($pai[$this->con->dados["idpai"]]) )
 			{
 				$array["FETCH"][$this->con->dados["idprocesso"]] = array_merge($array["FETCH"][$this->con->dados["idprocesso"]] ,$pai[$this->con->dados["idpai"]]);

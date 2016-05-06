@@ -9,41 +9,62 @@ class Workflow{
 		$this->con->conecta();
 
 	}
-
-	function PrimeiroHistorico($idprocesso, $idposto  ){
-	
-		  
-	}
+ 
 	
 	
 	
-	function SalvarHistorico($idprocesso, $idposto  ){
+	function SalvarHistorico($idprocesso, $idposto , $idworkflowtramitacao_original ){
 	 
-		$this->con->executa( "SELECT starter FROM workflow_postos WHERE id =$idposto	");
+		$this->con->executa( "SELECT starter, avanca_processo FROM workflow_postos WHERE id =$idposto	");
 		$this->con->navega(0);
+		$avanca_processo = $this->con->dados["avanca_processo"];
 		
 		if ($this->con->dados["starter"] == 1) {
+
 			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio , fim)
 					VALUES($idprocesso, $idposto, NOW()  , NOW() )	");
-
-			$this->con->executa( "SELECT goto FROM posto_acao WHERE idposto =$idposto and avanca_processo is not null ");
-			$this->con->navega(0);
-			
+ 			
 			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
-					VALUES($idprocesso, ".$this->con->dados["goto"].", NOW()   )	");
+					VALUES($idprocesso, ".$avanca_processo.", NOW()   )	");
 				
 		}
 		else{
-			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
-					VALUES($idprocesso, $idposto, NOW()   )	");
-	//		echo "UPDATE workflow_tramitacao SET fim = NOW() WHERE idprocesso = $idprocesso and idworkflowposto = $idposto";
-	//		$this->con->executa( "UPDATE workflow_tramitacao SET fim = NOW() WHERE idprocesso = $idprocesso and idworkflowposto = $idposto");
-		 		
-		}
-		
-		
+			if ($avanca_processo >0 ){
+				$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
+						VALUES($idprocesso, $avanca_processo, NOW()   )	");
+			}
+		 
+			/// checando se pode fechar posto de entidade diferente
+			$sql = "select tp.id
+			from workflow_postos wp
+			left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+			where wp.id  = $idposto";
+			//	echo "\n $sql";
+			
+			$this->con->executa($sql );
+			$this->con->navega(0);
+			$idtipoprocess_posto = 	$this->con->dados["id"];
+			
+			$sql = "select  tp.id
+					from workflow_tramitacao wt
+						inner join workflow_postos wp ON (wp.id = wt.idworkflowposto)
+						left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+					where wt.id = $idworkflowtramitacao_original ";
+			//	echo "\n $sql";
+			$this->con->executa( $sql);
+			$this->con->navega(0);
+			$idtipoprocess_processo = 	$this->con->dados["id"];
+			
+			if ( $idtipoprocess_posto == $idtipoprocess_processo){
+				//echo " \n \n A $idtipoprocess_posto B $idtipoprocess_processo";
+				//se mesma entidade, fechando o posto
+				$sql =  "UPDATE workflow_tramitacao SET fim = NOW() WHERE id  = $idworkflowtramitacao_original  ";
+				$this->con->executa(   $sql);				 
+			}
 	
+		}	
 	}
+	
 	
 	function getWorkflows($app ){
 	 
@@ -124,7 +145,7 @@ class Workflow{
 				$erro = 1;
 			else{
 				$idprocesso =  $this->con->dados["id"];		
-				$this->PrimeiroHistorico($idprocesso, $idposto);
+			//	$this->PrimeiroHistorico($idprocesso, $idposto);
 				
 			}
  		}
@@ -152,7 +173,7 @@ class Workflow{
 		 
  	    if ($json[processo][acao] == "Salvar e Avançar >>>")
  	    { 	   
- 	    	$this->SalvarHistorico($idprocesso, $idposto);
+ 	    	$this->SalvarHistorico($idprocesso, $idposto, $json[processo][idworkflowtramitacao_original]);
  	    }
  	    
 		
