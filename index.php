@@ -33,9 +33,9 @@ $app->get('/:idworkflow/getPostos/', function ( $idworkflow ) use ($app)  {
 	$Postos->getPostos($app, $idworkflow );
 }  );
 
-$app->get('/:idworkflow/getPosto/:idposto', function ( $idworkflow , $idposto) use ($app)  {
+$app->get('/:idworkflow/:processo/getPosto/:idposto', function ( $idworkflow , $processo, $idposto ) use ($app)  {
 	$Postos = new Postos(  );
-	$Postos->getCampos($app, $idworkflow, $idposto );
+	$Postos->getCampos($app, $idworkflow, $idposto , $processo);
 }  );
 $app->get('/:idworkflow/getPosto/Lista/:idposto', function ( $idworkflow , $idposto) use ($app)  {
 	$Postos = new Postos(  );

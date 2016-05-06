@@ -12,7 +12,7 @@ class Postos{
 	
 	function getPostos($app, $idworkflow ){
 	 
-		$this->con->executa( "Select * from workflow_postos WHere id_workflow = $idworkflow and principal = 1 ");
+		$this->con->executa( "Select * from workflow_postos WHere id_workflow = $idworkflow and principal = 1 ORDER BY ordem_cronologica ");
 		//$this->con->navega();
 		
 		$i=0;
@@ -33,18 +33,34 @@ class Postos{
 		
 	}
 
-	function getCampos($app, $idworkflow , $idposto ){
-	
+	function getCampos($app, $idworkflow , $idposto, $idprocesso ){
+		
+		$this->con->executa( "Select * from workflow_postos WHere id = $idposto  ");
+		$this->con->navega(0); 
+			$array["DADOS_POSTO"] [starter]  = $this->con->dados["starter"];
+		
+		
 		$this->con->executa( "Select * from postos_campo WHere idposto = $idposto  ");
 		//$this->con->navega();
-	
-		$i=0;
+	 
 		while ($this->con->navega(0)){
-			$array["FETCH"][$i]["campo"]  = $this->con->dados["campo"];
-			$array["FETCH"][$i]["idcampo"]  = $this->con->dados["id"];
-			$i++;
-		}
+			$array["FETCH"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
+			$array["FETCH"][$this->con->dados["id"]] ["idcampo"]  = $this->con->dados["id"];
+//			$array["FETCH"][$i]["idcampo"]  = $this->con->dados["id"];
 	
+		}
+ 
+		$this->con->executa( "Select wd.id idworkflowdado, wd.valor, pc.id
+from postos_campo pc 
+	inner join workflow_dados wd ON (wd.idpostocampo  =pc.id)
+WHere pc.idposto = $idposto and wd.idprocesso = $idprocesso  ");
+		//$this->con->navega();
+		
+		while ($this->con->navega(0)){
+			$array["FETCH"][$this->con->dados["id"]]["valor"]  = $this->con->dados["valor"];
+			$array["FETCH"][$this->con->dados["id"]]["idworkflowdado"]  = $this->con->dados["idworkflowdado"];
+		}
+		
 		$array["resultado"] = "SUCESSO";
 	
 		$data =  	$array;

@@ -9,6 +9,41 @@ class Workflow{
 		$this->con->conecta();
 
 	}
+
+	function PrimeiroHistorico($idprocesso, $idposto  ){
+	
+		  
+	}
+	
+	
+	
+	function SalvarHistorico($idprocesso, $idposto  ){
+	 
+		$this->con->executa( "SELECT starter FROM workflow_postos WHERE id =$idposto	");
+		$this->con->navega(0);
+		
+		if ($this->con->dados["starter"] == 1) {
+			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio , fim)
+					VALUES($idprocesso, $idposto, NOW()  , NOW() )	");
+
+			$this->con->executa( "SELECT goto FROM posto_acao WHERE idposto =$idposto and avanca_processo is not null ");
+			$this->con->navega(0);
+			
+			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
+					VALUES($idprocesso, ".$this->con->dados["goto"].", NOW()   )	");
+				
+		}
+		else{
+			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
+					VALUES($idprocesso, $idposto, NOW()   )	");
+	//		echo "UPDATE workflow_tramitacao SET fim = NOW() WHERE idprocesso = $idprocesso and idworkflowposto = $idposto";
+	//		$this->con->executa( "UPDATE workflow_tramitacao SET fim = NOW() WHERE idprocesso = $idprocesso and idworkflowposto = $idposto");
+		 		
+		}
+		
+		
+	
+	}
 	
 	function getWorkflows($app ){
 	 
@@ -66,39 +101,31 @@ class Workflow{
 			$this->con->navega(0);
 			$idtipoprocess_processo = 	$this->con->dados["idtipoprocesso"];
 		
-			//echo "\n $idtipoprocess_posto != $idtipoprocess_processo";
-			
 			if ( $idtipoprocess_posto != $idtipoprocess_processo){
-				//$idprocesso =  $idtipoprocess_posto;//$json[processo][valor];
-				
 				$id_pai = $json[processo][valor];
 				$json[processo][valor] = null;
 			}
 			else 	
-				$idprocesso = $json[processo][valor];
-		 
-				
+				$idprocesso = $json[processo][valor];	
 		}
-		
-		
 		
 		if ( !$json[processo][valor]    )  {
  			 
- 			$this->con->executa( "select tp.id idtipoprocesso
+ 			$this->con->executa( "select tp.id idtipoprocesso, wp.id_workflow
 									from workflow_postos wp
 										inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
 									where wp.id = $idposto " );
  			$this->con->navega(0);
  			
- 			$sql = "INSERT INTO  processos (idtipoprocesso, idpai, inicio)
-										VALUES ( ".$this->con->dados["idtipoprocesso"]."   ,$id_pai, NOW() )
+ 			$sql = "INSERT INTO  processos (idtipoprocesso, idpai, inicio, idworkflow)
+										VALUES ( ".$this->con->dados["idtipoprocesso"]."   ,$id_pai, NOW() , ".$this->con->dados["id_workflow"].")
 										RETURNING id ";
- 			
- 		//	echo "\n $sql";
 			if (  $this->con->executa( $sql , 1 ) === false )
 				$erro = 1;
 			else{
 				$idprocesso =  $this->con->dados["id"];		
+				$this->PrimeiroHistorico($idprocesso, $idposto);
+				
 			}
  		}
  				
@@ -107,11 +134,27 @@ class Workflow{
  	    foreach ($json as $campo => $valor){
  	    	if ($campo == "processo") continue;
  	    	
- 	    	if (!$this->con->executa( "INSERT INTO workflow_dados (idpostocampo, valor, idprocesso, registro) 
- 	    						  VALUES ('$campo','$valor[valor]', $idprocesso, NOW()) "  ))
- 	    		$erro++;
+ 	    	if ($valor[idworkflowdado] > 0 )
+ 	    	{
+ 	    		if (!$this->con->executa( "UPDATE workflow_dados SET valor = '".$valor[valor]."' WHERE id  ='".$valor[idworkflowdado]."'"  ))
+ 	    			$erro++;
+ 	    	}
+ 	    	else
+ 	    	{
+ 	    		if (!$this->con->executa( "INSERT INTO workflow_dados (idpostocampo, valor, idprocesso, registro)
+ 	    				VALUES ('$campo','$valor[valor]', $idprocesso, NOW()) "  ))
+ 	    			$erro++;
+ 	    		
+ 	    	}
+ 	    	
  	    }
-		
+ 	    
+		 
+ 	    if ($json[processo][acao] == "Salvar e Avançar >>>")
+ 	    { 	   
+ 	    	$this->SalvarHistorico($idprocesso, $idposto);
+ 	    }
+ 	    
 		
 		if ($erro == 0){
 			//autenticado
