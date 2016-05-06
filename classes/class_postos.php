@@ -59,7 +59,7 @@ class Postos{
 	
 		
 		// BUSCANDO DADOS DO PAI
-		$this->con->executa( "
+		$sql = "
 				SELECT pc.campo, w.valor, w.idprocesso, p.idpai
 				FROM postos_campo_lista pcl
 				INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
@@ -67,7 +67,9 @@ class Postos{
 				INNER JOIN workflow_dados w ON (w.idpostocampo = pcl.idpostocampo )
 				INNER JOIN processos p ON (p.id = w.idprocesso)
 		
-				WHERE pcl.idposto =   $idposto and p.idpai is null ");
+				WHERE pcl.idposto =   $idposto   ";
+		$this->con->executa($sql );
+		//echo $sql;
 		//$this->con->navega();
 		
 		$i=0;
@@ -85,7 +87,7 @@ class Postos{
 		
 		 
 		// BUSCANDO DADOS DO FILHO
-		$this->con->executa( "
+		$sql = "
 				SELECT pc.campo, w.valor, w.idprocesso, p.idpai
 				FROM postos_campo_lista pcl 
 						INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
@@ -93,7 +95,8 @@ class Postos{
 						INNER JOIN processos p ON (p.idtipoprocesso =  wp.idtipoprocesso)
 						INNER JOIN workflow_dados w ON (w.idpostocampo = pcl.idpostocampo and p.id = w.idprocesso)
 						
-				WHERE pcl.idposto =$idposto   ");
+				WHERE pcl.idposto =$idposto   ";
+		$this->con->executa( $sql);
 		//$this->con->navega();
 	
 		$i=0;

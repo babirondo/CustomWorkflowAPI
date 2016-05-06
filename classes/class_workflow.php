@@ -74,6 +74,8 @@ class Workflow{
 				$id_pai = $json[processo][valor];
 				$json[processo][valor] = null;
 			}
+			else 	
+				$idprocesso = $json[processo][valor];
 		 
 				
 		}
