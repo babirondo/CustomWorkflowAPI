@@ -9,6 +9,7 @@ error_reporting(E_ALL ^ E_DEPRECATED);
 require_Once("classes/globais.php");
 require_Once("classes/class_workflow.php");
 require_Once("classes/class_postos.php");
+require_Once("classes/class_Auth.php");
 
 require 'vendor/autoload.php';
 // tentando commitar pro github 
@@ -28,9 +29,9 @@ $app->get('/getWorkflows/', function () use ($app)  {
 }  );
 
 
-$app->get('/:idworkflow/getPostos/', function ( $idworkflow ) use ($app)  {
+$app->post('/:idworkflow/getPostos/', function ( $idworkflow ) use ($app)  {
 	$Postos = new Postos(  );
-	$Postos->getPostos($app, $idworkflow );
+	$Postos->getPostos($app, $idworkflow , $app->request->getBody());
 }  );
 
 $app->get('/:idworkflow/:processo/getPosto/:idposto', function ( $idworkflow , $processo, $idposto ) use ($app)  {
@@ -45,6 +46,11 @@ $app->get('/:idworkflow/getPosto/Lista/:idposto', function ( $idworkflow , $idpo
 $app->post('/Registrar/:idworkflow/:idposto', function ( $idworkflow , $idposto) use ($app)  {
 	$Workflow = new Workflow(  );
 	$Workflow->Registrar($app, $app->request->getBody(), $idposto );
+}  );
+
+$app->post('/Autenticar/', function () use ($app)  {
+	$Auth = new Auth();
+	$Auth->Autenticar($app, $app->request->getBody() );
 }  );
 
 

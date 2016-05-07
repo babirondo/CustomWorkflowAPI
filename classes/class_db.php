@@ -1,9 +1,6 @@
 <?php
 class db  
 {
-
-	
-	
 	function conecta() 
 	{
 		$localhost = "localhost";

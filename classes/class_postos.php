@@ -4,15 +4,58 @@ error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 class Postos{
 	function Postos( ){
 		
-		require("classes/class_db.php");
+		require_once("classes/class_db.php");
 		$this->con = new db();
 		$this->con->conecta();
 
 	}
 	
-	function getPostos($app, $idworkflow ){
+	
+	function execParticularidadesPosto( $idposto, $idprocesso){
+		$retorno = $this->getPosto($idposto);
+		
+		include_once( $retorno["FETCH"][0]["execucao_pos_posto"]  );
+		
+	}
+	
+	function getPosto($idposto){
+		 
+		$this->con->executa( "Select *
+								from workflow_postos wp 
+								WHere wp.id = $idposto ");
+		//$this->con->navega();
+		
+		$i=0;
+		while ($this->con->navega(0)){
+			$array["FETCH"][$i]["execucao_pos_posto"]  = $this->con->dados["execucao_pos_posto"];
+			$i++;
+		}
+		
+		return $array;
+	}
+	
+	
+	
+	function getPostos($app, $idworkflow , $jsonRAW){
+		$json = json_decode( $jsonRAW, true );
+		IF ($json == NULL) {
+			$data = array("data"=>
+		
+					array(	"resultado" =>  "ERRO",
+							"erro" => "JSON zuado - $jsonRAW" )
+			);
+		
+		
+			$app->render ('default.php',$data,500);
+			return false;
+		}
 	 
-		$this->con->executa( "Select * from workflow_postos WHere id_workflow = $idworkflow and principal = 1 ORDER BY ordem_cronologica ");
+		$this->con->executa( "Select wp.* 
+							  from workflow_postos wp
+								inner join   usuario_atores ua ON (ua.idator = wp.idator)
+								inner join usuarios u ON (u.id = ua.idusuario)
+							  WHere id_workflow = $idworkflow and principal = 1 and u.id = ".$json[idusuario]." 
+							  ORDER BY ordem_cronologica ");
 		//$this->con->navega();
 		
 		$i=0;
@@ -32,42 +75,46 @@ class Postos{
 				
 		
 	}
-
-	function getCampos($app, $idworkflow , $idposto, $idprocesso ){
-		
+	
+	
+	function LoadCampos(  $idposto, $idprocesso ){
+	
 		$this->con->executa( "Select * from workflow_postos WHere id = $idposto  ");
-		$this->con->navega(0); 
-			$array["DADOS_POSTO"] [starter]  = $this->con->dados["starter"];
-		
-		
+		$this->con->navega(0);
+		$array["DADOS_POSTO"] [starter]  = $this->con->dados["starter"];
+	
+	
 		$this->con->executa( "Select * from postos_campo WHere idposto = $idposto  ");
 		//$this->con->navega();
-	 
+	
 		while ($this->con->navega(0)){
 			$array["FETCH"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
 			$array["FETCH"][$this->con->dados["id"]] ["idcampo"]  = $this->con->dados["id"];
-//			$array["FETCH"][$i]["idcampo"]  = $this->con->dados["id"];
+			//			$array["FETCH"][$i]["idcampo"]  = $this->con->dados["id"];
 	
 		}
- 
+	
 		$this->con->executa( "Select wd.id idworkflowdado, wd.valor, pc.id
-from postos_campo pc 
-	inner join workflow_dados wd ON (wd.idpostocampo  =pc.id)
-WHere pc.idposto = $idposto and wd.idprocesso = $idprocesso  ");
+				from postos_campo pc
+				inner join workflow_dados wd ON (wd.idpostocampo  =pc.id)
+				WHere pc.idposto = $idposto and wd.idprocesso = $idprocesso  ");
 		//$this->con->navega();
-		
+	
 		while ($this->con->navega(0)){
 			$array["FETCH"][$this->con->dados["id"]]["valor"]  = $this->con->dados["valor"];
 			$array["FETCH"][$this->con->dados["id"]]["idworkflowdado"]  = $this->con->dados["idworkflowdado"];
 		}
-		
+	
 		$array["resultado"] = "SUCESSO";
 	
-		$data =  	$array;
+		return $array;	
 	
+	}
+	
+
+	function getCampos($app, $idworkflow , $idposto, $idprocesso ){
+		$data = $this->LoadCampos($idposto, $idprocesso );		
 		$app->render ('default.php',$data,200);
-	
-	
 	}
 	
 

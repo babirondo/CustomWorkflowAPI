@@ -8,29 +8,43 @@ class Auth{
 
 	}
 	
-	function Autenticar($login, $senha, $app){
+	function Autenticar(  $app, $jsonRAW){
 		
-	 	
- 
- 	 	if ( $this->con->executa("SELECT * FROM \"JOGADOR\" WHERE \"EMAIL\" = '$login' and \"SENHA\" = '$senha'") ){
+		$json = json_decode( $jsonRAW, true );
+		IF ($json == NULL) {
+			$data = array("data"=>
+		
+					array(	"resultado" =>  "ERRO",
+							"erro" => "JSON zuado - $jsonRAW" )
+			);
+		
+		
+			$app->render ('default.php',$data,500);
+			return false;
+		}
+		$sql = "SELECT * FROM usuarios WHERE login = '".$json[login]."' and senha = '".$json[senha]."'";
+	 	$this->con->executa($sql);
+ 	 	if ( $this->con->nrw == 1 ){
  	 		$this->con->navega();
  	 		//autenticado
  	 		
  	 		$data = array("data"=>
  	 				array(	"resultado" =>  "SUCESSO",
- 	 						"email" => $this->con->dados["EMAIL"],
- 	 						"nome" => $this->con->dados["NOME"])
+ 	 						"email" => $this->con->dados["email"],
+ 	 						"id" => $this->con->dados["id"],
+ 	 						"nome" => $this->con->dados["nome"])
  	 		); 	 	
+			$app->render ('default.php',$data,200);
  	 	}
 	 	else {
 	 		// nao encontrado
-	 		$data = array("data"=>
-	 						
-	 				array(	"resultado" =>  "ERRO",
-	 						"erro" => "Nao encontrado" )
-	 		);	 		
+ 	 		$data = array("data"=>
+ 	 				array(	"resultado" =>  "ERRO",
+ 	 						"erro" => "Usuário/Senha não encontrao")
+ 	 		);
+ 	 		$app->render ('default.php',$data,500);
+ 	 		 
 	 	} 
 
-		$app->render ('default.php',$data,200);
 	}
 }

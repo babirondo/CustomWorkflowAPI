@@ -4,15 +4,12 @@
 class Workflow{
 	function Workflow( ){
 		
-		require("classes/class_db.php");
+		require_once("classes/class_db.php");
+		
 		$this->con = new db();
-		$this->con->conecta();
-
+		$this->con->conecta();		
 	}
- 
-	
-	
-	
+ 	
 	function SalvarHistorico($idprocesso, $idposto , $idworkflowtramitacao_original ){
 	 
 		$this->con->executa( "SELECT starter, avanca_processo FROM workflow_postos WHERE id =$idposto	");
@@ -150,7 +147,7 @@ class Workflow{
 			}
  		}
  				
-		
+		//var_dump($json);
 				
  	    foreach ($json as $campo => $valor){
  	    	if ($campo == "processo") continue;
@@ -174,6 +171,11 @@ class Workflow{
  	    if ($json[processo][acao] == "Salvar e Avançar >>>")
  	    { 	   
  	    	$this->SalvarHistorico($idprocesso, $idposto, $json[processo][idworkflowtramitacao_original]);
+ 	    	
+ 	    	require_once("classes/class_postos.php");
+ 	    	$this->posto = new Postos();
+ 	    	
+ 	    	$this->posto->execParticularidadesPosto($idposto, $idprocesso);
  	    }
  	    
 		
