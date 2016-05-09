@@ -14,12 +14,14 @@ class Workflow{
 		
 		$this->idposto = null;
 		$this->idprocesso = null;
+		$this->debug = null;
 	}
 	
 	function TraduzirEmail ($texto_original, $data){
 		
 		$de["{tecnologia}"] = "tecnologia";
 		$de["{senioridade}"] = "senioridade";
+		$de["{job description}"] = "job description";
 		$de["{tipovaga}"] = "tipovaga";
 		$de["{consultoria}"] = "consultoria";
 		$de["{nome}"] = "nome";
@@ -27,16 +29,16 @@ class Workflow{
 		
 		$de["{atores}"] = $data["DADOS_POSTO"][atores];
 		
-		if (is_array($data["FETCH"][$this->idprocesso]))
+		if (is_array($data["FETCH"][$this->idposto]))
 		{
-			foreach ($data["FETCH"][$this->idprocesso] as $campo => $val){
+			foreach ($data["FETCH"][$this->idposto] as $campo => $val){
 			
-				$preenchido_no_posto[] = $campo . " = " . $val ;
-				$valor[$campo] = $val;
+				//$preenchido_no_posto[] = $campo . " = " . $val ;
+				$valor[$data["FETCH"][$this->idposto][campo]] = $data["FETCH"][$this->idposto][valor];
 			}
-			$texto_original = str_replace("{preenchido_no_posto}", implode("\n",$preenchido_no_posto) ,$texto_original);
 		}
-	//	var_dump($valor);
+		var_dump($data  );
+		exit;
 		
 		// replace simples - pelo nome do campo		
 		foreach ($de as $indice => $chave_array){
@@ -49,7 +51,9 @@ class Workflow{
 		
 		// replace com tratamentos e valores fora do posto
 		$texto_original = str_replace("{idprocesso}", $this->idprocesso ,$texto_original);
+	//	$texto_original = str_replace("{preenchido_no_posto}", implode("\n",$preenchido_no_posto) ,$texto_original);
 		
+	//	echo "\n $texto_original";
 		return $texto_original;
 	}
 	
@@ -62,7 +66,7 @@ class Workflow{
 			Return-Path: ".$de."
 		    Reply-To: ".$de."  ";
 		
-		echo "
+		$this->debug .= "
 de: $de
 para: $para
 titulo: ".$titulo."
@@ -71,11 +75,8 @@ corpo: ".$corpo."
 		
 header: $headers
 		";
-		
-		if (mail($para, $titulo, $corpo, $headers))
-			echo "Email enviado com sucesso";
-		else
-			echo "Erro no envio de Email";	
+
+		//mail($para, $titulo, $corpo, $headers);
 	}
 	
 	function notif_entrandoposto()
@@ -100,7 +101,7 @@ header: $headers
 				$de = $this->TraduzirEmail($data["DADOS_POSTO"] [de], $data);
 				$para = $this->TraduzirEmail($data["DADOS_POSTO"] [para], $data);
 							
-				var_dump($data);
+				//var_dump($data);
 				$this->EnviaEmail($de, $para, $titulo, $corpo);
 			}
 		}		
@@ -108,7 +109,9 @@ header: $headers
 	
 	function  notif_saindoposto( )
 	{
-		$data = $this->posto->LoadCampos($this->idposto, $this->idprocesso , "saindo");
+		$data = $this->posto->LoadCampos($this->idposto, $this->idprocesso , "saindo", 1);
+ 			
+//var_dump($data);
 
 		if ($data["DADOS_POSTO"] [avanca_processo] > 0 && $data["DADOS_POSTO"] [notif_saindoposto] >0 )
 		{
@@ -295,6 +298,7 @@ header: $headers
  	    if ($json[processo][acao] == "Salvar e Avançar >>>")
  	    { 	   
  	    	$this->SalvarHistorico($idprocesso, $idposto, $json[processo][idworkflowtramitacao_original]);
+ 	    	 
   	    }
  	    
 		
@@ -303,6 +307,7 @@ header: $headers
 				
 			$data = array("data"=>
 					array(	"resultado" =>  "SUCESSO",
+							"DEBUG" => $this->debug,
 							"IDPROCESSO" => $idprocesso
 					)
 			);
@@ -312,6 +317,7 @@ header: $headers
 			$data = array("data"=>
 		
 					array(	"resultado" =>  "ERRO #$erro",
+							"DEBUG" => $this->debug, 
 							"erro" => "Nao encontrado" )
 			);
 		}
