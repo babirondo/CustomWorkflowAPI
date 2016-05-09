@@ -19,6 +19,9 @@ class Workflow{
 	
 	function TraduzirEmail ($texto_original, $data){
 		
+		
+		// TODO Não está traduzindo todas as variáveis dos emails
+		
 		$de["{tecnologia}"] = "tecnologia";
 		$de["{senioridade}"] = "senioridade";
 		$de["{job description}"] = "job description";
@@ -37,8 +40,7 @@ class Workflow{
 				$valor[$data["FETCH"][$this->idposto][campo]] = $data["FETCH"][$this->idposto][valor];
 			}
 		}
-		var_dump($data  );
-		exit;
+
 		
 		// replace simples - pelo nome do campo		
 		foreach ($de as $indice => $chave_array){
@@ -130,6 +132,8 @@ header: $headers
 	 
 		$this->idposto = $idposto;
 		$this->idprocesso = $idprocesso;
+		
+		//TODO trocar starter por workflow.posto_inicial e remover campo starter da table wp
 		
 		$this->con->executa( "SELECT starter, avanca_processo FROM workflow_postos WHERE id =$idposto	");
 		$this->con->navega(0);

@@ -42,13 +42,14 @@ class Postos{
 			$app->render ('default.php',$data,500);
 			return false;
 		}
-		$sql = "Select wp.* 
+		$sql = "Select wp.* , wk.posto_finalizados
 							  from workflow_postos wp
-								inner join   usuario_atores ua ON (ua.idator = wp.idator)
-								inner join usuarios u ON (u.id = ua.idusuario)
-							  WHere id_workflow = $idworkflow and principal = 1 and u.id = ".$json[idusuario]." 
+							  	inner join workflow wk ON (wk.id = wp.id_workflow)
+								left join   usuario_atores ua ON (ua.idator = wp.idator)
+								left join usuarios u ON (u.id = ua.idusuario)
+							  WHere (wp.id_workflow = $idworkflow and wp.principal = 1) and (u.id = ".$json[idusuario]."  OR wp.idator is null)
 							  ORDER BY ordem_cronologica ";
-
+	//echo $sql;
 		$this->con->executa( $sql);
 		//$this->con->navega();
 		
@@ -57,7 +58,9 @@ class Postos{
 			$array["FETCH"][$i]["posto"]  = $this->con->dados["posto"];
 			$array["FETCH"][$i]["idposto"]  = $this->con->dados["id"];
 			$array["FETCH"][$i]["lista"]  = $this->con->dados["lista"];
-			$array["FETCH"][$i]["form"]  = $this->con->dados["form"];
+			
+ 
+			
 			$i++;
 		}
 		
@@ -180,6 +183,8 @@ class Postos{
 	function BuscarDadosdoFilhoePai($idposto, $idprocesso=null, $debug=null)
 	{
 	 
+		// TODO incluir, se idposto = posto_finalizados, mudar a consulta
+		
 		// BUSCANDO DADOS DO PAI
 		$sql = "
 		SELECT pc.campo, w.valor, w.idprocesso, p.idpai
@@ -209,7 +214,7 @@ class Postos{
 		//var_dump($pai);
 			
 		// BUSCANDO DADOS DO FILHO
-		$sql = "
+		$sql1 = "
 		SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao
 		FROM postos_campo_lista pcl
 		INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
@@ -219,9 +224,21 @@ class Postos{
 		INNER JOIN workflow_tramitacao wt ON (wt.idworkflowposto = pcl.idposto and wt.idprocesso = p.id and wt.fim is null)
 		
 		WHERE wp.id  =$idposto   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
-		$this->con->executa( $sql);
 
-		//if ($debug==1) echo $sql;
+		$sql2 = "
+		SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao
+		FROM postos_campo_lista pcl
+		INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
+		INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
+		LEFT  JOIN workflow_dados w ON (w.idpostocampo = pcl.idpostocampo  )
+		INNER JOIN workflow_tramitacao wt ON (wt.idworkflowposto = pcl.idposto and w.idprocesso= wt.idprocesso and wt.fim is null)
+		INNER JOIN processos p ON (p.id =  wt.idprocesso)
+		
+		WHERE wp.id  =$idposto   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
+		
+		$this->con->executa( $sql2);
+ 
+		//echo "<PRE>$sql</pre>";
 		
 		//$this->con->navega();
 		
