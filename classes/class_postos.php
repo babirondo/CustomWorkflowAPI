@@ -11,22 +11,7 @@ class Postos{
 	}
 	 
 	
-	function getPosto($idposto){
-		 
-		$this->con->executa( "Select *
-								from workflow_postos wp 
-								WHere wp.id = $idposto ");
-		//$this->con->navega();
-		
-		$i=0;
-		while ($this->con->navega(0)){
-			$array["FETCH"][$i]["execucao_pos_posto"]  = $this->con->dados["execucao_pos_posto"];
-			$i++;
-		}
-		
-		return $array;
-	}
-	
+	 
 	
 	
 	function getPostos($app, $idworkflow , $jsonRAW){
@@ -42,7 +27,7 @@ class Postos{
 			$app->render ('default.php',$data,500);
 			return false;
 		}
-		$sql = "Select wp.* , wk.posto_finalizados
+		$sql = "Select wp.*  
 							  from workflow_postos wp
 							  	inner join workflow wk ON (wk.id = wp.id_workflow)
 								left join   usuario_atores ua ON (ua.idator = wp.idator)
@@ -183,11 +168,11 @@ class Postos{
 	function BuscarDadosdoFilhoePai($idposto, $idprocesso=null, $debug=null)
 	{
 	 
-		// TODO incluir, se idposto = posto_finalizados, mudar a consulta
-		
+
+			
 		// BUSCANDO DADOS DO PAI
 		$sql = "
-		SELECT pc.campo, w.valor, w.idprocesso, p.idpai
+		SELECT pc.campo, w.valor, w.idprocesso, p.idpai, p.status, pc.id idcampo
 		FROM postos_campo_lista pcl
 		INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
 		INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
@@ -201,10 +186,12 @@ class Postos{
 		
 		$i=0;
 		while ($this->con->navega(0)){
-			$pai[$this->con->dados["idprocesso"]][$this->con->dados["campo"] ]   = $this->con->dados["valor"];
-		
-			$array["TITULO"][$this->con->dados["campo"]]   = $this->con->dados["campo"];
-		
+			$pai[$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
+		//	$pai[$this->con->dados["idprocesso"]]["Status" ]   = $this->con->dados["status"];
+			
+			$array["TITULO"][$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
+			  
+				
 				
 			//echo " \n ".$this->con->dados["idprocesso"]." = ".$this->con->dados["campo"]."  = ". $this->con->dados["valor"];
 			$i++;
@@ -214,19 +201,8 @@ class Postos{
 		//var_dump($pai);
 			
 		// BUSCANDO DADOS DO FILHO
-		$sql1 = "
-		SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao
-		FROM postos_campo_lista pcl
-		INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
-		INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
-		INNER JOIN processos p ON (p.idtipoprocesso =  wp.idtipoprocesso)
-		INNER  JOIN workflow_dados w ON (w.idpostocampo = pcl.idpostocampo and p.id = w.idprocesso)
-		INNER JOIN workflow_tramitacao wt ON (wt.idworkflowposto = pcl.idposto and wt.idprocesso = p.id and wt.fim is null)
-		
-		WHERE wp.id  =$idposto   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
-
-		$sql2 = "
-		SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao
+		$sql = "
+		SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao, p.status, pc.id idcampo
 		FROM postos_campo_lista pcl
 		INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
 		INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
@@ -236,7 +212,7 @@ class Postos{
 		
 		WHERE wp.id  =$idposto   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
 		
-		$this->con->executa( $sql2);
+		$this->con->executa( $sql);
  
 		//echo "<PRE>$sql</pre>";
 		
@@ -248,25 +224,59 @@ class Postos{
 		
 			//$pai[$this->con->dados["idprocesso"]][$this->con->dados["campo"] ]   = $this->con->dados["valor"];
 				
-			$array["FETCH"][$this->con->dados["idprocesso"]][$this->con->dados["campo"] ]   = $this->con->dados["valor"];
+			$array["FETCH"][$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
 			$array["FETCH"][$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"];
-		
+		//	$array["FETCH"][$this->con->dados["idprocesso"]]["Status" ]   = $this->con->dados["status"];
+				
 			
 			if (is_array($pai[$this->con->dados["idpai"]]) )
 			{
-				$array["FETCH"][$this->con->dados["idprocesso"]] = array_merge($array["FETCH"][$this->con->dados["idprocesso"]] ,$pai[$this->con->dados["idpai"]]);
+			$array["FETCH"][$this->con->dados["idprocesso"]] = $this->ArrayMergeKeepKeys($pai[$this->con->dados["idpai"]], $array["FETCH"][$this->con->dados["idprocesso"]] );
 			}
 		
-			$array["TITULO"][$this->con->dados["campo"]]   = $this->con->dados["campo"];
+			$array["TITULO"][$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
 		
 			$i++;
 		}
-		//var_dump($array);  
+		
+		
+			// BUSCANDO ATRIBUTOS DO PROCESSO
+		$sql = "
+		
+select *, p.status p_status, p.id idprocesso
+from workflow_tramitacao wt 
+	inner join postos_campo_lista pcl ON (pcl.idposto = wt.idworkflowposto)
+	INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
+	inner join processos p ON (p.id = wt.idprocesso)
+	 
+where wt.fim is null and wp.id =$idposto and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
+		
+		$this->con->executa( $sql);
+ 
+		//echo "<PRE>$sql</pre>";
+		
+		//$this->con->navega();
+		
+		$i=0;
+		while ($this->con->navega(0)){
+			$array["FETCH"][$this->con->dados["idprocesso"]][$this->con->dados["atributo_campo"] ]   = $this->con->dados [ $this->con->dados["atributo_valor"] ];
+			$array["TITULO"][$this->con->dados["atributo_campo"]]   = $this->con->dados["atributo_campo"];
+		
+			$i++;
+		}
 		
 		return $array;
 	}
 	
-	
+	Function ArrayMergeKeepKeys() {
+		$arg_list = func_get_args();
+		foreach((array)$arg_list as $arg){
+			foreach((array)$arg as $K => $V){
+				$Zoo[$K]=$V;
+			}
+		}
+		return $Zoo;
+	}
 	
 	
 	function getLista($app,   $idposto ){

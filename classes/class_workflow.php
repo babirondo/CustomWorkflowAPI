@@ -135,6 +135,15 @@ header: $headers
 		
 		//TODO trocar starter por workflow.posto_inicial e remover campo starter da table wp
 		
+		$sql =  "select posto_final, penultimo_posto
+		from workflow_postos wp
+		inner join workflow w ON (w.id = wp.id_workflow)
+		where wp.id=$idposto  ";
+		$this->con->executa(   $sql);
+		$this->con->navega(0);
+		$idposto_final = $this->con->dados["posto_final"];
+		$idposto_penultimo  = $this->con->dados["penultimo_posto"];
+		
 		$this->con->executa( "SELECT starter, avanca_processo FROM workflow_postos WHERE id =$idposto	");
 		$this->con->navega(0);
 		$avanca_processo = $this->con->dados["avanca_processo"];
@@ -153,10 +162,20 @@ header: $headers
 				
 		}
 		else{
+			
+			
+			
 			if ($avanca_processo >0 ){
 				$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
 						VALUES($idprocesso, $avanca_processo, NOW()   )	");
+				
 				$this->notif_entrandoposto();
+				
+				 
+				$sql =  "UPDATE processos SET status = 'Em Andamento' WHERE id  = $idprocesso  ";
+				$this->con->executa(   $sql);
+				
+				
 			}
 		 
 			/// checando se pode fechar posto de entidade diferente
@@ -164,33 +183,47 @@ header: $headers
 			from workflow_postos wp
 			left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
 			where wp.id  = $idposto";
-			//	echo "\n $sql";
-			
+	
 			$this->con->executa($sql );
 			$this->con->navega(0);
 			$idtipoprocess_posto = 	$this->con->dados["id"];
 			
-			$sql = "select  tp.id
+			$sql = "select  tp.id, wp.id idpostoanterior
 					from workflow_tramitacao wt
 						inner join workflow_postos wp ON (wp.id = wt.idworkflowposto)
 						left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
 					where wt.id = $idworkflowtramitacao_original ";
-			//	echo "\n $sql";
+
 			$this->con->executa( $sql);
 			$this->con->navega(0);
-			$idtipoprocess_processo = 	$this->con->dados["id"];
 			
-			if ( $idtipoprocess_posto == $idtipoprocess_processo){
-				//echo " \n \n A $idtipoprocess_posto B $idtipoprocess_processo";
-				//se mesma entidade, fechando o posto
-				$sql =  "UPDATE workflow_tramitacao SET fim = NOW() WHERE id  = $idworkflowtramitacao_original  ";
-				$this->con->executa(   $sql);
+			$idtipoprocess_processo = 	$this->con->dados["id"];
+			$idpostoanterior = 	$this->con->dados["idpostoanterior"];
 				
-				$this->notif_saindoposto( );
-				
-			}
+			
+			if ($avanca_processo >0 ){
+				if ( ($idtipoprocess_posto == $idtipoprocess_processo) || ($idtipoprocess_posto && !$idtipoprocess_processo )){
+
+					
+					//se mesma entidade, fechando o posto
+					$sql =  "UPDATE workflow_tramitacao SET fim = NOW() WHERE id  = $idworkflowtramitacao_original  ";
+					$this->con->executa(   $sql);
+					
+					$this->notif_saindoposto( );
 	
+				}
+			}
 		}	
+		
+		
+		//finalizando o status de um processo
+		if ($idposto_final == $avanca_processo && $avanca_processo > 0){
+			if ( $idposto_penultimo == $idpostoanterior)
+				$sql =  "UPDATE processos SET status = 'Concluído' WHERE id  = $idprocesso  ";
+			else
+				$sql =  "UPDATE processos SET status = 'Arquivado' WHERE id  = $idprocesso  ";
+			$this->con->executa(   $sql);				
+		}
 	}
 	
 	
@@ -283,6 +316,7 @@ header: $headers
  	    foreach ($json as $campo => $valor){
  	    	if ($campo == "processo") continue;
  	    	
+ 	    	//TODO nÃo está dando load nos salvos no posto
  	    	if ($valor[idworkflowdado] > 0 )
  	    	{
  	    		if (!$this->con->executa( "UPDATE workflow_dados SET valor = '".$valor[valor]."' WHERE id  ='".$valor[idworkflowdado]."'"  ))
