@@ -28,7 +28,6 @@ $app->get('/getWorkflows/', function () use ($app)  {
 	$Workflow->getWorkflows($app );
 }  );
 
-
 $app->post('/:idworkflow/getPostos/', function ( $idworkflow ) use ($app)  {
 	$Postos = new Postos(  );
 	$Postos->getPostos($app, $idworkflow , $app->request->getBody());
@@ -52,7 +51,17 @@ $app->post('/Autenticar/', function () use ($app)  {
 	$Auth = new Auth();
 	$Auth->Autenticar($app, $app->request->getBody() );
 }  );
+ 
 
+$app->post('/Usuarios/Posto/', function () use ($app)  {
+	$Auth = new Usuarios();
+	$Auth->Autenticar($app, $app->request->getBody() );
+}  );
+ 
+$app->get('/Usuarios/Posto/:idposto', function (  $idposto) use ($app)  {
+	$Postos = new Postos(  );
+	$Postos->getUsuarios($app, $idposto );
+}  );
 
 //rode a aplicação Slim 
 $app->run();

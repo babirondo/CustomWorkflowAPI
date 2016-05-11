@@ -19,6 +19,9 @@ class Workflow{
 		$this->debug = null;
 	}
 	
+     
+
+        
 	function TraduzirEmail ($texto_original, $data){
 		
 		 
@@ -262,8 +265,8 @@ header: $headers ";
 		$erro = 0;
 		
 	//	echo "\n $idposto - ".$json[processo][valor];
-		$id_pai = "null";
-		 if ($idposto && $json[processo][valor] ) {
+                $id_pai = "null";
+		if ($idposto && $json[processo][valor] ) {
 		 	$sql = "select tp.id
 					from workflow_postos wp
 					left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
@@ -291,14 +294,14 @@ header: $headers ";
 		if ( !$json[processo][valor]    )  {
  			 
  			$this->con->executa( "select tp.id idtipoprocesso, wp.id_workflow
-									from workflow_postos wp
-										inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-									where wp.id = $idposto " );
+                                            from workflow_postos wp
+                                                    inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                                            where wp.id = $idposto " );
  			$this->con->navega(0);
  			
  			$sql = "INSERT INTO  processos (idtipoprocesso, idpai, inicio, idworkflow)
-										VALUES ( ".$this->con->dados["idtipoprocesso"]."   ,$id_pai, NOW() , ".$this->con->dados["id_workflow"].")
-										RETURNING id ";
+                                VALUES ( ".$this->con->dados["idtipoprocesso"]."   ,$id_pai, NOW() , ".$this->con->dados["id_workflow"].")
+                                RETURNING id ";
 			if (  $this->con->executa( $sql , 1 ) === false )
 				$erro = 1;
 			else{
@@ -316,14 +319,14 @@ header: $headers ";
  	    	//TODO nÃo está dando load nos salvos no posto
  	    	if ($valor[idworkflowdado] > 0 )
  	    	{
- 	    		if (!$this->con->executa( "UPDATE workflow_dados SET valor = '".$valor[valor]."' WHERE id  ='".$valor[idworkflowdado]."'"  ))
- 	    			$erro++;
+                    if (!$this->con->executa( "UPDATE workflow_dados SET valor = '".$valor[valor]."' WHERE id  ='".$valor[idworkflowdado]."'"  ))
+                            $erro++;
  	    	}
  	    	else
  	    	{
- 	    		if (!$this->con->executa( "INSERT INTO workflow_dados (idpostocampo, valor, idprocesso, registro)
- 	    				VALUES ('$campo','$valor[valor]', $idprocesso, NOW()) "  ))
- 	    			$erro++;
+                    if (!$this->con->executa( "INSERT INTO workflow_dados (idpostocampo, valor, idprocesso, registro, idposto)
+                                    VALUES ('$campo','$valor[valor]', $idprocesso, NOW(), $idposto) "  ))
+                            $erro++;
  	    		
  	    	}
  	    	
@@ -337,32 +340,27 @@ header: $headers ";
   	    }
  	    
 		
-		if ($erro == 0){
-			//autenticado
-				
-			$data = array("data"=>
-					array(	"resultado" =>  "SUCESSO",
-							"DEBUG" => $this->debug,
-							"IDPROCESSO" => $idprocesso
-					)
-			);
-		}
-		else {
-			// nao encontrado
-			$data = array("data"=>
-		
-					array(	"resultado" =>  "ERRO #$erro",
-							"DEBUG" => $this->debug, 
-							"erro" => "Nao encontrado" )
-			);
-		}
-		
-		$app->render ('default.php',$data,200);		
-		
-	
-	
-	}
-	
-	 
-	
+            if ($erro == 0){
+                //autenticado
+
+                $data = array("data"=>
+                    array(	"resultado" =>  "SUCESSO",
+                            "DEBUG" => $this->debug,
+                            "IDPROCESSO" => $idprocesso
+                        )
+                );
+            }
+            else {
+                // nao encontrado
+                $data = array("data"=>
+
+                    array(	"resultado" =>  "ERRO #$erro",
+                        "DEBUG" => $this->debug, 
+                        "erro" => "Nao encontrado" )
+                );
+            }
+
+            $app->render ('default.php',$data,200);		
+
+	}	
 }
