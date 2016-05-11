@@ -5,12 +5,14 @@ class Workflow{
 	function Workflow( ){
 		
 		require_once("classes/class_postos.php");
+		require_once("classes/class_campo.php");
 		require_once("classes/class_db.php");
 		
 		$this->con = new db();
 		$this->con->conecta();		
 	
 		$this->posto = new Postos();
+		$this->campos = new Campos();
 		
 		$this->idposto = null;
 		$this->idprocesso = null;
@@ -19,40 +21,45 @@ class Workflow{
 	
 	function TraduzirEmail ($texto_original, $data){
 		
+		 
+		$de = $this->campos->getCampos(); // 11 nome
+		//var_dump($de);
 		
-		// TODO Não está traduzindo todas as variáveis dos emails
-		
-		$de["{tecnologia}"] = "tecnologia";
-		$de["{senioridade}"] = "senioridade";
-		$de["{job description}"] = "job description";
-		$de["{tipovaga}"] = "tipovaga";
-		$de["{consultoria}"] = "consultoria";
-		$de["{nome}"] = "nome";
-		$de["{gestor interessado}"] = "Gestor Interessado";
-		
-		$de["{atores}"] = $data["DADOS_POSTO"][atores];
-		
-		if (is_array($data["FETCH"][$this->idposto]))
+		//var_dump($data["FETCH"][$this->idprocesso]);
+
+                if (is_array($data["FETCH"][$this->idprocesso]))
 		{
-			foreach ($data["FETCH"][$this->idposto] as $campo => $val){
-			
-				//$preenchido_no_posto[] = $campo . " = " . $val ;
-				$valor[$data["FETCH"][$this->idposto][campo]] = $data["FETCH"][$this->idposto][valor];
+			foreach ($data["FETCH"][$this->idprocesso] as $campo => $val){
+				
+				//$valor[ $campo   ] = $val;  //       11 bruno
+                                $valor [$de[$campo]] = $val;
+                               // echo "\n -$campo- -$val- "  ;
 			}
 		}
-
+		//var_dump($valor);
 		
+//		$texto_original = str_replace("{email}",  "mudou"   , $texto_original);
+		
+        	$texto_original = str_replace("{idprocesso}", $this->idprocesso ,$texto_original);
+
+                
 		// replace simples - pelo nome do campo		
-		foreach ($de as $indice => $chave_array){
-			if ($valor[$chave_array])
-				$texto_original = preg_replace("{{$indice}}",  $valor[$chave_array]   , $texto_original);
-			//else
-			//	$texto_original = preg_replace("{{$indice}}",  $chave_array   , $texto_original);
-				
+		foreach ($de as $idcampo => $campo){
+			 
+                    //$texto_original = str_replace("{{$campo}}",  $valor[$idcampo ]   , $texto_original);
+                                        
+                 //   $texto_original =  preg_replace('%{.*?}%i', '', $texto_original); 
+                    $texto_original = preg_replace_callback( '%{.*?}%i',
+                            
+                        function($match) use ($valor) {
+                    //    var_dump($valor);   
+                            return    $valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )]       ; // nome
+                        },
+                    $texto_original);
+                    //echo "\n $campo =  ".$valor[$idcampo ]  ;
 		}
 		
 		// replace com tratamentos e valores fora do posto
-		$texto_original = str_replace("{idprocesso}", $this->idprocesso ,$texto_original);
 	//	$texto_original = str_replace("{preenchido_no_posto}", implode("\n",$preenchido_no_posto) ,$texto_original);
 		
 	//	echo "\n $texto_original";
@@ -75,155 +82,145 @@ titulo: ".$titulo."
 corpo: ".$corpo."
 		
 		
-header: $headers
-		";
+header: $headers ";
 
 		//mail($para, $titulo, $corpo, $headers);
 	}
 	
-	function notif_entrandoposto()
+	function notif_entrandoposto($idposto)
 	{	
 		
-		// puxa dados do posto atual
-		$data2 = $this->posto->LoadCampos($this->idposto, $this->idprocesso );
-		//echo " \n vardump do retorno ".$this->idposto."\n ";
-		//var_dump($data2);
-		
-		if ($data2["DADOS_POSTO"] [avanca_processo] > 0 )
-		{
-			// puxa dados do proximo posto
-			$data = $this->posto->LoadCampos($data2["DADOS_POSTO"] [avanca_processo], $this->idprocesso,"entrando" );
-			
-		//	echo "\n avanca ".$data["DADOS_POSTO"] [avanca_processo] ."\n";
-			
-			if ($data["DADOS_POSTO"] [notif_entrandoposto] > 0 )
-			{
-				$titulo = $this->TraduzirEmail($data["DADOS_POSTO"] [titulo], $data);
-				$corpo = $this->TraduzirEmail($data["DADOS_POSTO"] [corpo], $data);
-				$de = $this->TraduzirEmail($data["DADOS_POSTO"] [de], $data);
-				$para = $this->TraduzirEmail($data["DADOS_POSTO"] [para], $data);
-							
-				//var_dump($data);
-				$this->EnviaEmail($de, $para, $titulo, $corpo);
-			}
-		}		
+            // puxa dados do posto atual
+            $data2 = $this->posto->LoadCampos($this->idposto, $this->idprocesso );
+            //echo " \n vardump do retorno ".$this->idposto."\n ";
+            //var_dump($data2);
+
+            if ($data2["DADOS_POSTO"] [avanca_processo] > 0 )
+            {
+                // puxa dados do proximo posto
+                $data = $this->posto->LoadCampos($data2["DADOS_POSTO"] [avanca_processo], $this->idprocesso,"entrando" );
+
+        //	echo "\n avanca ".$data["DADOS_POSTO"] [avanca_processo] ."\n";
+
+                if ($data["DADOS_POSTO"] [notif_entrandoposto] > 0 )
+                {
+                    $titulo = $this->TraduzirEmail($data["DADOS_POSTO"] [titulo], $data);
+                    $corpo = $this->TraduzirEmail($data["DADOS_POSTO"] [corpo], $data);
+                    $de = $this->TraduzirEmail($data["DADOS_POSTO"] [de], $data);
+                    $para = $this->TraduzirEmail($data["DADOS_POSTO"] [para], $data);
+
+                    //var_dump($data);
+                    $this->EnviaEmail($de, $para, $titulo, $corpo);
+                }
+            }		
 	}
 	
-	function  notif_saindoposto( )
+	function  notif_saindoposto( $idposto_proximo )
 	{
-		$data = $this->posto->LoadCampos($this->idposto, $this->idprocesso , "saindo", 1);
- 			
-//var_dump($data);
+            // posto que esta indo
+            $data = $this->posto->LoadCampos( $idposto_proximo , $this->idprocesso , "saindo", $debug, "TODOS");
+            //$debug = 1;
+            // posto que esta no momento
+            $data_atual= $this->posto->LoadCampos( $this->idposto , $this->idprocesso , "saindo", $debug, "TODOS");
+         //   var_dump($data_atual);    
 
-		if ($data["DADOS_POSTO"] [avanca_processo] > 0 && $data["DADOS_POSTO"] [notif_saindoposto] >0 )
-		{
-			$titulo = $this->TraduzirEmail($data["DADOS_POSTO"] [titulo], $data);
-			$corpo = $this->TraduzirEmail($data["DADOS_POSTO"] [corpo], $data);
-			$de = $this->TraduzirEmail($data["DADOS_POSTO"] [de], $data);
-			$para = $this->TraduzirEmail($data["DADOS_POSTO"] [para], $data);
-				
-			
-			$this->EnviaEmail($de, $para, $titulo, $corpo);
-		}
+    //	var_dump($data_atual);
+            //xxxxx
+
+            if ($data_atual["DADOS_POSTO"] [avanca_processo] > 0 && $data_atual["DADOS_POSTO"] [notif_saindoposto] >0 )
+            {
+                $titulo = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [titulo], $data);
+                $corpo = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [corpo], $data);
+                $de = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [de], $data);
+                $para = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [para], $data);
+
+
+                $this->EnviaEmail($de, $para, $titulo, $corpo);
+            }
 	}
 	
  	
 	function SalvarHistorico($idprocesso, $idposto , $idworkflowtramitacao_original ){
-	 
-		$this->idposto = $idposto;
-		$this->idprocesso = $idprocesso;
-		
-		//TODO trocar starter por workflow.posto_inicial e remover campo starter da table wp
-		
-		$sql =  "select posto_final, penultimo_posto
-		from workflow_postos wp
-		inner join workflow w ON (w.id = wp.id_workflow)
-		where wp.id=$idposto  ";
-		$this->con->executa(   $sql);
-		$this->con->navega(0);
-		$idposto_final = $this->con->dados["posto_final"];
-		$idposto_penultimo  = $this->con->dados["penultimo_posto"];
-		
-		$this->con->executa( "SELECT starter, avanca_processo FROM workflow_postos WHERE id =$idposto	");
-		$this->con->navega(0);
-		$avanca_processo = $this->con->dados["avanca_processo"];
-		
-		if ($this->con->dados["starter"] == 1) {
 
-			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio , fim)
-					VALUES($idprocesso, $idposto, NOW()  , NOW() )	");
- 			
-			$this->notif_saindoposto( );
-				
-			$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
-					VALUES($idprocesso, ".$avanca_processo.", NOW()   )	");
-			
-			$this->notif_entrandoposto( );
-				
-		}
-		else{
-			
-			
-			
-			if ($avanca_processo >0 ){
-				$this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
-						VALUES($idprocesso, $avanca_processo, NOW()   )	");
-				
-				$this->notif_entrandoposto();
-				
-				 
-				$sql =  "UPDATE processos SET status = 'Em Andamento' WHERE id  = $idprocesso  ";
-				$this->con->executa(   $sql);
-				
-				
-			}
-		 
-			/// checando se pode fechar posto de entidade diferente
-			$sql = "select tp.id
-			from workflow_postos wp
-			left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-			where wp.id  = $idposto";
-	
-			$this->con->executa($sql );
-			$this->con->navega(0);
-			$idtipoprocess_posto = 	$this->con->dados["id"];
-			
-			$sql = "select  tp.id, wp.id idpostoanterior
-					from workflow_tramitacao wt
-						inner join workflow_postos wp ON (wp.id = wt.idworkflowposto)
-						left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-					where wt.id = $idworkflowtramitacao_original ";
+            $this->idposto = $idposto;
+            $this->idprocesso = $idprocesso;
 
-			$this->con->executa( $sql);
-			$this->con->navega(0);
-			
-			$idtipoprocess_processo = 	$this->con->dados["id"];
-			$idpostoanterior = 	$this->con->dados["idpostoanterior"];
-				
-			
-			if ($avanca_processo >0 ){
-				if ( ($idtipoprocess_posto == $idtipoprocess_processo) || ($idtipoprocess_posto && !$idtipoprocess_processo )){
+            //TODO trocar starter por workflow.posto_inicial e remover campo starter da table wp
 
-					
-					//se mesma entidade, fechando o posto
-					$sql =  "UPDATE workflow_tramitacao SET fim = NOW() WHERE id  = $idworkflowtramitacao_original  ";
-					$this->con->executa(   $sql);
-					
-					$this->notif_saindoposto( );
-	
-				}
-			}
-		}	
-		
-		
-		//finalizando o status de um processo
-		if ($idposto_final == $avanca_processo && $avanca_processo > 0){
-			if ( $idposto_penultimo == $idpostoanterior)
-				$sql =  "UPDATE processos SET status = 'Concluído' WHERE id  = $idprocesso  ";
-			else
-				$sql =  "UPDATE processos SET status = 'Arquivado' WHERE id  = $idprocesso  ";
-			$this->con->executa(   $sql);				
-		}
+            $sql =  "select posto_final, penultimo_posto
+            from workflow_postos wp
+            inner join workflow w ON (w.id = wp.id_workflow)
+            where wp.id=$idposto  ";
+            $this->con->executa(   $sql);
+            $this->con->navega(0);
+            $idposto_final = $this->con->dados["posto_final"];
+            $idposto_penultimo  = $this->con->dados["penultimo_posto"];
+
+            $this->con->executa( "SELECT starter, avanca_processo FROM workflow_postos WHERE id =$idposto	");
+            $this->con->navega(0);
+            $avanca_processo = $this->con->dados["avanca_processo"];
+            $starter = $this->con->dados["starter"];
+            
+            if ($starter){
+                $this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio, fim )
+                                        VALUES($idprocesso, $idposto, NOW() , NOW()  )	");
+
+                $this->notif_saindoposto($idposto);
+                
+            }
+
+            if ($avanca_processo >0 ){
+                $this->con->executa( "INSERT INTO workflow_tramitacao (idprocesso, idworkflowposto, inicio )
+                                        VALUES($idprocesso, $avanca_processo, NOW()   )	");
+
+                $this->notif_entrandoposto($avanca_processo);
+
+                $sql =  "UPDATE processos SET status = 'Em Andamento' WHERE id  = $idprocesso  ";
+                $this->con->executa(   $sql);
+            }
+
+            /// checando se pode fechar posto de entidade diferente
+            $sql = "select tp.id
+            from workflow_postos wp
+            left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+            where wp.id  = $idposto";
+
+            $this->con->executa($sql );
+            $this->con->navega(0);
+            $idtipoprocess_posto = 	$this->con->dados["id"];
+
+            $sql = "select  tp.id, wp.id idpostoanterior
+                            from workflow_tramitacao wt
+                                    inner join workflow_postos wp ON (wp.id = wt.idworkflowposto)
+                                    left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                            where wt.id = $idworkflowtramitacao_original ";
+
+            $this->con->executa( $sql);
+            $this->con->navega(0);
+
+            $idtipoprocess_processo = 	$this->con->dados["id"];
+            $idpostoanterior = 	$this->con->dados["idpostoanterior"];
+
+
+            if ($avanca_processo >0 ){
+                if ( ($idtipoprocess_posto == $idtipoprocess_processo) || ($idtipoprocess_posto && !$idtipoprocess_processo )){
+                    //se mesma entidade, fechando o posto
+                    $sql =  "UPDATE workflow_tramitacao SET fim = NOW() WHERE id  = $idworkflowtramitacao_original  ";
+                    $this->con->executa(   $sql);
+
+                    $this->notif_saindoposto( $avanca_processo );
+
+                }
+            }
+            	
+            //finalizando o status de um processo
+            if ($idposto_final == $avanca_processo && $avanca_processo > 0){
+                    if ( $idposto_penultimo == $idpostoanterior)
+                            $sql =  "UPDATE processos SET status = 'Concluído' WHERE id  = $idprocesso  ";
+                    else
+                            $sql =  "UPDATE processos SET status = 'Arquivado' WHERE id  = $idprocesso  ";
+                    $this->con->executa(   $sql);				
+            }
 	}
 	
 	
