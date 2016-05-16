@@ -1,14 +1,10 @@
 <?php
 error_reporting(E_ALL ^ E_DEPRECATED);
  
-
-// testando o commit do github
-
-//adt for windows 64 http://dl.google.com/android/adt/adt-bundle-windows-x86_64-20140702.zip
-// commit feito pelo mac
-require_Once("classes/globais.php");
+//require_Once("classes/globais.php");
 require_Once("classes/class_workflow.php");
 require_Once("classes/class_postos.php");
+require_Once("classes/class_posto_usuario.php");
 require_Once("classes/class_Auth.php");
 
 require 'vendor/autoload.php';
@@ -52,16 +48,23 @@ $app->post('/Autenticar/', function () use ($app)  {
 	$Auth->Autenticar($app, $app->request->getBody() );
 }  );
  
-
-$app->post('/Usuarios/Posto/', function () use ($app)  {
-	$Auth = new Usuarios();
-	$Auth->Autenticar($app, $app->request->getBody() );
+$app->post('/Posto/Associar/:idposto', function (  $idposto) use ($app)  {
+	$Posto_Usuario = new Posto_Usuario(  );
+	$Posto_Usuario->AssociarProcessonoPosto($app, $app->request->getBody(), $idposto );
 }  );
  
-$app->get('/Usuarios/Posto/:idposto', function (  $idposto) use ($app)  {
-	$Postos = new Postos(  );
-	$Postos->getUsuarios($app, $idposto );
+$app->post('/Posto/Desassociar/:idposto', function (  $idposto) use ($app)  {
+	$Posto_Usuario = new Posto_Usuario(  );
+	$Posto_Usuario->DesassociarProcessonoPosto($app, $app->request->getBody(), $idposto );
 }  );
 
+
+$app->get('/Usuarios/Posto/:idposto', function (  $idposto) use ($app)  {
+	$Postos = new Postos(  );
+	$Postos->UsuariosdoPosto($app, $idposto );
+}  );
+
+ 
 //rode a aplicação Slim 
 $app->run();
+ 

@@ -10,33 +10,38 @@ class Postos{
 		$this->con = new db();
 		$this->con->conecta();
                 
-                GLOBAL $SYS_DEPARA_CAMPOS;
-                $this->SYS_DEPARA_CAMPOS = $SYS_DEPARA_CAMPOS;
-
+                
+                $this->globais = new Globais();
+                
 	}
 	
-	function getUsuarios($app, $idposto  ){
+        function UsuariosdoPosto($app, $idposto  ){
+            $array = $this->getUsuarios($idposto);
+            
+            $array["resultado"] = "SUCESSO";
+
+            $data =  	$array;
+
+            $app->render ('default.php',$data,200);
+        }
+        
+	function getUsuarios($idposto  ){
                     
-		$sql = "select ua.idusuario, ua.idator, wp.id idposto, u.nome
-                        from usuario_atores ua
-                                INNER JOIN workflow_postos wp ON (wp.idator = ua.idator)
-                                INNER JOIN usuarios u ON (u.id = ua.idusuario)
-                        where wp.id= $idposto ";
+            $sql = "select ua.idusuario, ua.idator, wp.id idposto, u.nome
+                    from usuario_atores ua
+                            INNER JOIN workflow_postos wp ON (wp.idator = ua.idator)
+                            INNER JOIN usuarios u ON (u.id = ua.idusuario)
+                    where wp.id= $idposto and u.admin is null ";
+         //   echo "\n\n\n".$sql;
+            $this->con->executa( $sql);
 
-                $this->con->executa( $sql);
-
-                while ($this->con->navega(0)){
-                    $array["USUARIOS_POSTO"]
-                            [$this->con->dados["idposto"]]
-                            [$this->con->dados["idusuario"]]   = $this->con->dados["nome"];
-		}
-		
-		$array["resultado"] = "SUCESSO";
-
-		$data =  	$array;
-		
-		$app->render ('default.php',$data,200);
-	
+            while ($this->con->navega(0)){
+                $array["USUARIOS_POSTO"]
+                        [$this->con->dados["idposto"]]
+                        [$this->con->dados["idusuario"]]   = $this->con->dados["nome"];
+            }
+            
+            return $array;
 	}
         
         
@@ -55,13 +60,13 @@ class Postos{
 			return false;
 		}
 		$sql = "Select wp.*  
-							  from workflow_postos wp
-							  	inner join workflow wk ON (wk.id = wp.id_workflow)
-								left join   usuario_atores ua ON (ua.idator = wp.idator)
-								left join usuarios u ON (u.id = ua.idusuario)
-							  WHere (wp.id_workflow = $idworkflow and wp.principal = 1) and (u.id = ".$json[idusuario]."  OR wp.idator is null)
-							  ORDER BY ordem_cronologica ";
-	//echo $sql;
+                        from workflow_postos wp
+                              inner join workflow wk ON (wk.id = wp.id_workflow)
+                              left join   usuario_atores ua ON (ua.idator = wp.idator)
+                              left join usuarios u ON (u.id = ua.idusuario)
+                        WHere (wp.id_workflow = $idworkflow and wp.principal = 1) and (u.id = ".$json[idusuario]."  OR wp.idator is null)
+                        ORDER BY ordem_cronologica ";
+	//echo $sql;exit;
 		$this->con->executa( $sql);
 		//$this->con->navega();
 		
@@ -118,6 +123,7 @@ class Postos{
             $this->con->executa($sql);
 
             $this->con->navega(0);
+            $array["DADOS_POSTO"] [nomeposto]  = $this->con->dados["posto"];
             $array["DADOS_POSTO"] [idworkflow]  = $this->con->dados["id_workflow"];
             $array["DADOS_POSTO"] [starter]  = $this->con->dados["starter"];
             $array["DADOS_POSTO"] [de]  = $this->con->dados["de"];
@@ -218,19 +224,6 @@ class Postos{
                     break;
                 }
                 
-                $sql = "SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao, 
-                                p.status, w.idpostocampo idcampo, w.id idworkflowdado, 
-                                wp.tipodesignacao $camp
-                        FROM  processos p 
-                            INNER JOIN workflow_dados w ON (w.idprocesso = p.id)
-                            LEFT JOIN  postos_campo pc ON (pc.id = w.idpostocampo  )
-                            INNER JOIN workflow_tramitacao wt ON ( wt.idprocesso = p.id and wt.fim is null )
-                            INNER JOIN workflow_postos wp ON (wp.id = wt.idworkflowposto)
-                            
-                            $comp
-                        WHERE wp.id=$idposto   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
-                
-                
                 $sql = " SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao, 
                                 p.status, w.idpostocampo idcampo, w.id idworkflowdado, 
                                 wp.tipodesignacao  $camp
@@ -244,7 +237,7 @@ class Postos{
                         WHERE wp.id=$idposto and ((  w.idposto=wp.id) OR ( w.idpostocampo >0)) ".(($idprocesso>0)?" and p.id = $idprocesso":"");                
         	$this->con->executa( $sql);
  		
-              //  echo "<PRE>$sql</pre>";
+             //   echo "<PRE>$sql</pre>";
 		$i=0;
 		while ($this->con->navega(0)){
                     $idworkflowdado_assumir = null;
@@ -257,7 +250,7 @@ class Postos{
                     
                     switch ( $this->con->dados["idcampo"] )
                     {
-                        case( $this->SYS_DEPARA_CAMPOS["Responsável"] ):
+                        case( $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ):
                             $array["FETCH"]  [$this->con->dados["idprocesso"] ][idworkflowdado_assumir]   = $this->con->dados["idworkflowdado"];  
                             $idworkflowdado_assumir = "teve";
                         break;
@@ -271,7 +264,7 @@ class Postos{
                     if ($this->con->dados["estaprevistapralista"])   
                         $array["TITULO"][$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
                     else if ($idworkflowdado_assumir == "teve")
-                        $array["TITULO"][$this->con->dados["idcampo"]]   = array_search($this->con->dados["idcampo"], $this->SYS_DEPARA_CAMPOS);
+                        $array["TITULO"][$this->con->dados["idcampo"]]   = array_search($this->con->dados["idcampo"], $this->globais->SYS_DEPARA_CAMPOS);
 
                     $i++;
 		}
@@ -347,8 +340,9 @@ class Postos{
                 
                 switch ($array["DADOS_POSTO"][tipodesignacao])
                 {
+                    case("AUTO-DIRECIONADO"):
                     case("Assumir"):
-			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = $array["DADOS_POSTO"][tipodesignacao]; // Nome do Link
+			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = "Assumir"; // Nome do Link
 			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][ir]   = $idposto; // proximo posto
 			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][lista]   = "L"; // L ou F
 			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][idworkflow]   = $array["DADOS_POSTO"][idworkflow];//$this->con->dados["id_workflow"];
