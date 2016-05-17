@@ -119,25 +119,36 @@ header: $headers ";
 	
 	function  notif_saindoposto( $idprocesso, $idposto_proximo, $idpostoanterior )
 	{
-            // posto que esta indo
-            $data = $this->posto->LoadCampos( $idposto_proximo , $idprocesso , "saindo", $debug, "TODOS");
-            //$debug = 1;
-            // posto que esta no momento
-            $data_atual= $this->posto->LoadCampos( $idpostoanterior , $idprocesso , "saindo", $debug, "TODOS");
-         //   var_dump($data_atual);    
+            
+            $sql = "select notif_saindoposto from workflow_postos where id= 274";
+            $this->con->executa(   $sql, null, __LINE__);
+            $this->con->navega(0);
 
-    //	var_dump($data_atual);
-            //xxxxx
-
-            if ($data_atual["DADOS_POSTO"] [avanca_processo] > 0 && $data_atual["DADOS_POSTO"] [notif_saindoposto] >0 )
+            if ( $this->con->dados["notif_saindoposto"] > 0 )
             {
-                $titulo = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [titulo], $data);
-                $corpo = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [corpo], $data);
-                $de = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [de], $data);
-                $para = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [para], $data);
+                echo "Notificando saida de posto ($idprocesso, $idposto_proximo, $idpostoanterior) \n";
+
+                // posto que esta indo
+                $data = $this->posto->LoadCampos( $idposto_proximo , $idprocesso , "saindo", $debug, "TODOS");
+
+                //$debug = 1;
+                // posto que esta no momento
+                $data_atual= $this->posto->LoadCampos( $idpostoanterior , $idprocesso , "saindo", $debug, "TODOS");
+             //   var_dump($data_atual);    
+
+        //	var_dump($data_atual);
+                //xxxxx
+
+                if ($data_atual["DADOS_POSTO"] [avanca_processo] > 0 && $data_atual["DADOS_POSTO"] [notif_saindoposto] >0 )
+                {
+                    $titulo = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [titulo], $data);
+                    $corpo = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [corpo], $data);
+                    $de = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [de], $data);
+                    $para = $this->TraduzirEmail($data_atual["DADOS_POSTO"] [para], $data);
 
 
-                $this->EnviaEmail($de, $para, $titulo, $corpo);
+                    $this->EnviaEmail($de, $para, $titulo, $corpo);
+                }
             }
 	}
 	
