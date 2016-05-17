@@ -198,7 +198,7 @@ class Postos{
 		
 		WHERE wp.id  =   $idposto   ". (($idprocesso>0)?" and p.id = $idprocesso":"");
 		$this->con->executa($sql );
-		//if ($debug) echo "<PRE>$sql</pre>";
+                //echo "<PRE>$sql</pre>";
 		
 		//$this->con->navega();
 		
@@ -224,20 +224,31 @@ class Postos{
                     break;
                 }
                 
-                $sql = " SELECT pc.campo, w.valor, w.idprocesso, p.idpai, wt.id idworkflowtramitacao, 
+                $sql = " SELECT pc.campo, w.valor, p.id idprocesso, p.idpai, wt.id idworkflowtramitacao, 
                                 p.status, w.idpostocampo idcampo, w.id idworkflowdado, 
                                 wp.tipodesignacao  $camp
                         FROM  processos p 
                             INNER JOIN workflow_tramitacao wt ON ( wt.idprocesso = p.id  and wt.fim is null) --
                             
                             INNER JOIN workflow_postos wp ON (wp.id = wt.idworkflowposto)
-                            INNER JOIN workflow_dados w ON (w.idprocesso = p.id  )
+                            left JOIN workflow_dados w ON (w.idprocesso = p.id  )
                             LEFT JOIN  postos_campo pc ON ( pc.id = w.idpostocampo )   
                             $comp
-                        WHERE wp.id=$idposto and ((  w.idposto=wp.id) OR ( w.idpostocampo >0)) ".(($idprocesso>0)?" and p.id = $idprocesso":"");                
+                        WHERE wp.id=$idposto and ((  w.idposto=wp.id) OR ( w.idpostocampo >0)) ".(($idprocesso>0)?" and p.id = $idprocesso":"");  
+                $sql = " SELECT pc.campo, w.valor, p.id idprocesso, p.idpai, wt.id idworkflowtramitacao, 
+                             p.status, w.idpostocampo idcampo, w.id idworkflowdado, 
+                             wp.tipodesignacao  $camp
+                     FROM  processos p 
+                         INNER JOIN workflow_tramitacao wt ON ( wt.idprocesso = p.id  and wt.fim is null) --
+
+                         INNER JOIN workflow_postos wp ON (wp.id = wt.idworkflowposto)
+                         left JOIN workflow_dados w ON (w.idprocesso = p.id  )
+                         LEFT JOIN  postos_campo pc ON ( pc.id = w.idpostocampo )   
+                         $comp
+                     WHERE wp.id=$idposto and wt.idworkflowposto =$idposto  ".(($idprocesso>0)?" and p.id = $idprocesso":"");  
         	$this->con->executa( $sql);
- 		
-             //   echo "<PRE>$sql</pre>";
+                //echo "<PRE>$sql</pre>";
+                
 		$i=0;
 		while ($this->con->navega(0)){
                     $idworkflowdado_assumir = null;
