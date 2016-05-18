@@ -47,8 +47,8 @@ class Workflow{
                 
  	
 	function    SalvarHistorico($idprocesso, $idposto , $idworkflowtramitacao_original, $proximo_posto ){
-                echo "\n >>>>>>>>>> Criando historico de movimentação normal do processo $idprocesso.   ";
-                
+
+            
                 $sql =  "select  rp.avanca_processo, wp.starter 
              -- posto_final, penultimo_posto,  
               
@@ -79,11 +79,11 @@ class Workflow{
                     if (  $this->con->executa( $sql , 1 , __LINE__) === false )
                         $erro = 1;
                     else{ 
-                        echo "\n Tramitacao de chegada no novo posto criada: ".$this->con->dados["id"]." ( idprocesso $idprocesso idposto $idposto) \n";
+                      //  echo "\n Tramitacao de chegada no novo posto criada: ".$this->con->dados["id"]." ( idprocesso $idprocesso idposto $idposto) \n";
 
                         //$this->notificacoes->notif_entrandoposto($idprocesso , $avanca_processo);
 
-                        echo "Alterando processo para Em Andamento \n";
+                       // echo "Alterando processo para Em Andamento \n";
                         $sql =  "UPDATE processos SET status = 'Em Andamento' WHERE id  = $idprocesso  ";
                         $this->con->executa(   $sql, null, __LINE__);
                     }    
@@ -91,27 +91,27 @@ class Workflow{
 
                         
                         
-                    echo "Checkando se a movimentacao encerra o processo ...";
+                 //   echo "Checkando se a movimentacao encerra o processo ...";
                     //finalizando o status de um processo
                     if ($idposto_final == $avanca_processo && $avanca_processo > 0){
-                        echo "Encerra \n";
+                      //  echo "Encerra \n";
                         if ( $idposto_penultimo == $idpostoanterior)
                             $sql =  "UPDATE processos SET status = 'Concluído' WHERE id  = $idprocesso  ";
                         else
                             $sql =  "UPDATE processos SET status = 'Arquivado' WHERE id  = $idprocesso  ";
                         $this->con->executa(   $sql, null, __LINE__);				
                     }
-                    else
-                        echo "Nao Encerra \n";
+                    //else
+                      //  echo "Nao Encerra \n";
                     
 
-                    echo  "\n  chegou aqui ..... ($idworkflowtramitacao_original)";            
+                 //   echo  "\n  chegou aqui ..... ($idworkflowtramitacao_original)";            
                      //salvar historico de posto que nao tem proximo
                      if ($idworkflowtramitacao_original )
                      {
                          //se mesma entidade, fechando o posto
                          $sql =  " UPDATE workflow_tramitacao SET   fim = NOW() WHERE id  = ".$idworkflowtramitacao_original ."  ";
-                         echo "Finalizando posto $idposto , idworkflowtramitacao = ".$idworkflowtramitacao_original." \n";
+                       //  echo "Finalizando posto $idposto , idworkflowtramitacao = ".$idworkflowtramitacao_original." \n";
                          $this->con->executa(   $sql, null, __LINE__);
                         // $this->notificacoes->notif_saindoposto($idprocesso, $avanca_processo, $idpostoanterior);
 
@@ -194,7 +194,8 @@ class Workflow{
         
         function ControlaCriacaoProcesso($json , $idposto, $proximo_posto)
         {
-             echo "\n Iniciando Salvar dados do Form \n";
+                        
+          //   echo "\n Iniciando Salvar dados do Form \n";
          //    var_dump($json);
             // identifica quais os proximos postos a partir do atual
             $sql = "select avanca_processo
@@ -210,7 +211,7 @@ class Workflow{
             // para os proximos postos, verifica se é preciso criacao de processos
             if (is_array($proximos_postos))
             {
-                echo "\n Salvando ".count($proximos_postos)." postos\n";
+              //  echo "\n Salvando ".count($proximos_postos)." postos\n";
                 $idprocesso_original = $json[processo][valor];
                 $id_pai = "null";
                 
@@ -222,7 +223,7 @@ class Workflow{
                       $erro = 0;
 
                       //$id_pai = "null";
-                      echo "\n )))))))))))))))))) iniciando rotina de controle de criacao de processo ";
+                     // echo "\n )))))))))))))))))) iniciando rotina de controle de criacao de processo ";
 
                       if ($idposto && $json[processo][valor] ) 
                       {
@@ -231,7 +232,7 @@ class Workflow{
                                       inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
                                       left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
                                   where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
-                          echo "\n tem idposto e idprocesso do json    ";
+                        //  echo "\n tem idposto e idprocesso do json    ";
 
                           $this->con->executa($sql, null, __LINE__ );
                           $this->con->navega(0);
@@ -263,7 +264,7 @@ class Workflow{
                           }
                           */
 
-                          echo "\n tipo de processo do posto != tipo process do processo =  $idtipoprocess_posto != $idtipoprocess_processo ";
+                         // echo "\n tipo de processo do posto != tipo process do processo =  $idtipoprocess_posto != $idtipoprocess_processo ";
 
                           if ( $idtipoprocess_posto != $idtipoprocess_processo){
                               $id_pai = $json[processo][valor];
@@ -277,7 +278,7 @@ class Workflow{
                       {
                           // criar processo
 
-                          echo "\n Id Processo do JSON vazio  ";
+                         // echo "\n Id Processo do JSON vazio  ";
                           $sql = "select wp2.id idtipoprocesso, wp.id_workflow, rp.avanca_processo, 
                                           wp.idtipoprocesso idtipoprocesso_atual,
                                           wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
@@ -311,41 +312,49 @@ class Workflow{
                           */
 
 
-                          echo "\n Processo ainda nao criado  \n ";
+                         // echo "\n Processo ainda nao criado  \n ";
 
 
                           //while ($idtipoprocess_posto != $idtipoprocess_processo && $idtipoprocesso_dopai != $idtipoprocess_posto  )
                           if ($id_pai> 0 && $idtipoprocess_posto != $idtipoprocess_processo)
                           {
-                              echo "\n WHILE -  $idtipoprocess_posto  != $idtipoprocess_processo  ";
+                            //  echo "\n WHILE -  $idtipoprocess_posto  != $idtipoprocess_processo  ";
 
                         
 
 
                               if (!$jacriou[$idtipopai_posto])
                               {
-                                  echo "\n Processo do tipo  $idtipopai_posto da processo $idprocesso_original NÃO existe ";
-
-                        
-
-                                  echo "\n **((** Processo do tipo  $idtipopai_posto da processo $idprocesso_original = criado   ";
-                                  $id_pai = $this->CriarProcesso($idtipopai_posto, $id_pai, $idwok, $json, $proximo_posto, $proximo_posto );
-                                  echo "  $id_pai ";
+                                 // echo "\n  Processo do tipo  $idtipopai_posto da processo $idprocesso_original = criado   ";
+                                $id_pai = $this->CriarProcesso($idtipopai_posto, $id_pai, $idwok, $json, $proximo_posto, $proximo_posto );
+                                 // echo "  $id_pai ";
+                                $id_processo2 = $id_pai;
 
                         
                                   $jacriou[$idtipopai_posto] = $id_pai;
+                                  
+                                    //excepcional porque se pode criar processos intermediarios quando ha salto de mais de 1 nivel de tipo processo
+                                    // Registra os dados que foram submetidos no form
+                                    $valor=null;
+                                    //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
+                                    foreach ($json as $campo => $valor){
+                                        if ($campo == "processo") continue;
+                                        echo ".";
 
+                                        $this->registraDadosdoPosto($valor, $idposto, $id_processo2, $campo);
+                                    }                                  
                                   $id_processo =null;
-
-                                  //else 
-                                  //    break;
+                                  $json_bkp=null;
+                                  
+                                  $json_bkp[processo] = $json[processo]  ; $json = null;
+                                  
+                                  $json = $json_bkp;
                                   $cria_processo = 1;
-                        
 
                               }
                               else {
                                   $id_pai = $jacriou[$idtipopai_posto];//$this->con->dados["id"];
-                                  echo "\n Processo do tipo  $idtipopai_posto da processo $idprocesso_original  EXISTE =  $id_pai";
+                                //  echo "\n Processo do tipo  $idtipopai_posto da processo $idprocesso_original  EXISTE =  $id_pai";
                                   $cria_processo = 1;
 
 
@@ -356,43 +365,68 @@ class Workflow{
 
                         
                               if ($id_pai > 0){
-                                  echo "\n ID_PAI existente  \n ";
+                                //  echo "\n ID_PAI existente  \n ";
 
                                   $sql = "select 1 cria_processo from tipos_processo where id= $idtpproc and id_pai=
                                               (select idtipoprocesso from processos where id = $id_pai)";
-                                 echo " \n $sql \n";
+                                // echo " \n $sql \n";
                                   $this->con->executa( $sql, null, __LINE__);
                                   $this->con->navega(0);   
 
                                   $cria_processo = $this->con->dados["cria_processo"];
-                                  echo "\n Movimento regular para tramitacao: ".$cria_processo;
+                                //  echo "\n Movimento regular para tramitacao: ".$cria_processo;
 
                               }
                               
 
                               if ($idposto_inicial == $idposto ) {
                                   // starter
-                                  echo " \n Processo Starter  :   ";
+                                 // echo " \n Processo Starter  :   ";
                                   $id_pai = $this->CriarProcesso($idtpproc, $id_pai, $idwok, $json, $idposto,  $proximo_posto);   
-                                  echo " $id_pai  ";
+                                 // echo " $id_pai  ";
+                                  if (is_array($json))
+                                  {
+                                        // Registra os dados que foram submetidos no form
+                                        $valor=null;
+                                        //var_dump($json);
+                                        //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
+                                        foreach ($json as $campo => $valor){
+                                            if ($campo == "processo") continue;
+                                            echo ".";
 
+                                            $this->registraDadosdoPosto($valor, $idposto, $id_pai, $campo);
+                                        }                                     
+                                  }
 
                                   if ($json[processo][acao] == "Salvar e Avançar >>>")
                                   { 	  
                                       // cria proximo posto em branco ja que o inicial ja nasce fechado
                                       $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
+                                      $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
 
                                   }
-                                  $cria_processo=1;
+//                                  $cria_processo=1;
                               }
 
                               if ($cria_processo == 1 )
                               {
 
-                                  echo " \n Processo criado (cria_processo==1):    ";
+                                 // echo " \n Processo criado (cria_processo==1):    ";
                                   $idprocesso = $this->CriarProcesso($idtpproc, $id_pai, $idwok, $json, $proximo_posto, $proximo_posto );   
-                                  echo "  $idprocesso  ";
+                                 // echo "  $idprocesso  ";
+                                   if (is_array($json))
+                                  {
+                                        // Registra os dados que foram submetidos no form
+                                        $valor=null;
+                                        //var_dump($json);
+                                        //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
+                                        foreach ($json as $campo => $valor){
+                                            if ($campo == "processo") continue;
+                                            echo ".";
 
+                                            $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
+                                        }                                     
+                                  }
                                    if ($json[processo][acao] == "Salvar e Avançar >>>")
                                   { 	  
                                       $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
@@ -409,10 +443,25 @@ class Workflow{
 
                       }
                       else{
+                            if (is_array($json))
+                             {
+                                   // Registra os dados que foram submetidos no form
+                                   $valor=null;
+                                   //var_dump($json);
+                                   //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
+                                   foreach ($json as $campo => $valor){
+                                       if ($campo == "processo") continue;
+                                       echo ".";
+
+                                       $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
+                                   }                                     
+                             } 
+              
+                // ca
                             if ($json[processo][acao] == "Salvar e Avançar >>>")
                             { 	  
                                 // se mesma entidade e handover, so tramita
-                                echo "\n se mesma entidade e handover, so tramita";
+                              //  echo "\n se mesma entidade e handover, so tramita";
                                 $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
                             }      
                           
@@ -426,8 +475,22 @@ class Workflow{
             } 
             else{
                 $idprocesso = $json[processo][valor];
+                if (is_array($json))
+                {
+                      // Registra os dados que foram submetidos no form
+                      $valor=null;
+                      //var_dump($json);
+                      //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
+                      foreach ($json as $campo => $valor){
+                          if ($campo == "processo") continue;
+                          echo ".";
+
+                          $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
+                      }                                     
+                } 
+              
                 // caso o handover seja em posto sem destino ou posto finalizador
-                echo "\n handover sem destino";
+               // echo "\n handover sem destino";
                 $this->HandoverSemDestino( $json[processo][idworkflowtramitacao_original] );
 
             }
@@ -445,12 +508,7 @@ class Workflow{
         
         function CriarProcesso($idtpproc, $id_pai, $idwok, $json, $idposto, $proximo_posto )
         {
-            echo "\n\n\n Criando Processo:  
-TIpo de Processo:$idtpproc
-IDPAI: $id_pai
-IDPOSTO: $idposto
-PROXIMO POSTO: $proximo_posto
-IDPROCESSO: $idprocesso \n ";
+                        
 
             $sql = "INSERT INTO  processos (idtipoprocesso, idpai, inicio, idworkflow )
                     VALUES ( /*aqui*/ $idtpproc   ,$id_pai, NOW() , $idwok )
@@ -462,7 +520,7 @@ IDPROCESSO: $idprocesso \n ";
             else{
                 $idprocesso =  $this->con->dados["id"];
                 $tipoprocesso_jacriado[$idtpproc] = $idprocesso;
-                echo "Processo criado com sucesso: $idprocesso. Tipo de Processo: $idtpproc \n ";
+              //  echo "Processo criado com sucesso: $idprocesso. Tipo de Processo: $idtpproc \n ";
             }
 
              return $idprocesso;
@@ -490,7 +548,7 @@ IDPROCESSO: $idprocesso \n ";
         function HandoverSemDestino( $idtramitacao )
         {
          //  $idtramitacao 
-            echo "\n Dentro do handover sem destino";
+            //echo "\n Dentro do handover sem destino";
             
             $sql =  " UPDATE workflow_tramitacao SET   fim = NOW() WHERE id  = $idtramitacao returning idworkflowposto ";
             $this->con->executa(   $sql, 1, __LINE__);
@@ -526,7 +584,7 @@ IDPROCESSO: $idprocesso \n ";
                 
                 if ($this->con->dados["inicializados"] == $this->con->dados["finalizados"]){
                     // executa o handover do posto pai
-                    echo "\n Todos os filhos fechados, fechar o processo pai";
+                  //  echo "\n Todos os filhos fechados, fechar o processo pai";
                     
                     
                     $sql = "select p_pai.id, tp.avanca_processo_filhos_fechados 
@@ -539,7 +597,7 @@ IDPROCESSO: $idprocesso \n ";
 
                     $this->con->navega(0);
 
-                    echo "\n Fechando posto pai - idprocesso ".$this->con->dados["id"]." avanca_processo ".$this->con->dados["avanca_processo_filhos_fechados"];
+                    //echo "\n Fechando posto pai - idprocesso ".$this->con->dados["id"]." avanca_processo ".$this->con->dados["avanca_processo_filhos_fechados"];
                     $this->SalvarHistorico($this->con->dados["id"], $this->con->dados["avanca_processo_filhos_fechados"], null, $this->con->dados["avanca_processo_filhos_fechados"]);
                     
    
@@ -559,20 +617,9 @@ IDPROCESSO: $idprocesso \n ";
             if (!$idprocesso) die("Id Processo nulo");   
             
                 
-            
-            // Registra os dados que foram submetidos no form
-            $valor=null;
-            echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
- 	    foreach ($json as $campo => $valor){
- 	    	if ($campo == "processo") continue;
-                echo ".";
- 	        
-                $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
- 	    }
-            echo "] \n";
-                            
+                
  	    
-            echo " FIM \n";
+          //  echo " FIM \n";
             //finalizacao do json
             if ($erro == 0){
                 //autenticado

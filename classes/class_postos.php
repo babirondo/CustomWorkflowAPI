@@ -154,8 +154,8 @@ class Postos{
             $array_dados = $this->BuscarDadosProcesso($idprocesso , $idposto, $debug, $listar);
 
             if ($debug){
-              echo "BuscarDadosProcesso = $idprocesso = $idposto"; 
-              var_dump($array_dados);
+            //  echo "BuscarDadosProcesso = $idprocesso = $idposto"; 
+              //var_dump($array_dados);
   
             } 
             if (is_array($array_dados))
@@ -242,7 +242,8 @@ class Postos{
                          INNER JOIN workflow_tramitacao wt ON ( wt.idprocesso = p.id  and wt.fim is null) --
 
                          INNER JOIN workflow_postos wp ON (wp.id = wt.idworkflowposto)
-                         left JOIN workflow_dados w ON (w.idprocesso = p.id  )
+                         INNER Join arvore_processo ap ON (ap.proprio = p.id)
+                         left JOIN workflow_dados w ON (w.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo ) )
                          LEFT JOIN  postos_campo pc ON ( pc.id = w.idpostocampo )   
                          $comp
                      WHERE wp.id=$idposto and wt.idworkflowposto =$idposto  ".(($idprocesso>0)?" and p.id = $idprocesso":"");  
