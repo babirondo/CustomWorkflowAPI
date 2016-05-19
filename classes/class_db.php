@@ -1,5 +1,5 @@
 <?php 
-set_time_limit( 2 );
+set_time_limit( 2 ); 
 class db  
 {
 	function conecta() 
@@ -20,16 +20,27 @@ class db
 	}
 	
 	
-	function executa($sql, $prepared=0, $l=__LINE__)
+	function executa($sql, $prepared=0, $l=__LINE__, $debug=null)
 	{
-            $this->dados = null;
 
+            $this->dados = null;
+           
              if (substr(TRIM(STRTOUPPER($sql)),0,strpos(TRIM(STRTOUPPER($sql)), " " )  ) == "SELECT")
              {
-                //select
-                $select = 1;
-                $this->res = $this->pdo->query($sql);
-                $this->nrw = $this->res->rowCount();
+                 
+               
+
+		try { 
+                    //select
+                    $select = 1;
+                    $this->res = $this->pdo->query($sql);
+                    $this->nrw = $this->res->rowCount();
+                } 
+		catch(PDOException $e) { 
+                    // if ($debug == 1)
+			echo 'Error: ' . $e->getMessage();
+                     
+		}                
                 
                 return $this->res;
              }
@@ -65,13 +76,13 @@ class db
 	
 	function navega($i ){
 		
-            $this->dados = $this->res->fetch(PDO::FETCH_ASSOC, $i);	
+            $this->dados = $this->res->fetch(PDO::FETCH_ASSOC, $i );	
 
-            if ($this->dados === false ){
-                    return   false;
+            if ($this->dados  ){
+                    return   true ;
             }	
             else{
-                    return   true;
+                    return   false;
             } 
 				
 	}

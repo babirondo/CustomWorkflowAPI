@@ -18,7 +18,7 @@ class Posto_Usuario{
         function AssociarProcessonoPosto($app,  $jsonRAW, $idposto ){
 
             
-            var_dump($jsonRAW);
+       
             $this->workflow->SalvarnoBanco(  json_decode($jsonRAW, true), $idposto, "AssociarPosto", $app);
         }
 	

@@ -1,5 +1,5 @@
 <?php
-//set_time_limit(2);
+set_time_limit(2);
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Workflow{
@@ -81,7 +81,12 @@ class Workflow{
                     else{ 
                       //  echo "\n Tramitacao de chegada no novo posto criada: ".$this->con->dados["id"]." ( idprocesso $idprocesso idposto $idposto) \n";
 
-                        //$this->notificacoes->notif_entrandoposto($idprocesso , $avanca_processo);
+                        $this->notificacoes->notif_entrandoposto($idprocesso , $idposto);
+                        
+                        if ($starter){
+                         //   echo "aa $idprocesso $idposto $avanca_processo ";
+                            $this->notificacoes->notif_saindoposto($idprocesso, $idposto);
+                        }
 
                        // echo "Alterando processo para Em Andamento \n";
                         $sql =  "UPDATE processos SET status = 'Em Andamento' WHERE id  = $idprocesso  ";
@@ -111,9 +116,20 @@ class Workflow{
                      {
                          //se mesma entidade, fechando o posto
                          $sql =  " UPDATE workflow_tramitacao SET   fim = NOW() WHERE id  = ".$idworkflowtramitacao_original ."  ";
-                       //  echo "Finalizando posto $idposto , idworkflowtramitacao = ".$idworkflowtramitacao_original." \n";
+                        // echo "Finalizando posto $idposto , idworkflowtramitacao = ".$idworkflowtramitacao_original." \n";
                          $this->con->executa(   $sql, null, __LINE__);
-                        // $this->notificacoes->notif_saindoposto($idprocesso, $avanca_processo, $idpostoanterior);
+                      
+                         
+                        // resolver tramitacao em idprocesso, idposto, postoanterior
+                        $sql =  "select  wt.idprocesso , rp.idposto_atual, rp.avanca_processo
+                                from workflow_tramitacao wt
+                                       inner join relacionamento_postos rp ON (rp.idposto_atual = wt.idworkflowposto)
+                                where wt.id =   $idworkflowtramitacao_original      ";
+                        $this->con->executa(   $sql, 0, __LINE__);
+                        $this->con->navega(0);
+
+                        $this->notificacoes->notif_saindoposto($this->con->dados["idprocesso"], $this->con->dados["idposto_atual"]);
+ 
 
                      } 
 
@@ -159,40 +175,54 @@ class Workflow{
                     return false;
             }	
                         
-            $this->SalvarnoBanco(  $json , $idposto, "Salvando", $app); // indo array ?
+            $array = $this->SalvarnoBanco(  $json , $idposto, "Salvando", $app); // indo array ?
 
-    
+    		
+            $array["resultado"] = "SUCESSO";
+
+            $data =  	$array;
+
+            $app->render ('default.php',$data,200);
+
 	}
         
         
-        function AutoAssociarProcessonoPosto() 
+        function AutoAssociarProcessonoPosto($idprocesso, $avanca_processo , $app) 
         {
-            if ($origem  == "Salvando")
-            {
-
-                IF ($tipodesignacao)
-                {
-                    //rotina de associação
-                    $this->Posto_Usuario = new Posto_Usuario();
-
-                    switch ($tipodesignacao){
-                        CASE("AUTO-DIRECIONADO"):
-                            $usuarios = $this->posto->getUsuarios($avanca_processo);
-
-                            $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor]  = array_rand($usuarios["USUARIOS_POSTO"][$avanca_processo],1);
-                            $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idworkflowdado"]  = null ;
-                            $associarRegistro [processo][valor]  = $idprocesso;	
-
-                        //    $this->Posto_Usuario->AssociarProcessonoPosto($app, json_encode($associarRegistro) , $avanca_processo );
-                        BREAK;
-                    }
-                }
-            } 
             
+            $sql = "select   wp.tipodesignacao
+                    from workflow_postos wp
+
+                          left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                      where wp.id  = $avanca_processo";
+              $this->con->executa( $sql, null, __LINE__);
+             //  echo "\n $sql";
+              $this->con->navega(0);
+              $tipodesignacao = $this->con->dados["tipodesignacao"];
+                          
+            //rotina de associação
+            $this->Posto_Usuario = new Posto_Usuario();
+
+            switch ($tipodesignacao){
+                CASE("AUTO-DIRECIONADO"):
+                    $usuarios = $this->posto->getUsuarios($avanca_processo);
+
+                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor]  = array_rand($usuarios["USUARIOS_POSTO"][$avanca_processo],1);
+                    $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idworkflowdado"]  = null ;
+                    $associarRegistro [processo][valor]  = $idprocesso;	
+                    
+                    //echo "\n associado: $idprocesso Posto: $avanca_processo usuario:  ".$associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor];
+
+                    $this->Posto_Usuario->AssociarProcessonoPosto($app, json_encode($associarRegistro) , $avanca_processo );
+                BREAK;
+            }
+                        
+                        
+            return $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor];
         }
         
         
-        function ControlaCriacaoProcesso($json , $idposto, $proximo_posto)
+        function ControlaCriacaoProcesso($json , $idposto, $proximo_posto, $app)
         {
                         
           //   echo "\n Iniciando Salvar dados do Form \n";
@@ -285,7 +315,7 @@ class Workflow{
                                   from workflow_postos wp
                                       inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
                                       inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-                                      inner join workflow_postos wp2 ON (wp2.id = wp.avanca_processo)
+                                      inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
                                       inner join workflow w ON (w.id = wp.id_workflow)
                                   where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
 
@@ -339,9 +369,10 @@ class Workflow{
                                     //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                     foreach ($json as $campo => $valor){
                                         if ($campo == "processo") continue;
-                                        echo ".";
+                                        //echo ".";
 
                                         $this->registraDadosdoPosto($valor, $idposto, $id_processo2, $campo);
+                                       
                                     }                                  
                                   $id_processo =null;
                                   $json_bkp=null;
@@ -392,7 +423,7 @@ class Workflow{
                                         //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                         foreach ($json as $campo => $valor){
                                             if ($campo == "processo") continue;
-                                            echo ".";
+                                            /// ".";
 
                                             $this->registraDadosdoPosto($valor, $idposto, $id_pai, $campo);
                                         }                                     
@@ -403,6 +434,7 @@ class Workflow{
                                       // cria proximo posto em branco ja que o inicial ja nasce fechado
                                       $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
                                       $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+                                      $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app);   
 
                                   }
 //                                  $cria_processo=1;
@@ -422,14 +454,16 @@ class Workflow{
                                         //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                         foreach ($json as $campo => $valor){
                                             if ($campo == "processo") continue;
-                                            echo ".";
+                                            //echo ".";
 
                                             $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
                                         }                                     
                                   }
                                    if ($json[processo][acao] == "Salvar e Avançar >>>")
                                   { 	  
-                                      $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
+                                    //  echo " \n aqui "; 
+                                      $this->SalvarHistorico($idprocesso, $proximo_posto, null, $proximo_posto);
+                                      $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app);   
                                   }
 
                               }
@@ -451,7 +485,7 @@ class Workflow{
                                    //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                    foreach ($json as $campo => $valor){
                                        if ($campo == "processo") continue;
-                                       echo ".";
+                                       //echo ".";
 
                                        $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
                                    }                                     
@@ -461,13 +495,14 @@ class Workflow{
                             if ($json[processo][acao] == "Salvar e Avançar >>>")
                             { 	  
                                 // se mesma entidade e handover, so tramita
-                              //  echo "\n se mesma entidade e handover, so tramita";
+                                //echo "\n se mesma entidade e handover, so tramita";
                                 $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
+                                $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app);   
                             }      
                           
                       }
 
-                    //$this->AutoAssociarProcessonoPosto();                        
+                                        
                 } // fim for each
                 
                 
@@ -483,23 +518,20 @@ class Workflow{
                       //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                       foreach ($json as $campo => $valor){
                           if ($campo == "processo") continue;
-                          echo ".";
+                          //echo ".";
 
                           $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
                       }                                     
                 } 
               
-                // caso o handover seja em posto sem destino ou posto finalizador
-               // echo "\n handover sem destino";
-                $this->HandoverSemDestino( $json[processo][idworkflowtramitacao_original] );
+                if ($json[processo][idworkflowtramitacao_original]){
+                    // caso o handover seja em posto sem destino ou posto finalizador
+                   // echo "\n handover sem destino";
+                    $this->HandoverSemDestino( $json[processo][idworkflowtramitacao_original] );
+                }
 
             }
 
-
-            
-            
-            
-            
             
             //legado **********************************************************************
           
@@ -552,9 +584,18 @@ class Workflow{
             
             $sql =  " UPDATE workflow_tramitacao SET   fim = NOW() WHERE id  = $idtramitacao returning idworkflowposto ";
             $this->con->executa(   $sql, 1, __LINE__);
-            //$this->notificacoes->notif_saindoposto($idprocesso, $avanca_processo, $idpostoanterior);
-
+        
             
+            // resolver tramitacao em idprocesso, idposto, postoanterior
+            $sql =  "select  wt.idprocesso , rp.idposto_atual, rp.avanca_processo
+                    from workflow_tramitacao wt
+                           inner join relacionamento_postos rp ON (rp.idposto_atual = wt.idworkflowposto)
+                    where wt.id =   $idtramitacao      ";
+            $this->con->executa(   $sql, 0, __LINE__);
+            $this->con->navega(0);
+                        
+            $this->notificacoes->notif_saindoposto($this->con->dados["idprocesso"],   $this->con->dados["idposto_atual"]);
+    
             // BUSCA O TIPO DE HANDOVER DO TIPO DE PROCESSO PAI
             $sql =  "select tp_pai.regra_handover
                     from workflow_tramitacao wt
@@ -612,9 +653,14 @@ class Workflow{
         function SalvarnoBanco($json, $idposto, $origem  , $app)
         {
             
-            $idprocesso = $this->ControlaCriacaoProcesso($json,$idposto, $proximos_posto);
-                
-            if (!$idprocesso) die("Id Processo nulo");   
+            $idprocesso = $this->ControlaCriacaoProcesso($json,$idposto, $proximos_posto, $app);
+             
+          
+            if (!$idprocesso) {
+                  $RETORNO_function["ERRO"] = "Id Processo nulo";
+                  
+                  return $RETORNO_function;
+            } 
             
                 
                 

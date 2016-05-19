@@ -25,7 +25,7 @@ class Auth{
 		$sql = "SELECT * FROM usuarios WHERE login = '".$json[login]."' and senha = '".$json[senha]."'";
 	 	$this->con->executa($sql);
  	 	if ( $this->con->nrw == 1 ){
- 	 		$this->con->navega();
+ 	 		$this->con->navega(null);
  	 		//autenticado
  	 		
  	 		$data = array("data"=>
