@@ -5,11 +5,24 @@ class Auth{
 		require("classes/class_db.php");
 		$this->con = new db();
 		$this->con->conecta();
+                     
 
 	}
 	
 	function Autenticar(  $app, $jsonRAW){
-		
+                
+            if (!$this->con->conectado){
+                $data = array("data"=>
+                    array(	"resultado" =>  "ERRO",
+                                 "erro" => "nao conectado - ".$this->con->erro )
+                );
+
+
+
+                $app->render ('default.php',$data,500);
+                return false;                    
+            }
+            
 		$json = json_decode( $jsonRAW, true );
 		IF ($json == NULL) {
 			$data = array("data"=>

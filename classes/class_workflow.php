@@ -42,9 +42,26 @@ class Workflow{
             $erro = 0;
             var_dump($json);
          
-            $this->con->executa( "delete from workflow_dados where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idworkflowdado]."'", null, __LINE__);
+            $this->con->executa( "update   workflow_tramitacao set id_usuario_associado = null where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'", null, __LINE__);
         }
 
+        function AssociarRegistronoPosto($jsonRAW, $idposto){
+            $json = json_decode( $jsonRAW, true );
+            IF ($json == NULL) {
+                    $data = array("data"=>
+                                array(	"resultado" =>  "ERRO",
+                                        "erro" => "JSON zuado - $jsonRAW" )
+                    );
+
+
+                    $app->render ('default.php',$data,500);
+                    return false;
+            }	
+            $erro = 0;
+            //var_dump($json);
+         
+            $this->con->executa( "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'", null, __LINE__);
+        }
                 
  	
 	function    SalvarHistorico($idprocesso, $idposto , $idworkflowtramitacao_original, $proximo_posto ){
@@ -522,7 +539,7 @@ class Workflow{
                       //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                       foreach ($json as $campo => $valor){
                           if ($campo == "processo") continue;
-                          //echo ".";
+                         // echo "\n $campo = ".$valor[valor];
 
                           $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
                       }                                     

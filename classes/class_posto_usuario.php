@@ -16,12 +16,11 @@ class Posto_Usuario{
 	}
         
         function AssociarProcessonoPosto($app,  $jsonRAW, $idposto ){
-
-            
-       
-            $this->workflow->SalvarnoBanco(  json_decode($jsonRAW, true), $idposto, "AssociarPosto", $app);
+//id_usuario_associado
+           // $this->workflow->SalvarnoBanco(  json_decode($jsonRAW, true), $idposto, "AssociarPosto", $app);
+            $array = $this->workflow->AssociarRegistronoPosto( $jsonRAW, $idposto);
         }
-	
+
         function DesassociarProcessonoPosto($app, $jsonRAW, $idposto ){
          // chamar o registrar   
             $array = $this->workflow->DesassociarRegistronoPosto( $jsonRAW, $idposto);
