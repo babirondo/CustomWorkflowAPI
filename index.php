@@ -16,7 +16,9 @@ $app = new \Slim\Slim( array(
     'templates.path' => './templates'
 ) );
 \Slim\Slim::registerAutoloader();
- 
+
+
+  
 //defina a rota
 
 $app->get('/getWorkflows/', function () use ($app)  {

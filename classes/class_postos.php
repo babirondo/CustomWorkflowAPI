@@ -120,7 +120,7 @@ class Postos{
                             LEFT JOIN notificacoes_email nsp ON (nsp.id = wp.".(($posto=="entrando")?"notif_entrandoposto":"notif_saindoposto").")
                             LEFT JOIN relacionamento_postos rp ON (rp.idposto_atual = wp.id)
                     WHERE wp.id = $idposto  ";
-            //if ($debug) echo $sql;
+            //echo $sql;
             $this->con->executa($sql);
 
             $p=0;

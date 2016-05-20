@@ -40,6 +40,7 @@ class Workflow{
                     return false;
             }	
             $erro = 0;
+            var_dump($json);
          
             $this->con->executa( "delete from workflow_dados where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idworkflowdado]."'", null, __LINE__);
         }
@@ -50,13 +51,13 @@ class Workflow{
 
             
                 $sql =  "select  rp.avanca_processo, wp.starter 
-             -- posto_final, penultimo_posto,  
+  
               
                             from workflow_postos wp
                                 inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
                                 inner join workflow w ON (w.id = wp.id_workflow)
                             where wp.id=$idposto  and rp.avanca_processo = $proximo_posto  ";
-                    //echo "\n Buscando informacoes de posto final, penultimo, proximo posto e starter = $sql\n";
+                  //  echo "\n Buscando informacoes de posto final, penultimo, proximo posto e starter = $sql\n";
                     $this->con->executa(   $sql, null, __LINE__);
                     $this->con->navega(0);
                     
@@ -80,7 +81,7 @@ class Workflow{
                         $erro = 1;
                     else{ 
                       //  echo "\n Tramitacao de chegada no novo posto criada: ".$this->con->dados["id"]." ( idprocesso $idprocesso idposto $idposto) \n";
-
+                        echo " \n Entrando em novo posto de mesmo nivel";
                         $this->notificacoes->notif_entrandoposto($idprocesso , $idposto);
                         
                         if ($starter){
@@ -114,6 +115,7 @@ class Workflow{
                      //salvar historico de posto que nao tem proximo
                      if ($idworkflowtramitacao_original )
                      {
+                         echo "\n XXXXX \n ";
                          //se mesma entidade, fechando o posto
                          $sql =  " UPDATE workflow_tramitacao SET   fim = NOW() WHERE id  = ".$idworkflowtramitacao_original ."  ";
                         // echo "Finalizando posto $idposto , idworkflowtramitacao = ".$idworkflowtramitacao_original." \n";
@@ -121,14 +123,14 @@ class Workflow{
                       
                          
                         // resolver tramitacao em idprocesso, idposto, postoanterior
-                        $sql =  "select  wt.idprocesso , rp.idposto_atual, rp.avanca_processo
+                        $sql =  "select wt.idworkflowposto , wt.idprocesso , rp.idposto_atual, rp.avanca_processo
                                 from workflow_tramitacao wt
                                        inner join relacionamento_postos rp ON (rp.idposto_atual = wt.idworkflowposto)
                                 where wt.id =   $idworkflowtramitacao_original      ";
                         $this->con->executa(   $sql, 0, __LINE__);
                         $this->con->navega(0);
 
-                        $this->notificacoes->notif_saindoposto($this->con->dados["idprocesso"], $this->con->dados["idposto_atual"]);
+                        $this->notificacoes->notif_saindoposto($this->con->dados["idprocesso"],  $this->con->dados["idposto_atual"] );
  
 
                      } 
@@ -144,7 +146,7 @@ class Workflow{
 	
 		$this->con->executa( "Select * from workflow", null, __LINE__);
 		//$this->con->navega();
-		
+                
 		$i=0;
 		while ($this->con->navega(0)){
 			$array["FETCH"][$i]["workflow"]  = $this->con->dados["workflow"];
@@ -152,7 +154,7 @@ class Workflow{
 			$array["FETCH"][$i]["postoinicial"]  = $this->con->dados["posto_inicial"];
 			$i++;
 		}
-		
+                
 		$array["resultado"] = "SUCESSO";
 
 		$data =  	$array;
@@ -461,8 +463,10 @@ class Workflow{
                                   }
                                    if ($json[processo][acao] == "Salvar e Avançar >>>")
                                   { 	  
-                                    //  echo " \n aqui "; 
+                                     echo " \n mesma entidade "; 
+                                    //  mesma entidade
                                       $this->SalvarHistorico($idprocesso, $proximo_posto, null, $proximo_posto);
+                                      // $this->SalvarHistorico($idprocesso, $idposto, null, $proximo_posto);
                                       $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app);   
                                   }
 
@@ -587,14 +591,14 @@ class Workflow{
         
             
             // resolver tramitacao em idprocesso, idposto, postoanterior
-            $sql =  "select  wt.idprocesso , rp.idposto_atual, rp.avanca_processo
+            $sql =  "select  wt.idprocesso , rp.idposto_atual, rp.avanca_processo, wt.idworkflowposto
                     from workflow_tramitacao wt
-                           inner join relacionamento_postos rp ON (rp.idposto_atual = wt.idworkflowposto)
+                           left join relacionamento_postos rp ON (rp.idposto_atual = wt.idworkflowposto)
                     where wt.id =   $idtramitacao      ";
             $this->con->executa(   $sql, 0, __LINE__);
             $this->con->navega(0);
-                        
-            $this->notificacoes->notif_saindoposto($this->con->dados["idprocesso"],   $this->con->dados["idposto_atual"]);
+             echo "Handover sem destino \n";           
+            $this->notificacoes->notif_saindoposto($this->con->dados["idprocesso"],   $this->con->dados["idworkflowposto"]);
     
             // BUSCA O TIPO DE HANDOVER DO TIPO DE PROCESSO PAI
             $sql =  "select tp_pai.regra_handover
@@ -640,6 +644,8 @@ class Workflow{
 
                     //echo "\n Fechando posto pai - idprocesso ".$this->con->dados["id"]." avanca_processo ".$this->con->dados["avanca_processo_filhos_fechados"];
                     $this->SalvarHistorico($this->con->dados["id"], $this->con->dados["avanca_processo_filhos_fechados"], null, $this->con->dados["avanca_processo_filhos_fechados"]);
+                    echo "\n Movendo entidade pai \n";           
+                    $this->notificacoes->notif_entrandoposto($this->con->dados["id"],   $this->con->dados["avanca_processo_filhos_fechados"]);
                     
    
                 }
