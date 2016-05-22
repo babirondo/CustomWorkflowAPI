@@ -4,18 +4,26 @@ class db
 {
 	function conecta() 
 	{
-                // windows
-                $localhost = "127.0.0.1";
-		$db ="customworkflow";
-		$username = "postgres";
-		$password = "rodr1gues";
-
-                // mac
-                $localhost = "localhost";
-		$db ="customworkflow";
-		$username = "postgres";
-		$password = "rodr1gues";
+                $usar = "windows";
                 
+                if ($usar == "windows"){
+                    // windows
+                      $localhost = "127.0.0.1";
+                      $db ="customworkflow";
+                      $username = "postgres";
+                      $password = "rodr1gues";
+
+                }
+                else{
+                            // mac
+                       $localhost = "localhost";
+                       $db ="customworkflow";
+                       $username = "postgres";
+                       $password = "rodr1gues";
+
+                }
+              
+               
 		try { 
 			$this->pdo = new PDO("pgsql:host=$localhost;dbname=$db", $username, $password); 
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
@@ -58,7 +66,7 @@ class db
              }
              else{
                 //echo "\n ($l) $sql";
-              //  echo "$sql \n"; 
+                echo "$sql \n"; 
                 if ($prepared == 1)
                 {
                       $stmt = $this->pdo->prepare($sql);

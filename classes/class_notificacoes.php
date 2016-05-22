@@ -6,28 +6,67 @@ class Notificacoes{
 		
 		require_once("classes/class_postos.php");
 		require_once("classes/class_campo.php");
+                include_once("classes/globais.php");   
 		require_once("classes/class_db.php");
 		
 		$this->con = new db();
 		$this->con->conecta();		
-	
-		$this->posto = new Postos();
+                $this->globais = new Globais();
+                $this->posto = new Postos();
 		$this->campos = new Campos();
-		
+		 
 		$this->debug = null;
                
 	}
 	
-     
+                
+        function LoadbyChave($chave, $idsla)
+        {
+            $sql = "select * from sla where id = $idsla  "; 
+            //    echo "<BR> $sql";
+            $this->con->executa( $sql);
+            $this->con->navega(0);
+            $tipo_chave = $this->con->dados["tabela"];
+            
+            $sql = "select  ".$this->con->dados["campo_localizador"]." chave, *
+                    from ".$this->con->dados["tabela"]."   
+                    WHERE  ".$this->con->dados["campo_localizador"]." = $chave   ";    
+                
+            $this->con->executa( $sql); 
+            $this->con->navega(0);
+            
+            
+            //echo "<BR>tipo chave: $tipo_chave";
+            switch ($tipo_chave)
+            {
+                case("workflow_tramitacao wt"):
+                    $idposto =$this->con->dados["idworkflowposto"];
+                    $this->idprocesso =$this->con->dados["idprocesso"];
+                    
+                    $data = $this->posto->LoadCampos($idposto,$this->idprocesso );
+                break;
+            
+                case("processos p"):
+                  
+                    $this->idprocesso =$this->con->dados["id"];
+                    
+                    $data = $this->posto->LoadCamposbyProcesso(  $this->idprocesso );
+                break;    
+            }
+            
+            return $data;      
+        }
+           
 
         
 	function TraduzirEmail ($texto_original, $data){
 		
 		 
 		$de = $this->campos->getCampos(); // 11 nome
-//var_dump($data);
+                
                 if (is_array($data["FETCH"][$this->idprocesso]))
 		{
+                
 			foreach ($data["FETCH"][$this->idprocesso] as $campo => $val){
 				
 				//$valor[ $campo   ] = $val;  //       11 bruno
@@ -35,7 +74,10 @@ class Notificacoes{
                                // echo "\n -$campo- -$val- "  ;
 			}
 		}
-		
+		// TODO: REsolver a adicao de campos especiais para resolver no email de notificacao
+                $valor = $this->globais->ArrayMergeKeepKeys ($valor, $this->globais->SYS_CAMPOS_ESPECIAIS );
+                //var_dump($valor);exit;  
+                
         	$texto_original = str_replace("{idprocesso}", $this->idprocesso ,$texto_original);
                 
 		foreach ($de as $idcampo => $campo){
@@ -43,7 +85,9 @@ class Notificacoes{
                     $texto_original = preg_replace_callback( '%{.*?}%i',
                             
                         function($match) use ($valor) {
-                            return    $valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )]       ; // nome
+                            return    (($valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )])
+                                       ? $valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )]
+                                       : "<font color=#ff0000>$match[0]</font>")       ; // nome
                         },
                     $texto_original);
 		}
@@ -60,22 +104,22 @@ class Notificacoes{
 			Return-Path: ".$de."
 		    Reply-To: ".$de."  ";
 		
-		$this->debug .= "
+		$debug .= "<PRE>
 de: $de
 para: $para
 titulo: ".$titulo."
 corpo: ".$corpo."
 		
 		
-header: $headers ";
+header: $headers</PRE> ";
 
                 
-                echo "\n".$this->debug;
+               echo "\n".$debug;
                 
 		//mail($para, $titulo, $corpo, $headers);
                 
                 
-                return $this->debug;
+                return $debug;
 	}
 	
 	function notif_entrandoposto($idprocesso, $idposto)
@@ -160,6 +204,77 @@ header: $headers ";
             }
              
 	}
+        
+        
+        
+        function LoadCampos($idnotificacao)
+        {
+            
+            //buscando dados do posto
+            $sql ="Select * FROM notificacoes_email WHERE id =  $idnotificacao  ";
+            //echo $sql;
+            $this->con->executa($sql);
+
+            $p=0;
+            while ($this->con->navega($p)){
+
+  
+                $array  [de]  = $this->con->dados["de"];
+                $array  [para]  = $this->con->dados["para"];
+                $array  [titulo]  = $this->con->dados["titulo"];
+                $array [corpo]  = $this->con->dados["corpo"];
+                
+                $p++;
+            }
+            return $array;
+        }
+        function notifica_sla_vencido($idsla,   $idnotificacao, $chave)
+	{	
+          echo "<BR> id notificacao:$idnotificacao"
+                . "<BR> SLA $idsla "
+                      . "<BR> idprocesso $idprocesso "
+                  . "<BR> Chave $chave <BR> "     ;
+          
+            // puxa dados da notificacao
+            $dados_notificacao = $this->LoadCampos($idnotificacao);
+          // echo "<Pre>"; var_dump($dados_notificacao);   echo "</Pre>";      
+            // puxa dados do posto atual
+            $data_atual = $this->LoadbyChave($chave, $idsla);
+                
+                
+         //  echo "<Pre>"; var_dump($data_atual);   echo "</Pre>";
+           //exit;
+         
+            $titulo = $this->TraduzirEmail($dados_notificacao  [titulo], $data_atual);
+            $corpo = $this->TraduzirEmail($dados_notificacao [corpo], $data_atual);
+            $de = $this->TraduzirEmail($dados_notificacao  [de], $data_atual);
+            $para = $this->TraduzirEmail($dados_notificacao  [para], $data_atual);
+ 
+            $this->registranotificacao($idsla,   $idnotificacao, $chave);
+            return $this->EnviaEmail($de, $para, $titulo, $corpo);
+         
+ 
+	}
+        
+        function registranotificacao( $idsla,   $idnotificacao, $chave)
+	{	
+            
+                $sql = "select  *
+                        from sla s
+                               left join sla_notificacoes sn ON (sn.idsla = s.id)
+                        where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' minutes' AS INTERVAL))   " ;
+             
+               $this->con->executa( $sql);
+                 
+               if ($this->con->nrw==0)
+               {          
+                     echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
+                    $sql ="insert into sla_notificacoes ( idsla, datanotificacao, chave) values ($idsla,  NOW(), $chave) ";
+                    $this->con->executa($sql);
+               }
+             
+	}
+	
 	
  	 	
 }

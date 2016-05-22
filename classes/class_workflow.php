@@ -40,7 +40,7 @@ class Workflow{
                     return false;
             }	
             $erro = 0;
-            var_dump($json);
+             var_dump($json);
          
             $this->con->executa( "update   workflow_tramitacao set id_usuario_associado = null where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'", null, __LINE__);
         }
@@ -99,6 +99,7 @@ class Workflow{
                     else{ 
                       //  echo "\n Tramitacao de chegada no novo posto criada: ".$this->con->dados["id"]." ( idprocesso $idprocesso idposto $idposto) \n";
                         echo " \n Entrando em novo posto de mesmo nivel";
+                        $idtramitacao_criada = $this->con->dados["id"];
                         $this->notificacoes->notif_entrandoposto($idprocesso , $idposto);
                         
                         if ($starter){
@@ -155,7 +156,7 @@ class Workflow{
                         
                 //}
             //}
-                        
+             return $idtramitacao_criada;           
 	}
 	
 	
@@ -206,7 +207,7 @@ class Workflow{
 	}
         
         
-        function AutoAssociarProcessonoPosto($idprocesso, $avanca_processo , $app) 
+        function AutoAssociarProcessonoPosto($idprocesso, $avanca_processo , $app, $idtramitacao ) 
         {
             
             $sql = "select   wp.tipodesignacao
@@ -227,9 +228,9 @@ class Workflow{
                     $usuarios = $this->posto->getUsuarios($avanca_processo);
 
                     $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor]  = array_rand($usuarios["USUARIOS_POSTO"][$avanca_processo],1);
+                    $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idtramitacao"]  = $idtramitacao ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idworkflowdado"]  = null ;
-                    $associarRegistro [processo][valor]  = $idprocesso;	
-                    
+                    $associarRegistro [processo][valor]  = $idprocesso;	 
                     //echo "\n associado: $idprocesso Posto: $avanca_processo usuario:  ".$associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor];
 
                     $this->Posto_Usuario->AssociarProcessonoPosto($app, json_encode($associarRegistro) , $avanca_processo );
@@ -448,12 +449,12 @@ class Workflow{
                                         }                                     
                                   }
 
-                                  if ($json[processo][acao] == "Salvar e Avançar >>>")
+                                  if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] )
                                   { 	  
                                       // cria proximo posto em branco ja que o inicial ja nasce fechado
                                       $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
-                                      $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
-                                      $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app);   
+                                      $idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+                                      $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);   
 
                                   }
 //                                  $cria_processo=1;
@@ -478,13 +479,13 @@ class Workflow{
                                             $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
                                         }                                     
                                   }
-                                   if ($json[processo][acao] == "Salvar e Avançar >>>")
+                                   if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
                                   { 	  
                                      echo " \n mesma entidade "; 
                                     //  mesma entidade
-                                      $this->SalvarHistorico($idprocesso, $proximo_posto, null, $proximo_posto);
+                                      $idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, null, $proximo_posto);
                                       // $this->SalvarHistorico($idprocesso, $idposto, null, $proximo_posto);
-                                      $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app);   
+                                      $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);   
                                   }
 
                               }
@@ -513,12 +514,12 @@ class Workflow{
                              } 
               
                 // ca
-                            if ($json[processo][acao] == "Salvar e Avançar >>>")
+                            if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
                             { 	  
                                 // se mesma entidade e handover, so tramita
                                 //echo "\n se mesma entidade e handover, so tramita";
-                                $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
-                                $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app);   
+                                $idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
+                                $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);   
                             }      
                           
                       }
@@ -672,6 +673,8 @@ class Workflow{
             }
             
         }
+        
+
         
         function SalvarnoBanco($json, $idposto, $origem  , $app)
         {

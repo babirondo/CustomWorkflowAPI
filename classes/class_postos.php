@@ -98,60 +98,62 @@ class Postos{
 	}
 	
 	function LoadCampos(  $idposto, $idprocesso, $posto="entrando", $debug=null, $listar="Lista" ){
-            // busca o email dos atores do posto
-            $sql ="select u.email
-                    from workflow_postos wp 
-                        inner join atores  a ON (a.id = wp.idator)
-                        inner join usuario_atores ua ON (ua.idator = a.id)
-                        inner join usuarios u ON (u.id = ua.idusuario)
-                    where  wp.id = $idposto ";
-            $this->con->executa($sql);
+            if ($idposto>0)
+            {
+                // busca o email dos atores do posto
+                $sql ="select u.email
+                        from workflow_postos wp 
+                            inner join atores  a ON (a.id = wp.idator)
+                            inner join usuario_atores ua ON (ua.idator = a.id)
+                            inner join usuarios u ON (u.id = ua.idusuario)
+                        where  wp.id = $idposto ";
+                $this->con->executa($sql);
 
-            $emails = null;
-            while ($this->con->navega(0)){
-                $emails[$this->con->dados["email"]]  = $this->con->dados["email"];
+                $emails = null;
+                while ($this->con->navega(0)){
+                    $emails[$this->con->dados["email"]]  = $this->con->dados["email"];
+                }
+                if (is_array($emails))
+                        $array["DADOS_POSTO"] [atores]  = implode(",",$emails);
+
+                //buscando dados do posto
+                $sql ="Select wp.*, nsp.de, nsp.para, nsp.titulo, nsp.corpo, rp.avanca_processo
+                        from workflow_postos  wp
+                                LEFT JOIN notificacoes_email nsp ON (nsp.id = wp.".(($posto=="entrando")?"notif_entrandoposto":"notif_saindoposto").")
+                                LEFT JOIN relacionamento_postos rp ON (rp.idposto_atual = wp.id)
+                        WHERE wp.id = $idposto  ";
+                //echo $sql;
+                $this->con->executa($sql);
+
+                $p=0;
+                while ($this->con->navega($p)){
+
+                    $array["DADOS_POSTO"] [nomeposto]  = $this->con->dados["posto"];
+                    $array["DADOS_POSTO"] [idworkflow]  = $this->con->dados["id_workflow"];
+                    $array["DADOS_POSTO"] [starter]  = $this->con->dados["starter"];
+                    $array["DADOS_POSTO"] [de]  = $this->con->dados["de"];
+                    $array["DADOS_POSTO"] [para]  = $this->con->dados["para"];
+                    $array["DADOS_POSTO"] [titulo]  = $this->con->dados["titulo"];
+                    $array["DADOS_POSTO"] [corpo]  = $this->con->dados["corpo"];
+                    $array["DADOS_POSTO"] [notif_entrandoposto]  = $this->con->dados["notif_entrandoposto"];
+                    $array["DADOS_POSTO"] [notif_saindoposto]  = $this->con->dados["notif_saindoposto"];
+                    $array["DADOS_POSTO"] [tipodesignacao]  = $this->con->dados["tipodesignacao"];
+                    $array["DADOS_POSTO"] [avanca_processo][$p]  = $this->con->dados["avanca_processo"]; 
+                    $p++;
+                }
+                $this->con->executa( "Select * from postos_campo WHere idposto = $idposto  ");
+                //$this->con->navega();
+
+                while ($this->con->navega(0)){
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["maxlenght"]  = $this->con->dados["maxlenght"];
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["inputtype"]  = $this->con->dados["inputtype"];
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_cols"]  = $this->con->dados["txtarea_cols"];
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_rows"]  = $this->con->dados["txtarea_rows"];
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["idcampo"]  = $this->con->dados["id"];
+                }		
             }
-            if (is_array($emails))
-                    $array["DADOS_POSTO"] [atores]  = implode(",",$emails);
-
-            //buscando dados do posto
-            $sql ="Select wp.*, nsp.de, nsp.para, nsp.titulo, nsp.corpo, rp.avanca_processo
-                    from workflow_postos  wp
-                            LEFT JOIN notificacoes_email nsp ON (nsp.id = wp.".(($posto=="entrando")?"notif_entrandoposto":"notif_saindoposto").")
-                            LEFT JOIN relacionamento_postos rp ON (rp.idposto_atual = wp.id)
-                    WHERE wp.id = $idposto  ";
-            //echo $sql;
-            $this->con->executa($sql);
-
-            $p=0;
-            while ($this->con->navega($p)){
-
-                $array["DADOS_POSTO"] [nomeposto]  = $this->con->dados["posto"];
-                $array["DADOS_POSTO"] [idworkflow]  = $this->con->dados["id_workflow"];
-                $array["DADOS_POSTO"] [starter]  = $this->con->dados["starter"];
-                $array["DADOS_POSTO"] [de]  = $this->con->dados["de"];
-                $array["DADOS_POSTO"] [para]  = $this->con->dados["para"];
-                $array["DADOS_POSTO"] [titulo]  = $this->con->dados["titulo"];
-                $array["DADOS_POSTO"] [corpo]  = $this->con->dados["corpo"];
-                $array["DADOS_POSTO"] [notif_entrandoposto]  = $this->con->dados["notif_entrandoposto"];
-                $array["DADOS_POSTO"] [notif_saindoposto]  = $this->con->dados["notif_saindoposto"];
-                $array["DADOS_POSTO"] [tipodesignacao]  = $this->con->dados["tipodesignacao"];
-                $array["DADOS_POSTO"] [avanca_processo][$p]  = $this->con->dados["avanca_processo"]; 
-                $p++;
-            }
-            $this->con->executa( "Select * from postos_campo WHere idposto = $idposto  ");
-            //$this->con->navega();
-
-            while ($this->con->navega(0)){
-                    $array["FETCH_CAMPO"][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
-                    $array["FETCH_CAMPO"][$this->con->dados["id"]] ["maxlenght"]  = $this->con->dados["maxlenght"];
-                    $array["FETCH_CAMPO"][$this->con->dados["id"]] ["inputtype"]  = $this->con->dados["inputtype"];
-                    $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_cols"]  = $this->con->dados["txtarea_cols"];
-                    $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_rows"]  = $this->con->dados["txtarea_rows"];
-                    $array["FETCH_CAMPO"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
-                    $array["FETCH_CAMPO"][$this->con->dados["id"]] ["idcampo"]  = $this->con->dados["id"];
-            }		
-
             //if ($debug) var_dump($array);
 
             // buscando os registros do posto, direcionado pelo idprocesso
@@ -164,7 +166,7 @@ class Postos{
             } 
             if (is_array($array_dados))
                     //$array_completo =  array_merge($array_dados, $array);
-                    $array_completo =  $this->ArrayMergeKeepKeys($array_dados, $array);
+                    $array_completo =  $this->globais->ArrayMergeKeepKeys($array_dados, $array);
 
             else
                     $array_completo = $array;
@@ -183,6 +185,13 @@ class Postos{
 	
 	}
 	
+        
+        function LoadCamposbyProcesso(  $idprocesso  ){
+                    
+            $array = $this->LoadCampos( null, $idprocesso, null, null, null );
+            return $array;	
+	
+	}
 
 	function getCampos($app, $idworkflow , $idposto, $idprocesso ){
 		$data = $this->LoadCampos($idposto, $idprocesso );		
@@ -227,11 +236,13 @@ class Postos{
                         $comp = "left join postos_campo_lista pcl ON (pcl.idpostocampo = pc.id and pcl.idposto = wp.id)";
                         $camp = ", pcl.id estaprevistapralista";
                     break;
+                } 
+                if ($idposto>0){
+                    $comp_ini = "wp.id=$idposto and wt.idworkflowposto =$idposto and ";
                 }
-                
                 $sql = "SELECT pc.campo, w.valor, p.id idprocesso, p.idpai, wt.id idworkflowtramitacao, 
-                             p.status, w.idpostocampo idcampo, w.id idworkflowdado, 
-                              4 idworkflowposto, 
+                             p.status, w.idpostocampo idcampo, wt.id_usuario_associado tramitacao_idusuario, 
+                              4 idworkflowposto, u.nome tramitacao_usuario,
                              wp.tipodesignacao  $camp
                      FROM  processos p 
                          INNER JOIN workflow_tramitacao wt ON ( wt.idprocesso = p.id ".(($posto=="saindo")?"  ": " and wt.fim is null " )." ) 
@@ -240,8 +251,9 @@ class Postos{
                          INNER Join arvore_processo ap ON (ap.proprio = p.id)
                          left JOIN workflow_dados w ON (w.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo ) )
                          LEFT JOIN  postos_campo pc ON ( pc.id = w.idpostocampo )   
+                         LEFT JOIN usuarios u ON (u.id = wt.id_usuario_associado)
                          $comp
-                     WHERE wp.id=$idposto and wt.idworkflowposto =$idposto and w.idpostocampo > 0 ".(($idprocesso>0)?" and ap.proprio = $idprocesso":"");  
+                     WHERE  $comp_ini w.idpostocampo > 0 ".(($idprocesso>0)?" and ap.proprio = $idprocesso":"");  
         	
                 
                 $this->con->executa( $sql, 0, __LINE__  );
@@ -254,47 +266,32 @@ class Postos{
 		//$d = $this->con->navega($i);
                // if ($debug) var_dump($d);
 		while ($this->con->navega($i) ){
-                    //if ($this->con->dados["idworkflowposto"]!= null)
-                    {
-                        
-
-                    //   if ($debug) echo "\n .";
                        $idworkflowdado_assumir = null;
 
-
-
                        $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
-                       $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"]; 
-
-                      //if ($debug) var_dump($array);
-
-                     //  var_dump($this->SYS_DEPARA_CAMPOS);
-
-                       switch ( $this->con->dados["idcampo"] )
-                       {
-                           case( $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ):
-                               $array["FETCH"]   [$this->con->dados["idprocesso"] ][idworkflowdado_assumir]   = $this->con->dados["idworkflowdado"];  
-                               $idworkflowdado_assumir = "teve";
-                           break;
+                       $array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"]; 
+                       if ($this->con->dados["tramitacao_idusuario"]>0){
+                            $array["FETCH"] [$this->con->dados["idprocesso"]]["-1"."-ID"]   = $this->con->dados["tramitacao_idusuario"];
+                            $array["FETCH"] [$this->con->dados["idprocesso"]]["-1"]   = $this->con->dados["tramitacao_usuario"];
+                            $idworkflowdado_assumir = "teve";
                        }
-
-                      // if (is_array($pai[$this->con->dados["idpai"]]) )
-                      // {
-                      //     $array["FETCH"][$this->con->dados["idprocesso"]]  = $this->ArrayMergeKeepKeys($pai[$this->con->dados["idpai"]], $array["FETCH"][$this->con->dados["idprocesso"]] );
-                      // }
+                  
+                       $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"]; 
 
                        if ($this->con->dados["estaprevistapralista"])   
                            $array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
                        else if ($idworkflowdado_assumir == "teve")
-                           $array["TITULO"] [$this->con->dados["idcampo"]]   = array_search($this->con->dados["idcampo"], $this->globais->SYS_DEPARA_CAMPOS);
+                           $array["TITULO"] [-1]   = array_search(-1, $this->globais->SYS_DEPARA_CAMPOS);
 
                        $i++;
-                    }
+                }
 
-		}
+                    
                         
-                //if ($debug) var_dump($array);
-
+                if ( $idposto>0 )
+                {  
+                    $comp_ini = " and wp.id =$idposto ";
+                }
                 // BUSCANDO ATRIBUTOS DO PROCESSO
 		$sql = "
                     select *, p.status p_status, p.id idprocesso, to_char(wt.inicio, 'dd/mm/yyyy') wt_inicio ,
@@ -305,7 +302,7 @@ class Postos{
                             inner join processos p ON (p.id = wt.idprocesso)
                            
 
-                    where wt.fim is null and wp.id =$idposto and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
+                    where wt.fim is null $comp_ini and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
 
 		$this->con->executa( $sql,0, __LINE__);
 		
@@ -328,21 +325,7 @@ class Postos{
 		return $array;
 	}
 	
-	Function ArrayMergeKeepKeys() {
-		$arg_list = func_get_args();
-		
-		foreach((array)$arg_list as $arg){
-			if (is_array ($arg) )
-			{
-				foreach((array)$arg as $K => $V){
-					$Zoo[$K]=$V;
-				}
-				
-			}
-		}
-		return $Zoo;
-	}
-	
+
 	
 	function getLista($app,   $idposto ){
                 $debug= 0;
