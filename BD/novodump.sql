@@ -12,7 +12,8 @@ SET client_min_messages = warning;
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
 --
-
+create database customworkflow;
+\c customworkflow;
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 
 
