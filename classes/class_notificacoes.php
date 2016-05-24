@@ -22,42 +22,65 @@ class Notificacoes{
                 
         function LoadbyChave($chave, $idsla)
         {
-            $sql = "select * from sla where id = $idsla  "; 
-            //    echo "<BR> $sql";
+            $sql = "select trim(tabela) tabela, trim(campo_localizador) campo_localizador from sla where id = '$idsla'  "; 
             $this->con->executa( $sql);
             $this->con->navega(0);
             $tipo_chave = $this->con->dados["tabela"];
             
             $sql = "select  ".$this->con->dados["campo_localizador"]." chave, *
                     from ".$this->con->dados["tabela"]."   
-                    WHERE  ".$this->con->dados["campo_localizador"]." = $chave   ";    
+                    WHERE  ".$this->con->dados["campo_localizador"]." = '$chave'  ";    
                 
             $this->con->executa( $sql); 
             $this->con->navega(0);
             
-            
+            $idsla_procura_principal = $idsla;
             //echo "<BR>tipo chave: $tipo_chave";
+           // var_dump($tipo_chave);
+            
+            while($tipo_chave == "sla_notificacoes sn")
+            {
+                    $sql = "select id, trim(tabela) tabela from sla where id = (select idpai from sla where id= '$idsla_procura_principal')";  
+                    $this->con->executa( $sql); 
+                    $this->con->navega(0);
+
+                    // tipo chave do pai
+                    $tipo_chave = $this->con->dados["tabela"];
+                    $idsla_procura_principal = $this->con->dados["id"];
+                    
+            }
+            
             switch ($tipo_chave)
             {
                 case("workflow_tramitacao wt"):
-                    $idposto =$this->con->dados["idworkflowposto"];
-                    $this->idprocesso =$this->con->dados["idprocesso"];
-                    
+                    $sql = "select * from workflow_tramitacao where id = $chave ";    
+                    $this->con->executa( $sql); 
+                    $this->con->navega(0);
+
                     $data = $this->posto->LoadCampos($idposto,$this->idprocesso );
                 break;
-            
+
                 case("processos p"):
-                  
-                    $this->idprocesso =$this->con->dados["id"];
-                    
+
+                    $this->idprocesso =$chave;
+
                     $data = $this->posto->LoadCamposbyProcesso(  $this->idprocesso );
-                break;    
+                break;   
+                    
+                default:
+                    echo "Tipo Chave não mapeado: $tipo_chave";
+                    $data = null;
+                    return false;
+                break;
             }
+                        
+            
+                        
             
             return $data;      
         }
            
-
+                
         
 	function TraduzirEmail ($texto_original, $data){
 		
@@ -211,14 +234,13 @@ header: $headers</PRE> ";
         {
             
             //buscando dados do posto
-            $sql ="Select * FROM notificacoes_email WHERE id =  $idnotificacao  ";
-            //echo $sql;
-            $this->con->executa($sql);
-
+            $sql ="SELECT * FROM notificacoes_email WHERE id =  $idnotificacao  ";
+            $this->con->executa($sql );
+            
             $p=0;
             while ($this->con->navega($p)){
 
-  
+
                 $array  [de]  = $this->con->dados["de"];
                 $array  [para]  = $this->con->dados["para"];
                 $array  [titulo]  = $this->con->dados["titulo"];
@@ -226,23 +248,27 @@ header: $headers</PRE> ";
                 
                 $p++;
             }
+
             return $array;
         }
         function notifica_sla_vencido($idsla,   $idnotificacao, $chave)
 	{	
           echo "<BR> id notificacao:$idnotificacao"
                 . "<BR> SLA $idsla "
-                      . "<BR> idprocesso $idprocesso "
                   . "<BR> Chave $chave <BR> "     ;
           
             // puxa dados da notificacao
-            $dados_notificacao = $this->LoadCampos($idnotificacao);
+             $dados_notificacao = $this->LoadCampos($idnotificacao);
           // echo "<Pre>"; var_dump($dados_notificacao);   echo "</Pre>";      
+            
             // puxa dados do posto atual
             $data_atual = $this->LoadbyChave($chave, $idsla);
+            if (!$data_atual) {
+                return false;
+            }
                 
-                
-         //  echo "<Pre>"; var_dump($data_atual);   echo "</Pre>";
+
+            //  echo "<Pre>"; var_dump($data_atual);   echo "</Pre>";
            //exit;
          
             $titulo = $this->TraduzirEmail($dados_notificacao  [titulo], $data_atual);

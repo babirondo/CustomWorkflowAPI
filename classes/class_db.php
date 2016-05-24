@@ -27,7 +27,11 @@ class db
                
 		try { 
 			$this->pdo = new PDO("pgsql:host=$localhost;dbname=$db", $username, $password); 
-			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); 
+			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true );
+                         
+
+                        
 		} 
 		catch(PDOException $e) { 
 			$this->erro =  'Error: ' . $e->getMessage();
@@ -49,25 +53,45 @@ class db
              if (substr(TRIM(STRTOUPPER($sql)),0,strpos(TRIM(STRTOUPPER($sql)), " " )  ) == "SELECT")
              {
                  
+                   
                
 
 		try { 
                     //select
+
+                   
                     $select = 1;
                     $this->res = $this->pdo->query($sql);
-                    $this->nrw = $this->res->rowCount();
+                     
+                    if ($this->res)
+                        $this->nrw = $this->res->rowCount();
+                    else
+                        $this->nrw = null;
+
                 } 
 		catch(PDOException $e) { 
+
                     // if ($debug == 1)
-			echo 'Error: ' . $e->getMessage();
+			echo "Error PDO: <font color=#00aa00>$sql</font>" . $e->getMessage();
                      
 		}                
-                
+		catch(Exception $e) { 
+
+                    // if ($debug == 1)
+			echo 'Error EXCEPTION: ' . $e->getMessage();
+                     
+		}                
+
+                finally {
+                    // após exceptions roda isso
+			 
+                }
+
                 return $this->res;
              }
              else{
                 //echo "\n ($l) $sql";
-                echo "$sql \n"; 
+//                echo "$sql \n"; 
                 if ($prepared == 1)
                 {
                       $stmt = $this->pdo->prepare($sql);
