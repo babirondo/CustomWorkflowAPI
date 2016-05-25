@@ -72,7 +72,7 @@ class db
 		catch(PDOException $e) { 
 
                     // if ($debug == 1)
-			echo "Error PDO: <font color=#00aa00>$sql</font>" . $e->getMessage();
+			echo "Error PDO: <font color=#00aa00><pre>".var_export($sql)."</font></pre>" . $e->getMessage();
                      
 		}                
 		catch(Exception $e) { 

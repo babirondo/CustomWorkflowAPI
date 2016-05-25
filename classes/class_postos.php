@@ -114,7 +114,7 @@ class Postos{
                     $emails[$this->con->dados["email"]]  = $this->con->dados["email"];
                 }
                 if (is_array($emails))
-                        $array["DADOS_POSTO"] [atores]  = implode(",",$emails);
+                        $array["DADOS_POSTO"] [atoresdoposto]  = implode(",",$emails);
 
                 //buscando dados do posto
                 $sql ="Select wp.*, nsp.de, nsp.para, nsp.titulo, nsp.corpo, rp.avanca_processo
@@ -154,25 +154,30 @@ class Postos{
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["idcampo"]  = $this->con->dados["id"];
                 }		
             }
-            //if ($debug) var_dump($array);
-
-            // buscando os registros do posto, direcionado pelo idprocesso
-            $array_dados = $this->BuscarDadosProcesso($idprocesso , $idposto, $debug, $listar, $posto);
-           // var_dump($array_dados);        
-            if ($debug){
-            //  echo "BuscarDadosProcesso = $idprocesso = $idposto"; 
-              //var_dump($array_dados);
-  
-            } 
-            if (is_array($array_dados))
-                    //$array_completo =  array_merge($array_dados, $array);
-                    $array_completo =  $this->globais->ArrayMergeKeepKeys($array_dados, $array);
-
-            else
-                    $array_completo = $array;
-
 
             
+            // buscando os registros do posto, direcionado pelo idprocesso
+            $array_dados = $this->BuscarDadosProcesso($idprocesso , $idposto, $debug, $listar, $posto);
+           
+            
+            if ($debug){
+            
+            } 
+            if (is_array($array_dados))
+                $array_completo =  $this->globais->ArrayMergeKeepKeys($array_dados, $array);
+            else
+                $array_completo = $array;
+
+           /*
+            *  // adiciona ao Fetch os valores que sao buscados na traducao dos colchetes nos emails
+            // neste caso dados do posto
+            foreach ($this->globais->SYS_ADD_CAMPOS as $idx => $val){
+                $array["FETCH"] [$this->con->dados["idprocesso"]][$idx]   =   $this->con->dados["$val"]  ;
+            }
+            
+            */
+            
+            //echo "<pre>"; var_dump($array_completo);        echo "</pre>";
 
             $array_completo["resultado"] = "SUCESSO";
 
@@ -200,36 +205,6 @@ class Postos{
 	
 	function BuscarDadosdoFilhoePai($idposto, $idprocesso=null, $debug=null, $listar = "Lista", $posto)
 	{
-            /*
-                // BUSCANDO DADOS DO PAI
-		$sql = "
-		SELECT pc.campo, w.valor, w.idprocesso, p.idpai, p.status, pc.id idcampo
-		FROM postos_campo_lista pcl
-		INNER JOIN postos_campo pc ON (pc.id = pcl.idpostocampo)
-		INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
-		LEFT JOIN workflow_dados w ON (w.idpostocampo = pcl.idpostocampo )
-		LEFT JOIN processos p ON (p.id = w.idprocesso)
-		
-		WHERE wp.id  =   $idposto   ". (($idprocesso>0)?" and p.id = $idprocesso":"");
-		$this->con->executa($sql , 0 , __LINE__);
-                //echo "<PRE>$sql</pre>";
-		
-		//$this->con->navega();
-		
-		$i=0;
-		while ($this->con->navega(0)){
-                    $pai[$this->con->dados["idprocesso"]]  [$this->con->dados["idworkflowposto"] ] [$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
-                  //  $pai[$this->con->dados["idprocesso"]][Designado]   = $this->con->dados["idusuario_designado"];
-
-                    $array["TITULO"][$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
-                    $i++;
-		}
-		
-		*/	
-		//var_dump($pai);
-			
-		// BUSCANDO DADOS DO FILHO
-		
                 switch ($listar)
                 {
                     case ("Lista"):
@@ -242,7 +217,7 @@ class Postos{
                 }
                 $sql = "SELECT pc.campo, w.valor, p.id idprocesso, p.idpai, wt.id idworkflowtramitacao, 
                              p.status, w.idpostocampo idcampo, wt.id_usuario_associado tramitacao_idusuario, 
-                              4 idworkflowposto, u.nome tramitacao_usuario,
+                             u.nome tramitacao_usuario, u.nome usuarioassociado,
                              wp.tipodesignacao  $camp
                      FROM  processos p 
                          INNER JOIN workflow_tramitacao wt ON ( wt.idprocesso = p.id ".(($posto=="saindo")?"  ": " and wt.fim is null " )." ) 
@@ -254,27 +229,28 @@ class Postos{
                          LEFT JOIN usuarios u ON (u.id = wt.id_usuario_associado)
                          $comp
                      WHERE  $comp_ini w.idpostocampo > 0 ".(($idprocesso>0)?" and ap.proprio = $idprocesso":"");  
-        	
-                
                 $this->con->executa( $sql, 0, __LINE__  );
-              //  echo "<pre>$sql</pre>";
-                
-              //  if ($debug) die($sql) ;
-
+                //echo $sql; exit;
+                //echo "\n SQL GERADO";
                 $i=0;
-                // if ($debug) echo "\n NRW:".$this->con->nrw;   
-		//$d = $this->con->navega($i);
-               // if ($debug) var_dump($d);
+      
 		while ($this->con->navega($i) ){
                        $idworkflowdado_assumir = null;
 
                        $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
                        $array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"]; 
+                       
                        if ($this->con->dados["tramitacao_idusuario"]>0){
-                            $array["FETCH"] [$this->con->dados["idprocesso"]]["-1"."-ID"]   = $this->con->dados["tramitacao_idusuario"];
-                            $array["FETCH"] [$this->con->dados["idprocesso"]]["-1"]   = $this->con->dados["tramitacao_usuario"];
+                            $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ."-ID"]   = $this->con->dados["tramitacao_idusuario"];
+                            $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ]   = $this->con->dados["tramitacao_usuario"];
                             $idworkflowdado_assumir = "teve";
                        }
+                       
+                        // adiciona ao Fetch os valores que sao buscados na traducao dos colchetes nos emails
+                        foreach ($this->globais->SYS_ADD_CAMPOS as $idx => $val){
+                            $array["FETCH"] [$this->con->dados["idprocesso"]][$idx]   =   $this->con->dados["$val"]  ;
+                        }
+
                   
                        $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"]; 
 
@@ -295,23 +271,19 @@ class Postos{
                 // BUSCANDO ATRIBUTOS DO PROCESSO
 		$sql = "
                     select *, p.status p_status, p.id idprocesso, to_char(wt.inicio, 'dd/mm/yyyy') wt_inicio ,
-                                    to_char(p.inicio, 'dd/mm/yyyy') p_inicio ,wt.idworkflowposto
+                                    to_char(p.inicio, 'dd/mm/yyyy') p_inicio ,wt.idworkflowposto, p.inicio entradanoposto,
+                                    u.nome usuarioassociado
                     from workflow_tramitacao wt 
                             inner join postos_campo_lista pcl ON (pcl.idposto = wt.idworkflowposto)
                             INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
                             inner join processos p ON (p.id = wt.idprocesso)
+                            left join usuarios u ON (u.id  = wt.id_usuario_associado)
                            
 
                     where wt.fim is null $comp_ini and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
 
 		$this->con->executa( $sql,0, __LINE__);
-		
-                
-                //if ($debug) echo "<PRE>$sql</pre>";
-		//echo "<PRE>$sql</pre>";
-		
-		//$this->con->navega();
-		
+		//echo $sql;
 		$i=0;
 		while ($this->con->navega(0)){
                     $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["atributo_campo"] ]   = $this->con->dados [ $this->con->dados["atributo_valor"] ];
@@ -319,8 +291,6 @@ class Postos{
 
                     $i++;
 		}
-                
-                //if ($debug) var_dump($array);
         
 		return $array;
 	}

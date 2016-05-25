@@ -20,9 +20,12 @@ class SLA{
   
         function checkar_todos_SLAs( $idsla )
         {
-            //$sql = "select * from sla where id=$idsla";
-            $sql = "select * from sla  ";
-            $sql = "select * from sla where idpai is not null ";
+             if ($idsla)
+                $sql = "select * from sla where id IN ($idsla) ";
+             else
+                $sql = "select * from sla   ";
+            //$sql = "select * from sla   ";
+            //$sql = "select * from sla where idpai is not null ";
             
             $this->con->executa( $sql);
 
@@ -33,10 +36,9 @@ class SLA{
                             from ".$this->con->dados["tabela"]."  
                             where  (NOW() - ".$this->con->dados["campo_calculado"].") >  INTERVAL '".$this->con->dados["sla_emhorascorridas"]." minutes'  "
                                   . (($this->con->dados["where_tabela"])?" and ".$this->con->dados["where_tabela"]:"")
-                            ." and  chave =  '47215' GROUP BY 1  ";
+                            ."  GROUP BY 1  ";
                            
                         ;
-                   
                     $this->con2->executa( $sql);
 
                     if ($this->con2->nrw >0)

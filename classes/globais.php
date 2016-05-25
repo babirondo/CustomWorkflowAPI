@@ -8,7 +8,15 @@ class Globais{
             $this->SYS_DEPARA_CAMPOS["Responsável"] = -1;
             $this->SYS_DEPARA_CAMPOS["bt_handover"] = "Salvar e Avancar >"; 
             
-            $this->SYS_CAMPOS_ESPECIAIS["Gestor Seleção"] = "Bruno Siqueira - Gestor Seleção"; 
+            $this->SYS_CAMPOS_ESPECIAIS["gestorselecao"] = "Bruno Siqueira - Gestor Seleção"; 
+            
+            $this->SYS_ADD_CAMPOS["entradanoposto"] = "wt_inicio"; 
+            //$this->SYS_ADD_CAMPOS["temponoposto"] = "wt_inicio"; 
+            $this->SYS_ADD_CAMPOS["usuarioassociado"] = "usuarioassociado"; 
+            $this->SYS_ADD_CAMPOS["inicioprocesso"] = "p_inicio"; 
+            $this->SYS_ADD_CAMPOS["atoresdoposto"] = "atoresdoposto"; 
+             
+            
 
 	}
 	

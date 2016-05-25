@@ -40,7 +40,7 @@ class Workflow{
                     return false;
             }	
             $erro = 0;
-             var_dump($json);
+            // var_dump($json);
          
             $this->con->executa( "update   workflow_tramitacao set id_usuario_associado = null where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'", null, __LINE__);
         }
@@ -59,13 +59,17 @@ class Workflow{
             }	
             $erro = 0;
             //var_dump($json);
-         
+           // echo "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'";
             $this->con->executa( "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'", null, __LINE__);
         }
                 
  	
 	function    SalvarHistorico($idprocesso, $idposto , $idworkflowtramitacao_original, $proximo_posto ){
 
+            
+            
+
+            
             
                 $sql =  "select  rp.avanca_processo, wp.starter 
   
@@ -98,9 +102,12 @@ class Workflow{
                         $erro = 1;
                     else{ 
                       //  echo "\n Tramitacao de chegada no novo posto criada: ".$this->con->dados["id"]." ( idprocesso $idprocesso idposto $idposto) \n";
-                        echo " \n Entrando em novo posto de mesmo nivel";
+                        //echo " \n Entrando em novo posto de mesmo nivel";
                         $idtramitacao_criada = $this->con->dados["id"];
-                        $this->notificacoes->notif_entrandoposto($idprocesso , $idposto);
+                        $this->AutoAssociarProcessonoPosto($idprocesso, $idposto, null, $idtramitacao_criada);   
+                        
+                        //$this->notificacoes->notif_entrandoposto($idprocesso , $idposto); // funcionando
+                        $this->notificacoes->notif_entrandoposto($idprocesso , $idposto, $avanca_processo);
                         
                         if ($starter){
                          //   echo "aa $idprocesso $idposto $avanca_processo ";
@@ -133,7 +140,7 @@ class Workflow{
                      //salvar historico de posto que nao tem proximo
                      if ($idworkflowtramitacao_original )
                      {
-                         echo "\n XXXXX \n ";
+                       //  echo "\n XXXXX \n ";
                          //se mesma entidade, fechando o posto
                          $sql =  " UPDATE workflow_tramitacao SET   fim = NOW() WHERE id  = ".$idworkflowtramitacao_original ."  ";
                         // echo "Finalizando posto $idposto , idworkflowtramitacao = ".$idworkflowtramitacao_original." \n";
@@ -194,11 +201,11 @@ class Workflow{
                     $app->render ('default.php',$data,500);
                     return false;
             }	
-                        
+             
             $array = $this->SalvarnoBanco(  $json , $idposto, "Salvando", $app); // indo array ?
-
     		
             $array["resultado"] = "SUCESSO";
+            $array["DEBUG"] = $this->notificacoes->debug;
 
             $data =  	$array;
 
@@ -454,7 +461,7 @@ class Workflow{
                                       // cria proximo posto em branco ja que o inicial ja nasce fechado
                                       $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
                                       $idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
-                                      $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);   
+                                    //  $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);   
 
                                   }
 //                                  $cria_processo=1;
@@ -481,11 +488,11 @@ class Workflow{
                                   }
                                    if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
                                   { 	  
-                                     echo " \n mesma entidade "; 
+                                  //   echo " \n mesma entidade "; 
                                     //  mesma entidade
                                       $idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, null, $proximo_posto);
                                       // $this->SalvarHistorico($idprocesso, $idposto, null, $proximo_posto);
-                                      $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);   
+                                     // $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);   
                                   }
 
                               }
@@ -519,7 +526,7 @@ class Workflow{
                                 // se mesma entidade e handover, so tramita
                                 //echo "\n se mesma entidade e handover, so tramita";
                                 $idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
-                                $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);   
+                              //  $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);   
                             }      
                           
                       }
@@ -615,7 +622,7 @@ class Workflow{
                     where wt.id =   $idtramitacao      ";
             $this->con->executa(   $sql, 0, __LINE__);
             $this->con->navega(0);
-             echo "Handover sem destino \n";           
+           //  echo "Handover sem destino \n";           
             $this->notificacoes->notif_saindoposto($this->con->dados["idprocesso"],   $this->con->dados["idworkflowposto"]);
     
             // BUSCA O TIPO DE HANDOVER DO TIPO DE PROCESSO PAI
@@ -662,7 +669,7 @@ class Workflow{
 
                     //echo "\n Fechando posto pai - idprocesso ".$this->con->dados["id"]." avanca_processo ".$this->con->dados["avanca_processo_filhos_fechados"];
                     $this->SalvarHistorico($this->con->dados["id"], $this->con->dados["avanca_processo_filhos_fechados"], null, $this->con->dados["avanca_processo_filhos_fechados"]);
-                    echo "\n Movendo entidade pai \n";           
+                   // echo "\n Movendo entidade pai \n";           
                     $this->notificacoes->notif_entrandoposto($this->con->dados["id"],   $this->con->dados["avanca_processo_filhos_fechados"]);
                     
    
@@ -690,29 +697,5 @@ class Workflow{
             
                 
                 
- 	    
-          //  echo " FIM \n";
-            //finalizacao do json
-            if ($erro == 0){
-                //autenticado
-                $data = array("data"=>
-                    array(	"resultado" =>  "SUCESSO",
-                            "DEBUG" => $this->debug,
-                            "IDPROCESSO" => $idprocesso
-                        )
-                );
-            }
-            else {
-                // nao encontrado
-                $data = array("data"=>
-
-                    array(	"resultado" =>  "ERRO #$erro",
-                        "DEBUG" => $this->debug, 
-                        "erro" => "Nao encontrado" )
-                );
-            }
-
-            $app->render ('default.php',$data,200);		
-            
         }
 }

@@ -5,8 +5,11 @@ class Campos{
 	function Campos( ){
 		
 		require_once("classes/class_db.php");
+		require_once("classes/globais.php");
 		$this->con = new db();
 		$this->con->conecta();
+                
+                $this->globais = new Globais();
 
 	}
 
@@ -20,7 +23,11 @@ class Campos{
 			$campos[ strtolower(trim($this->con->dados["id"])) ] = strtolower(trim($this->con->dados["campo"]));
 			 
 			$i++;
-		}		
+		}	
+                $campos = $this->globais->ArrayMergeKeepKeys( $this->globais->SYS_ADD_CAMPOS, $campos);
+                //$campos[ "entradanoposto" ] = "entradanoposto";
+                    //$array["FETCH"] [$this->con->dados["idprocesso"]]["entradanoposto" ]   =  $this->con->dados["wt_inicio"] ;
+                
 		return $campos;
 		
 	}	
