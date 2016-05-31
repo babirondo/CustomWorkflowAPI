@@ -1,14 +1,16 @@
 <?php
 error_reporting(E_ALL ^ E_DEPRECATED);
- 
+
 //require_Once("classes/globais.php");
 require_Once("classes/class_workflow.php");
 require_Once("classes/class_postos.php");
 require_Once("classes/class_posto_usuario.php");
 require_Once("classes/class_Auth.php");
+require_Once("classes/class_relatorios.php");
 
 require 'vendor/autoload.php';
-// tentando commitar pro github 
+// tentando commitar pro github
+ /// teste no atom
  
 //instancie o objeto
 $app = new \Slim\Slim( array(
@@ -18,8 +20,14 @@ $app = new \Slim\Slim( array(
 \Slim\Slim::registerAutoloader();
 
 
-  
+
 //defina a rota
+//CHANGED: akkaakakk
+
+$app->post('/Relatorios/', function (    ) use ($app)  {
+	$Relatorios = new Relatorios(  );
+	$Relatorios->extrair_dados($app,   $app->request->getBody());
+}  );
 
 $app->get('/getWorkflows/', function () use ($app)  {
 	$Workflow = new Workflow();
@@ -49,12 +57,12 @@ $app->post('/Autenticar/', function () use ($app)  {
 	$Auth = new Auth();
 	$Auth->Autenticar($app, $app->request->getBody() );
 }  );
- 
+
 $app->post('/Posto/Associar/:idposto', function (  $idposto) use ($app)  {
 	$Posto_Usuario = new Posto_Usuario(  );
 	$Posto_Usuario->AssociarProcessonoPosto($app, $app->request->getBody(), $idposto );
 }  );
- 
+
 $app->post('/Posto/Desassociar/:idposto', function (  $idposto) use ($app)  {
 	$Posto_Usuario = new Posto_Usuario(  );
 	$Posto_Usuario->DesassociarProcessonoPosto($app, $app->request->getBody(), $idposto );
@@ -66,7 +74,6 @@ $app->get('/Usuarios/Posto/:idposto', function (  $idposto) use ($app)  {
 	$Postos->UsuariosdoPosto($app, $idposto );
 }  );
 
- 
-//rode a aplicação Slim 
+
+//rode a aplicação Slim
 $app->run();
- 

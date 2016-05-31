@@ -25,6 +25,9 @@ class Workflow{
             $this->idposto = null;
             $this->idprocesso = null;
             $this->debug = null;
+            
+            
+
 	}
 	
         function DesassociarRegistronoPosto($jsonRAW, $idposto){
