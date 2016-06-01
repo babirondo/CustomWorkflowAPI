@@ -255,6 +255,9 @@ class Workflow{
         function ControlaCriacaoProcesso($json , $idposto, $proximo_posto, $app)
         {
                         
+            //TODO: quando cria a prospecao do tipo 1 para tipo 4, ta quebrando (amarra o pai certo mas o tipo errado)
+
+
           //   echo "\n Iniciando Salvar dados do Form \n";
          //    var_dump($json);
             // identifica quais os proximos postos a partir do atual
@@ -262,7 +265,7 @@ class Workflow{
                     from RELACIONAMENTO_POSTOS 
                     where idposto_atual= $idposto";
             $this->con->executa($sql , null, __LINE__);
-
+//echo $sql;
             while ($this->con->navega(0)) {
                 if ($this->con->dados["avanca_processo"]>0)
                     $proximos_postos [ $this->con->dados["avanca_processo"]]  = $this->con->dados["avanca_processo"];
@@ -287,13 +290,13 @@ class Workflow{
 
                       if ($idposto && $json[processo][valor] ) 
                       {
-                          $sql = "select tp.id, rp.avanca_processo, wp.tipodesignacao, tp.id_pai
+                          $sql = "select tp.id, rp.avanca_processo, wp.tipodesignacao, wp.idtipoprocesso posto_idpai , tp.id_pai 
                                   from workflow_postos wp
                                       inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
                                       left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
                                   where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
                         //  echo "\n tem idposto e idprocesso do json    ";
-
+//echo $sql;
                           $this->con->executa($sql, null, __LINE__ );
                           $this->con->navega(0);
                           $idtipoprocess_posto = 	$this->con->dados["id"];
@@ -305,26 +308,14 @@ class Workflow{
                                   from processos p
                                       inner join tipos_processo tp ON (tp.id = p.idtipoprocesso)
                                   where p.id = ".$json[processo][valor];
-                         // echo $sql;
+                          // echo $sql;
                           $this->con->executa( $sql, null, __LINE__);
                           $this->con->navega(0);
                           $idtipoprocess_processo = 	$this->con->dados["idtipoprocesso"];
 
-                          /*
-                          if ($avanca_processo){
-                              $sql = "select   wp.tipodesignacao
-                                      from workflow_postos wp
+                           
 
-                                          left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-                                      where wp.id  = $avanca_processo    ";
-                              $this->con->executa( $sql, null, __LINE__);
-                             //  echo "\n $sql";
-                              $this->con->navega(0);
-                              $tipodesignacao = 	$this->con->dados["tipodesignacao"];
-                          }
-                          */
-
-                         // echo "\n tipo de processo do posto != tipo process do processo =  $idtipoprocess_posto != $idtipoprocess_processo ";
+                        // echo "\n tipo de processo do posto != tipo process do processo =  $idtipoprocess_posto != $idtipoprocess_processo ";
 
                           if ( $idtipoprocess_posto != $idtipoprocess_processo){
                               $id_pai = $json[processo][valor];
@@ -348,7 +339,7 @@ class Workflow{
                                       inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
                                       inner join workflow w ON (w.id = wp.id_workflow)
                                   where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
-
+                                    echo $sql;
                           $this->con->executa( $sql , null, __LINE__);
                        //   echo "\n IDados do Posto:    ";
                           $this->con->navega(0);
@@ -359,17 +350,7 @@ class Workflow{
                           $idtpproc_proximo = $this->con->dados["idtipoprocesso"];
                           $idwok = $this->con->dados["id_workflow"];
 
-                          /*
-                          $sql = "select   wp.tipodesignacao 
-                                  from workflow_postos wp
-
-                                      left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-                                  where wp.id  = $avanca_processo";
-                          $this->con->executa( $sql, null, __LINE__);
-                         //  echo "\n $sql";
-                          $this->con->navega(0);
-                          $tipodesignacao = $this->con->dados["tipodesignacao"];
-                          */
+                         
 
 
                          // echo "\n Processo ainda nao criado  \n ";
@@ -378,15 +359,18 @@ class Workflow{
                           //while ($idtipoprocess_posto != $idtipoprocess_processo && $idtipoprocesso_dopai != $idtipoprocess_posto  )
                           if ($id_pai> 0 && $idtipoprocess_posto != $idtipoprocess_processo)
                           {
-                            //  echo "\n WHILE -  $idtipoprocess_posto  != $idtipoprocess_processo  ";
+                          //   echo "\n WHILE -  $idtipoprocess_posto  != $idtipoprocess_processo  ";
 
-                        
+                            //TODO: criar loop de criacao de processos para fazer a arvore dos processos
+                            //FIXME: enviar vaga para novos destinatarios criando novo processo e nao levando o tipo de processo correto....
+                            // FIXME: precisa mesmo criar um processo só para enviar emails ???                        
 
 
                               if (!$jacriou[$idtipopai_posto])
                               {
                                  // echo "\n  Processo do tipo  $idtipopai_posto da processo $idprocesso_original = criado   ";
                                 $id_pai = $this->CriarProcesso($idtipopai_posto, $id_pai, $idwok, $json, $proximo_posto, $proximo_posto );
+//                                $id_pai = $this->CriarProcesso($idtpproc, $id_pai, $idwok, $json, $proximo_posto, $proximo_posto );
                                  // echo "  $id_pai ";
                                 $id_processo2 = $id_pai;
 

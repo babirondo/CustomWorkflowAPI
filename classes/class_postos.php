@@ -116,6 +116,24 @@ class Postos{
                 if (is_array($emails))
                         $array["DADOS_POSTO"] [atoresdoposto]  = implode(",",$emails);
 
+              //buscando funcoes do posto
+                $sql ="SELECT fp.*, wp.lista 
+                        from funcoes_posto fp
+                            inner join workflow_postos wp ON (wp.id = fp.goto)
+                        where fp.idposto =  $idposto  ";
+                //echo $sql;
+                $this->con->executa($sql);
+
+                $p=0;
+                while ($this->con->navega($p)){
+
+                    $array["FUNCOES_POSTO"][$this->con->dados["funcao"]][avanca_processo]  = $this->con->dados["goto"];
+                    $array["FUNCOES_POSTO"][$this->con->dados["funcao"]][lista]  = $this->con->dados["lista"];
+                    $p++;
+                }
+
+
+
                 //buscando dados do posto
                 $sql ="Select wp.*, nsp.de, nsp.para, nsp.titulo, nsp.corpo, rp.avanca_processo
                         from workflow_postos  wp
@@ -141,13 +159,14 @@ class Postos{
                     $array["DADOS_POSTO"] [avanca_processo][$p]  = $this->con->dados["avanca_processo"]; 
                     $p++;
                 }
+
                 $this->con->executa( "Select * from postos_campo WHere idposto = $idposto  ");
-                //$this->con->navega();
 
                 while ($this->con->navega(0)){
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["maxlenght"]  = $this->con->dados["maxlenght"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["inputtype"]  = $this->con->dados["inputtype"];
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["dica_preenchimento"]  = $this->con->dados["dica_preenchimento"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_cols"]  = $this->con->dados["txtarea_cols"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_rows"]  = $this->con->dados["txtarea_rows"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
@@ -231,7 +250,7 @@ class Postos{
                  $comp
              WHERE  $comp_ini w.idpostocampo > 0 ".(($idprocesso>0)?" and ap.proprio = $idprocesso":"");  
         $this->con->executa( $sql, 0, __LINE__  );
-      //  echo $sql; exit;
+        //echo "<PRE>".$sql."</pre>"; exit;
         //echo "\n SQL GERADO";
         $i=0;
       
@@ -267,11 +286,11 @@ class Postos{
         }
 
                     
-                        
-                if ( $idposto>0 )
-                {  
-                    $comp_ini = " and wp.id =$idposto ";
-                }
+                
+        if ( $idposto>0 )
+        {  
+            $comp_ini = " and wp.id =$idposto ";
+        }
                 // BUSCANDO ATRIBUTOS DO PROCESSO
 		$sql = "
                     select *, p.status p_status, p.id idprocesso, to_char(wt.inicio, 'dd/mm/yyyy') wt_inicio ,
@@ -305,7 +324,7 @@ class Postos{
                 $debug= 0;
 		//$array = $this->BuscarDadosdoFilhoePai($idposto, null, $debug, "Lista"); // xxx
                
-                $array = $this->LoadCampos(  $idposto, null, null, $debug ,  "Lista" );
+        $array = $this->LoadCampos(  $idposto, null, null, $debug ,  "Lista" );
                 //  var_dump($array );
 		
 		$this->con->executa( "select * 
@@ -325,20 +344,20 @@ class Postos{
                 //$array["ACOES"]  [$this->con->dados["idprocesso"] ][idworkflowdado]   = $this->con->dados["idworkflowdado"]; // L ou F
 
                 
-                switch ($array["DADOS_POSTO"][tipodesignacao])
-                {
-                    case("AUTO-DIRECIONADO"):
-                    case("Assumir"):
-			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = "Assumir"; // Nome do Link
-			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][ir]   = $idposto; // proximo posto
-			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][lista]   = "L"; // L ou F
-			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][idworkflow]   = $array["DADOS_POSTO"][idworkflow];//$this->con->dados["id_workflow"];
-			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][assumir]   = 1;//$this->con->dados["id_workflow"];
-                    break;
+        switch ($array["DADOS_POSTO"][tipodesignacao])
+        {
+            case("AUTO-DIRECIONADO"):
+            case("Assumir"):
+    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = "Assumir"; // Nome do Link
+    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][ir]   = $idposto; // proximo posto
+    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][lista]   = "L"; // L ou F
+    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][idworkflow]   = $array["DADOS_POSTO"][idworkflow];//$this->con->dados["id_workflow"];
+    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][assumir]   = 1;//$this->con->dados["id_workflow"];
+            break;
                 
-                    default:
+            default:
 			//$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = $array["DADOS_POSTO"][tipodesignacao]; // Nome do Link
-                }
+        }
                 
 		 
 		
