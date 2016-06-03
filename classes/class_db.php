@@ -5,7 +5,7 @@ class db
 	function conecta() 
 	{
                 $usar = "windows";
-                $usar = "mac";
+//                $usar = "mac";
 
                 if ($usar == "windows"){
                     // windows

@@ -47,6 +47,22 @@ class Postos{
 	}
 
 
+	function getUsuariosbyTecnologia($idtecnologia  ){
+            
+            $sql = "select u.id
+                    from usuarios u
+                           inner join usuarios_avaliadores_tecnologias uat ON (uat.idusuario = u.id)
+                    where uat.idtecnologia =$idtecnologia ";
+           // echo $sql;
+            $this->con->executa( $sql);
+
+            while ($this->con->navega(0)){
+                $array["USUARIO_TECNOLOGIA"] [$idtecnologia][]    = $this->con->dados["id"];
+            }
+
+            return $array;
+	}
+
 
 	function getPostos($app, $idworkflow , $jsonRAW){
 		$json = json_decode( $jsonRAW, true );
@@ -168,15 +184,13 @@ class Postos{
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["maxlenght"]  = $this->con->dados["maxlenght"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["inputtype"]  = $this->con->dados["inputtype"];
-												$array["FETCH_CAMPO"][$this->con->dados["id"]] ["dica_preenchimento"]  = $this->con->dados["dica_preenchimento"];
-												//	echo "<BR>".$this->con->dados["valor_default"]." - a".$this->globais->Traduzir( $this->con->dados["valor_default"] );
-												if ($this->globais->Traduzir( $this->con->dados["valor_default"] ) == false )
-													$array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->con->dados["valor_default"];
-												else {
-
-													$array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->campo->BuscarValoresCampo($this->con->dados["valor_default"]);
-
-												}
+                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["dica_preenchimento"]  = $this->con->dados["dica_preenchimento"];
+                        //	echo "<BR>".$this->con->dados["valor_default"]." - a".$this->globais->Traduzir( $this->con->dados["valor_default"] );
+                        if ($this->globais->Traduzir( $this->con->dados["valor_default"] ) == false )
+                                $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->con->dados["valor_default"];
+                        else {
+                                $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->campo->BuscarValoresCampo($this->con->dados["valor_default"]);
+                        }
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_cols"]  = $this->con->dados["txtarea_cols"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_rows"]  = $this->con->dados["txtarea_rows"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
@@ -264,12 +278,20 @@ class Postos{
         //echo "\n SQL GERADO";
         $i=0;
 
-		while ($this->con->navega($i) ){
+        while ($this->con->navega($i) ){
                $idworkflowdado_assumir = null;
 
-               $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
+               if ($this->con->dados["idcampo"] == $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]) 
+               {
+                    $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] , $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]); 
+                    $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
+                } 
+               else
+                    $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
+              
+               
                $array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"];
-
+            
             //   $array["FETCH"] [$this->con->dados["idprocesso"]]["POSTO_ATUAL" ][$this->con->dados["idworkflowposto"]]   = $this->con->dados["idworkflowposto"];
 
 

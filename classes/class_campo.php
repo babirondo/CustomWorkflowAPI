@@ -13,19 +13,32 @@ class Campos{
 
 	}
 
-	function BuscarValoresCampo ($valor_default_campo){
+	function BuscarValoresCampo ($valor_default_campo, $globais_conf=""){
 
-		switch ($valor_default_campo){
-			case("{configuracoes.tecnologias}"):
+            switch ($globais_conf){
+                case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] ):
 
-					$this->con->executa( "select * from configuracoes.tecnologias");
-					while ($this->con->navega(0)){
-						$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
-					}
-			break;
-		}
+                    $this->con->executa( "select * from configuracoes.tecnologias WHERE id IN ( $valor_default_campo ) ");
+                    while ($this->con->navega(0)){
+                        $retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
+                    }
+                    return implode(",",$retorno);
+                break;
+            }
 
-		return  $retorno;
+            
+            switch ($valor_default_campo){
+                case("{configuracoes.tecnologias}"):
+
+                    $this->con->executa( "select * from configuracoes.tecnologias");
+                    while ($this->con->navega(0)){
+                        $retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
+                    }
+                    return  $retorno;
+                break;
+            }
+
+           
 	}
 
 

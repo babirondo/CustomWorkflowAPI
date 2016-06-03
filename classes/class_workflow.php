@@ -62,17 +62,13 @@ class Workflow{
             }
             $erro = 0;
             //var_dump($json);
-           // echo "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'";
-            $this->con->executa( "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'", null, __LINE__);
+           $sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'";
+            echo $sql;
+            $this->con->executa(    $sql, null, __LINE__);
         }
 
 
 	function    SalvarHistorico($idprocesso, $idposto , $idworkflowtramitacao_original, $proximo_posto ){
-
-
-
-
-
 
                 $sql =  "select  rp.avanca_processo, wp.starter
 
@@ -235,9 +231,13 @@ class Workflow{
 
             switch ($tipodesignacao){
                 CASE("AUTO-DIRECIONADO"):
-                    $usuarios = $this->posto->getUsuarios($avanca_processo);
-
-                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor]  = array_rand($usuarios["USUARIOS_POSTO"][$avanca_processo],1);
+                    $vida_processo = $this->posto->LoadCampos( null, $idprocesso, null, null, null );
+                
+                    $idtec = $vida_processo["FETCH"][$idprocesso][$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]."-original"];
+                    $usuarios = $this->posto->getUsuariosbyTecnologia($idtec);
+                    $usuario_aleatorio = rand(0, (COUNT( $usuarios["USUARIO_TECNOLOGIA"] [$idtec])-1) );
+                
+                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$idtec][$usuario_aleatorio]   ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idtramitacao"]  = $idtramitacao ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idworkflowdado"]  = null ;
                     $associarRegistro [processo][valor]  = $idprocesso;
@@ -285,43 +285,43 @@ class Workflow{
 
                       $erro = 0;
 
-											// echo "\n Id Processo do JSON vazio  ";
-									 		$sql = "select wp2.id idtipoprocesso, wp.id_workflow, rp.avanca_processo,
-									 										wp.idtipoprocesso idtipoprocesso_atual,
-									 										wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
-									 						from workflow_postos wp
-									 								inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
-									 								inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-									 								inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
-									 								inner join workflow w ON (w.id = wp.id_workflow)
-									 						where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
-									 	// echo $sql;
-									 		$this->con->executa( $sql , null, __LINE__);
-									  //   echo "\n IDados do Posto:    ";
-									 		$this->con->navega(0);
+                        // echo "\n Id Processo do JSON vazio  ";
+                        $sql = "select wp2.id idtipoprocesso, wp.id_workflow, rp.avanca_processo,
+                                                                                        wp.idtipoprocesso idtipoprocesso_atual,
+                                                                                        wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
+                                                        from workflow_postos wp
+                                                                        inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
+                                                                        inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                                                                        inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
+                                                                        inner join workflow w ON (w.id = wp.id_workflow)
+                                                        where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
+                // echo $sql;
+                        $this->con->executa( $sql , null, __LINE__);
+          //   echo "\n IDados do Posto:    ";
+                        $this->con->navega(0);
 
-									 		$avanca_processo =  $this->con->dados["avanca_processo"];
-									 		$idposto_inicial = $this->con->dados["posto_inicial"];
-									 		$idtpproc = $this->con->dados["idtipoprocesso_atual"];
-									 		$idtpproc_proximo = $this->con->dados["idtipoprocesso"];
-									 		$idwok = $this->con->dados["id_workflow"];
+                        $avanca_processo =  $this->con->dados["avanca_processo"];
+                        $idposto_inicial = $this->con->dados["posto_inicial"];
+                        $idtpproc = $this->con->dados["idtipoprocesso_atual"];
+                        $idtpproc_proximo = $this->con->dados["idtipoprocesso"];
+                        $idwok = $this->con->dados["id_workflow"];
 
 
-									 		// dentro de um posto com pai já existente...
-									 		$sql = "select tp.id, rp.avanca_processo, wp.tipodesignacao, wp.idtipoprocesso posto_idpai , tp.id_pai
-									 						from workflow_postos wp
-									 								inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
-									 								left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-									 						where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
-									 	 //echo $sql;
-									 	//  echo "\n tem idposto e idprocesso do json    ";
-									 //echo $sql;
-									 		$this->con->executa($sql, null, __LINE__ );
-									 		$this->con->navega(0);
-									 		$idtipoprocess_posto = 	$this->con->dados["id"];
-									 		$avanca_processo = 	$this->con->dados["avanca_processo"];
-									 		$idtipopai_posto =  $this->con->dados["id_pai"];
-									 		$idtipo_proximoposto =  $this->con->dados["posto_idpai"];
+                        // dentro de um posto com pai já existente...
+                        $sql = "select tp.id, rp.avanca_processo, wp.tipodesignacao, wp.idtipoprocesso posto_idpai , tp.id_pai
+                                                        from workflow_postos wp
+                                                                        inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
+                                                                        left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                                                        where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
+                 //echo $sql;
+                //  echo "\n tem idposto e idprocesso do json    ";
+         //echo $sql;
+                        $this->con->executa($sql, null, __LINE__ );
+                        $this->con->navega(0);
+                        $idtipoprocess_posto = 	$this->con->dados["id"];
+                        $avanca_processo = 	$this->con->dados["avanca_processo"];
+                        $idtipopai_posto =  $this->con->dados["id_pai"];
+                        $idtipo_proximoposto =  $this->con->dados["posto_idpai"];
 
 
                       //$id_pai = "null";
@@ -393,7 +393,7 @@ class Workflow{
 												$this->con->navega(0);
 
 												$tipos_processo_para_preencher=null;
-												echo "\n\n processos faltantes ? $idtpproc, $id_pai";
+												//echo "\n\n processos faltantes ? $idtpproc, $id_pai";
 												$tipos_processo_para_preencher = $this->Tipos_Processo_Faltantes($idtpproc, $id_pai);
 
 													//$tipos_processo_para_preencher[] = 2;
@@ -694,29 +694,29 @@ class Workflow{
 
 				function Tipos_Processo_Faltantes($idtipoprocesso, $idprocesso_pai){
 						$sql = "select idtipoprocesso from processos where id = $idprocesso_pai";
-						echo $sql;
+						///echo $sql;
 						$this->con->executa(   $sql, 0, __LINE__);
 
 						$this->con->navega(0);
 						$tipoprocesso_pai = $this->con->dados["idtipoprocesso"];
 
-						echo "\n  idtipoprocesso $idtipoprocesso idtipoprocesso-pai $tipoprocesso_pai \n ";
+						//echo "\n  idtipoprocesso $idtipoprocesso idtipoprocesso-pai $tipoprocesso_pai \n ";
 						$tentar_tipo_processo = $idtipoprocesso;
 
 								while  ($this->con->dados["id_pai"] != $tipoprocesso_pai )
 								{
 										$sql = "select * from tipos_processo where id = $tentar_tipo_processo";
-										echo "\n $sql;";
+										//echo "\n $sql;";
 										$this->con->executa(   $sql, 0, __LINE__);
 
 										$this->con->navega(0);
 
 
-										 echo  "\n ".$this->con->dados["id_pai"]." == $tipoprocesso_pai";
+										// echo  "\n ".$this->con->dados["id_pai"]." == $tipoprocesso_pai";
 
 										if ($this->con->dados["id_pai"] == $tipoprocesso_pai){
 //											$array[] = $this->con->dados["id_pai"];
-											var_dump($array);
+										//	var_dump($array);
 											return $array;
 										}
 										else{

@@ -5,6 +5,7 @@ set_time_limit(2);
 class Globais{
 	function Globais( ){
 
+            $this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 12;
             $this->SYS_DEPARA_CAMPOS["Responsável"] = -1;
             $this->SYS_DEPARA_CAMPOS["bt_handover"] = "Salvar e Avancar >";
 
@@ -27,12 +28,12 @@ class Globais{
 	//	echo "<BR> aa ".$texto_original;
 		$texto_original = preg_replace_callback( '%{.*?}%i',
 
-				function($match) use ($valor) {
-						//echo "<BR> trafuziu ".str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
-						return str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
+                    function($match) use ($valor) {
+                                    //echo "<BR> trafuziu ".str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
+                                    return str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
 
 
-				},
+                    },
 		$texto_original);
 
 		return $texto_original;
