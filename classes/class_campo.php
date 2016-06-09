@@ -26,7 +26,7 @@ class Campos{
                 break;
             }
 
-            
+
             switch ($valor_default_campo){
                 case("{configuracoes.tecnologias}"):
 
@@ -38,7 +38,7 @@ class Campos{
                 break;
             }
 
-           
+
 	}
 
 

@@ -7,11 +7,12 @@ require_Once("classes/class_postos.php");
 require_Once("classes/class_posto_usuario.php");
 require_Once("classes/class_Auth.php");
 require_Once("classes/class_relatorios.php");
+require_Once("classes/class_processos.php");
 
 require 'vendor/autoload.php';
 // tentando commitar pro github
  /// teste no atom
- 
+
 //instancie o objeto
 $app = new \Slim\Slim( array(
     'debug' => true,
@@ -72,6 +73,12 @@ $app->post('/Posto/Desassociar/:idposto', function (  $idposto) use ($app)  {
 $app->get('/Usuarios/Posto/:idposto', function (  $idposto) use ($app)  {
 	$Postos = new Postos(  );
 	$Postos->UsuariosdoPosto($app, $idposto );
+}  );
+
+
+$app->get('/VidaProcesso/:idprocesso', function (  $idprocesso) use ($app)  {
+	$Processos = new Processos(  );
+	$Processos->Vida_Processo($app, $idprocesso );
 }  );
 
 

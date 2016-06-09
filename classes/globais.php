@@ -11,7 +11,8 @@ class Globais{
 
             $this->SYS_CAMPOS_ESPECIAIS["gestorselecao"] = "Bruno Siqueira - Gestor Seleção";
 
-            $this->SYS_ADD_CAMPOS["entradanoposto"] = "wt_inicio";
+						$this->SYS_ADD_CAMPOS["entradanoposto"] = "wt_inicio";
+						$this->SYS_ADD_CAMPOS["saidadoposto"] = "wt_fim";
             //$this->SYS_ADD_CAMPOS["temponoposto"] = "wt_inicio";
             $this->SYS_ADD_CAMPOS["usuarioassociado"] = "usuarioassociado";
             $this->SYS_ADD_CAMPOS["inicioprocesso"] = "p_inicio";

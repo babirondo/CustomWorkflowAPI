@@ -232,11 +232,11 @@ class Workflow{
             switch ($tipodesignacao){
                 CASE("AUTO-DIRECIONADO"):
                     $vida_processo = $this->posto->LoadCampos( null, $idprocesso, null, null, null );
-                
+
                     $idtec = $vida_processo["FETCH"][$idprocesso][$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]."-original"];
                     $usuarios = $this->posto->getUsuariosbyTecnologia($idtec);
                     $usuario_aleatorio = rand(0, (COUNT( $usuarios["USUARIO_TECNOLOGIA"] [$idtec])-1) );
-                
+
                     $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$idtec][$usuario_aleatorio]   ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idtramitacao"]  = $idtramitacao ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idworkflowdado"]  = null ;
@@ -423,9 +423,13 @@ class Workflow{
                                             if ($campo == "processo") continue;
                                             //echo ".";
 
-                                            $this->registraDadosdoPosto($valor, $idposto, $id_processo2, $campo);
+                                            $this->registraDadosdoPosto($valor, $idposto, $id_processo2, $campo, $json[processo][idworkflowtramitacao_original]);
+
+
+
 
                                         }
+																				$salvar_dados_form = 1;
                                       $id_processo =null;
                                       $json_bkp=null;
 
@@ -458,6 +462,15 @@ class Workflow{
                         // starter
                         $id_pai = $this->CriarProcesso($idtpproc, $id_pai, $idwok, $json, $idposto,  $proximo_posto);
 
+												if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] )
+												{
+												//    echo "\n criar tramitacao \n ";
+														// cria proximo posto em branco ja que o inicial ja nasce fechado
+														$idtramitacaogerada_pai = $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
+														$idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+													//  $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);
+
+												}
                         if (is_array($json))
                         {
                               // Registra os dados que foram submetidos no form
@@ -468,18 +481,10 @@ class Workflow{
                                   if ($campo == "processo") continue;
                                   /// ".";
 
-                                  $this->registraDadosdoPosto($valor, $idposto, $id_pai, $campo);
+                                  $this->registraDadosdoPosto($valor, $idposto, $id_pai, $campo, $idtramitacaogerada_pai);
                               }
                         }
-                        if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] )
-                        {
-                        //    echo "\n criar tramitacao \n ";
-                            // cria proximo posto em branco ja que o inicial ja nasce fechado
-                            $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
-                            $idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
-                          //  $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);
 
-                        }
 //                                  $cria_processo=1;
                     }
 
@@ -488,6 +493,14 @@ class Workflow{
 
                                   $idprocesso = $this->CriarProcesso($idtpproc, $id_pai, $idwok, $json, $proximo_posto, $proximo_posto );
                             //      echo " \n Processo criado (cria_processo==1):  $idprocesso   ";
+																	if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
+																 {
+														 //         echo " \n criando tramitacao \n  ";
+																	 //  mesma entidade
+																		 $idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, null, $proximo_posto);
+																		 // $this->SalvarHistorico($idprocesso, $idposto, null, $proximo_posto);
+																		// $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);
+																 }
 
                                    if (is_array($json))
                                   {
@@ -499,17 +512,10 @@ class Workflow{
                                             if ($campo == "processo") continue;
                                             //echo ".";
 
-                                            $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
+                                            $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo, $idtramitacao_gerada);
                                         }
                                   }
-                                   if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
-                                  {
-                              //         echo " \n criando tramitacao \n  ";
-                                    //  mesma entidade
-                                      $idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, null, $proximo_posto);
-                                      // $this->SalvarHistorico($idprocesso, $idposto, null, $proximo_posto);
-                                     // $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);
-                                  }
+
 
                               }
                               else {
@@ -517,6 +523,13 @@ class Workflow{
                               }
                       }
                       else{
+														if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
+														{
+																// se mesma entidade e handover, so tramita
+																//echo "\n se mesma entidade e handover, so tramita";
+																$idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
+															//  $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);
+														}
                             if (is_array($json))
                              {
                                    // Registra os dados que foram submetidos no form
@@ -527,18 +540,12 @@ class Workflow{
                                        if ($campo == "processo") continue;
                                        //echo ".";
 
-                                       $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
+                                       $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo, $idtramitacao_gerada);
                                    }
                              }
 
                 // ca
-                            if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
-                            {
-                                // se mesma entidade e handover, so tramita
-                                //echo "\n se mesma entidade e handover, so tramita";
-                                $idtramitacao_gerada = $this->SalvarHistorico($idprocesso, $proximo_posto, $json[processo][idworkflowtramitacao_original], $proximo_posto);
-                              //  $this->AutoAssociarProcessonoPosto($idprocesso, $proximo_posto, $app, $idtramitacao_gerada);
-                            }
+
 
                       }
 
@@ -550,6 +557,7 @@ class Workflow{
             }
             else{
                 $idprocesso = $json[processo][valor];
+								$salvar_dados_form = 1;
                 if (is_array($json))
                 {
                       // Registra os dados que foram submetidos no form
@@ -560,7 +568,7 @@ class Workflow{
                           if ($campo == "processo") continue;
                          // echo "\n $campo = ".$valor[valor];
 
-                          $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo);
+                          $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo, $json[processo][idworkflowtramitacao_original]);
                       }
                 }
 
@@ -599,7 +607,7 @@ class Workflow{
 
         }
 
-        function registraDadosdoPosto($valor, $idposto, $idprocesso, $campo)
+        function registraDadosdoPosto($valor, $idposto, $idprocesso, $campo, $idworkflowtramitacao = "null")
         {
             //TODO nÃo está dando load nos salvos no posto
             if ( $valor["idworkflowdado"] > 0 )
@@ -609,8 +617,8 @@ class Workflow{
             }
             else
             {
-                if (!$this->con->executa( "INSERT INTO workflow_dados (idpostocampo, valor, idprocesso, registro, idposto)
-                                        VALUES (/*4*/ '$campo','$valor[valor]', $idprocesso, NOW(), $idposto)  " , null, __LINE__ ))
+                if (!$this->con->executa( "INSERT INTO workflow_dados (idpostocampo, valor, idprocesso, registro, idposto, idworkflowtramitacao)
+                                        VALUES (/*4*/ '$campo','$valor[valor]', $idprocesso, NOW(), $idposto, $idworkflowtramitacao)  " , null, __LINE__ ))
                 $erro++;
             }
 
