@@ -40,21 +40,20 @@ class Globais{
 		return $texto_original;
 
 	}
+ 
+		 	Function ArrayMergeKeepKeys() {
+				$arg_list = func_get_args();
 
- 	Function ArrayMergeKeepKeys() {
-		$arg_list = func_get_args();
-
-		foreach((array)$arg_list as $arg){
-			if (is_array ($arg) )
-			{
-				foreach((array)$arg as $K => $V){
-					$Zoo[$K]=$V;
+				foreach((array)$arg_list as $arg){
+					if (is_array ($arg) )
+					{
+						foreach((array)$arg as $K => $V){
+								$Zoo[$K]=$V;
+						}
+					}
 				}
-
+				return $Zoo;
 			}
-		}
-		return $Zoo;
-	}
 
 }
 

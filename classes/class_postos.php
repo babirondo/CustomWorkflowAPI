@@ -107,15 +107,15 @@ class Postos{
 
 	}
 
-	function BuscarDadosProcesso($idprocesso , $idposto,  $debug = null, $listar="Lista", $posto)
+	function BuscarDadosProcesso($idprocesso , $idposto,  $debug = null, $listar="Lista", $posto, $jsonfiltros = null)
 	{
             // buscando dados -> indexado por idprocesso
-            $array_dopai = $this->BuscarDadosdoFilhoePai($idposto, $idprocesso, $debug, $listar, $posto);
+            $array_dopai = $this->BuscarDadosdoFilhoePai($idposto, $idprocesso, $debug, $listar, $posto, $jsonfiltros);
 
             return $array_dopai;
 	}
 
-	function LoadCampos(  $idposto, $idprocesso, $posto="entrando", $debug=null, $listar="Lista" ){
+	function LoadCampos(  $idposto, $idprocesso, $posto="entrando", $debug=null, $listar="Lista" , $jsonfiltros="" ){
             if ($idposto>0)
             {
                 // busca o email dos atores do posto
@@ -150,6 +150,21 @@ class Postos{
                     $p++;
                 }
 
+								//buscando opcoes de filtro do posto
+								$sql ="select fp.id, pc.campo, fp.tipofiltro
+												from filtros_postos fp
+													inner join postos_campo pc ON (pc.id = fp.idpostocampo)
+												where fp.idposto = $idposto  ";
+								//echo $sql;
+								$this->con->executa($sql);
+
+
+								while ($this->con->navega($p)){
+
+										$array["FILTROS_POSTO"] [$this->con->dados["id"]][FILTRO]  = $this->con->dados["campo"];
+										$array["FILTROS_POSTO"] [$this->con->dados["id"]][TIPO]  = $this->con->dados["tipofiltro"];
+
+								}
 
 
                 //buscando dados do posto
@@ -200,27 +215,22 @@ class Postos{
 
 
             // buscando os registros do posto, direcionado pelo idprocesso
-            $array_dados = $this->BuscarDadosProcesso($idprocesso , $idposto, $debug, $listar, $posto);
+            $array_dados = $this->BuscarDadosProcesso($idprocesso , $idposto, $debug, $listar, $posto, $jsonfiltros);
 
 
-            if ($debug){
+					  if (is_array($array_dados)){
+							$array_completo =  array_replace_recursive($array_dados, $array);
+							//$array_completo =  array_merge_recursive($array_dados, $array);
 
-            }
-            if (is_array($array_dados))
-                $array_completo =  $this->globais->ArrayMergeKeepKeys($array_dados, $array);
+						}
             else
                 $array_completo = $array;
 
-           /*
-            *  // adiciona ao Fetch os valores que sao buscados na traducao dos colchetes nos emails
-            // neste caso dados do posto
-            foreach ($this->globais->SYS_ADD_CAMPOS as $idx => $val){
-                $array["FETCH"] [$this->con->dados["idprocesso"]][$idx]   =   $this->con->dados["$val"]  ;
-            }
+								//echo "<PRE>"; var_dump($array);
+								//echo "<PRE>"; var_dump($array_dados);
+					//			echo "<PRE>"; var_dump($array_completo );
 
-            */
 
-            //echo "<pre>"; var_dump($array_completo);        echo "</pre>";
 
             $array_completo["resultado"] = "SUCESSO";
 
@@ -246,8 +256,25 @@ class Postos{
 		$app->render ('default.php',$data,200);
 	}
 
-	function BuscarDadosdoFilhoePai($idposto, $idprocesso=null, $debug=null, $listar = "Lista", $posto)
+	function BuscarDadosdoFilhoePai($idposto, $idprocesso=null, $debug=null, $listar = "Lista", $posto, $jsonfiltros= null)
 	{
+				$filtros = json_decode( $jsonfiltros, true );
+			//  $filtros = json_decode($jsonfiltros);
+				if (is_array($filtros))
+				{
+
+					foreach ($filtros as $filtrando ){
+						if ($filtrando != -1 && $filtrando){
+							$fils[] = "'$filtrando'" ;
+						}
+					}
+					if (is_array($fils) )
+					{
+						$gowhere_filtro = implode(",", $fils);
+						if ($gowhere_filtro) $gowhere_filtro = " and w.valor IN (".$gowhere_filtro.")";
+					}
+				}
+
 				$busca_so_dados_do_posto = "left";
 			  $busca_entidades = "wt.idprocesso = p.id";
 
@@ -278,7 +305,7 @@ class Postos{
                      u.nome tramitacao_usuario, u.nome usuarioassociado,
                      wp.tipodesignacao  $camp
                      , wt.idworkflowposto, wt.fim, w.idposto,
-										 wt.inicio wt_inicio, wt.fim wt_fim
+										 wt.inicio wt_inicio, wt.fim wt_fim, fp.tipofiltro, fp.id idfiltro
              FROM  arvore_processo ap
 					  		 INNER JOIN processos p ON (p.id = ap.proprio)
                  INNER JOIN workflow_tramitacao wt ON ( $busca_entidades  ".(($posto=="saindo")?"  ": " and wt.fim is null " )."  )
@@ -286,11 +313,13 @@ class Postos{
                  INNER JOIN workflow_postos wp ON (wp.id = wt.idworkflowposto)
                  LEFT JOIN  postos_campo pc ON ( pc.id = w.idpostocampo )
                  LEFT JOIN usuarios u ON (u.id = wt.id_usuario_associado)
+								 LEFT JOIN filtros_postos fp ON (fp.idposto = wp.id and fp.idpostocampo = pc.id)
                  $comp
              WHERE  $comp_ini w.idpostocampo > 0 ".(($idprocesso>0)?" and ap.proprio = $idprocesso":"")."
+						 	$gowhere_filtro
 						 $orderby ";
         $this->con->executa( $sql, 0, __LINE__  );
-        //	echo "<PRE>".$sql."</pre>"; exit;
+      //	echo "<PRE>".$sql."</pre>"; exit;
         //echo "\n SQL GERADO";
         $i=0;
 
@@ -303,9 +332,19 @@ class Postos{
 										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] , $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]);
 										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
 
+										// seta a info para o filtro
+										if ($this->con->dados["idfiltro"] > 0)
+											$array["FILTROS_POSTO"] [$this->con->dados["idfiltro"]] ["ITENS"][$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]] = $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
                 }
-               else
-                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]  = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
+               else{
+
+								 $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]  = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
+								 // seta a info para o filtro
+								 if ($this->con->dados["idfiltro"] > 0)
+									 $array["FILTROS_POSTO"] [$this->con->dados["idfiltro"]] ["ITENS"][$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]] = $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
+
+
+							 }
 
 
                $array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"];
@@ -371,44 +410,46 @@ class Postos{
 
 
 
-	function getLista($app,   $idposto ){
-    $debug= 0;
+	function getLista($app,   $idposto , $jsonRAW){
+
+
+    	$debug= 0;
 		//$array = $this->BuscarDadosdoFilhoePai($idposto, null, $debug, "Lista"); // xxx
 
-    $array = $this->LoadCampos(  $idposto, null, null, $debug ,  "Lista" );
-                //  var_dump($array );
+	    $array = $this->LoadCampos(  $idposto, null, null, $debug ,  "Lista" , $jsonRAW);
+	                //  var_dump($array );
 
-		$this->con->executa( "select *
-                                    from posto_acao pa
-                                            inner join workflow_postos wp ON (wp.id = pa.goto)
-                                    where pa.idposto =  $idposto    ");
+			$this->con->executa( "select *
+	                          from posto_acao pa
+	                                  inner join workflow_postos wp ON (wp.id = pa.goto)
+	                          where pa.idposto =  $idposto    ");
 		//$this->con->navega();
-		$i=0;
-		while ($this->con->navega(0)){
-			$array["ACOES"]  [$this->con->dados["id"] ][acao]   = $this->con->dados["acao"];
-			$array["ACOES"]  [$this->con->dados["id"] ][ir]   = $this->con->dados["goto"];
-			$array["ACOES"]  [$this->con->dados["id"] ][lista]   = $this->con->dados["lista"];
-			$array["ACOES"]  [$this->con->dados["id"] ][idworkflow]   = $this->con->dados["id_workflow"];
+			$i=0;
+			while ($this->con->navega(0)){
+				$array["ACOES"]  [$this->con->dados["id"] ][acao]   = $this->con->dados["acao"];
+				$array["ACOES"]  [$this->con->dados["id"] ][ir]   = $this->con->dados["goto"];
+				$array["ACOES"]  [$this->con->dados["id"] ][lista]   = $this->con->dados["lista"];
+				$array["ACOES"]  [$this->con->dados["id"] ][idworkflow]   = $this->con->dados["id_workflow"];
 
-			$i++;
-		}
-                //$array["ACOES"]  [$this->con->dados["idprocesso"] ][idworkflowdado]   = $this->con->dados["idworkflowdado"]; // L ou F
+				$i++;
+			}
+	                //$array["ACOES"]  [$this->con->dados["idprocesso"] ][idworkflowdado]   = $this->con->dados["idworkflowdado"]; // L ou F
 
 
-        switch ($array["DADOS_POSTO"][tipodesignacao])
-        {
-            case("AUTO-DIRECIONADO"):
-            case("Assumir"):
-		    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = "Assumir"; // Nome do Link
-		    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][ir]   = $idposto; // proximo posto
-		    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][lista]   = "L"; // L ou F
-		    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][idworkflow]   = $array["DADOS_POSTO"][idworkflow];//$this->con->dados["id_workflow"];
-		    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][assumir]   = 1;//$this->con->dados["id_workflow"];
-            break;
+      switch ($array["DADOS_POSTO"][tipodesignacao])
+      {
+          case("AUTO-DIRECIONADO"):
+          case("Assumir"):
+	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = "Assumir"; // Nome do Link
+	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][ir]   = $idposto; // proximo posto
+	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][lista]   = "L"; // L ou F
+	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][idworkflow]   = $array["DADOS_POSTO"][idworkflow];//$this->con->dados["id_workflow"];
+	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][assumir]   = 1;//$this->con->dados["id_workflow"];
+          break;
 
-            default:
-			//$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = $array["DADOS_POSTO"][tipodesignacao]; // Nome do Link
-        }
+          default:
+		//$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = $array["DADOS_POSTO"][tipodesignacao]; // Nome do Link
+      }
 
 
 
