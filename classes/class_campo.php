@@ -18,6 +18,15 @@ class Campos{
 				{
 
             switch ($idcampo){
+							case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] ):
+
+									$this->con->executa( "select * from configuracoes.tecnologias WHERE id IN ( $valor_default_campo ) ");
+									while ($this->con->navega(0)){
+											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
+									}
+									return implode(",",$retorno);
+							break;
+
                 case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] ):
 
                     $this->con->executa( "select * from configuracoes.tecnologias WHERE id IN ( $valor_default_campo ) ");
