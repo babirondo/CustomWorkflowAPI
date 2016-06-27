@@ -200,7 +200,7 @@ class Postos{
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["maxlenght"]  = $this->con->dados["maxlenght"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["inputtype"]  = $this->con->dados["inputtype"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["dica_preenchimento"]  = $this->con->dados["dica_preenchimento"];
-                        //	echo "<BR>".$this->con->dados["valor_default"]." - a".$this->globais->Traduzir( $this->con->dados["valor_default"] );
+
                         if ($this->globais->Traduzir( $this->con->dados["valor_default"] ) == false )
                                 $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->con->dados["valor_default"];
                         else {
@@ -227,7 +227,7 @@ class Postos{
 						else if (is_array($array)   ){
 							$array_completo =  $array;
 						}
-           
+
 
 								//echo "<PRE>"; var_dump($array);
 								//echo "<PRE>"; var_dump($array_dados);
@@ -329,26 +329,13 @@ class Postos{
         while ($this->con->navega($i) ){
                $idworkflowdado_assumir = null;
 
-               if ($this->con->dados["idcampo"] == $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"])
-               {
 
-										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] , $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]);
-										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
+							$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+							$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
 
-										// seta a info para o filtro
-										if ($this->con->dados["idfiltro"] > 0)
-											$array["FILTROS_POSTO"] [$this->con->dados["idfiltro"]] ["ITENS"][$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]] = $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
-                }
-               else{
-
-								 $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]  = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $this->con->dados["valor"];
-								 // seta a info para o filtro
-								 if ($this->con->dados["idfiltro"] > 0)
-									 $array["FILTROS_POSTO"] [$this->con->dados["idfiltro"]] ["ITENS"][$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]] = $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
-
-
-							 }
-
+							// seta a info para o filtro
+							if ($this->con->dados["idfiltro"] > 0)
+								$array["FILTROS_POSTO"] [$this->con->dados["idfiltro"]] ["ITENS"][$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]] = $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
 
                $array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"];
 

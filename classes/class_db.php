@@ -23,7 +23,7 @@ class db
                         $this->conectado = false;
                         return false;
 		}
-                $this->conectado = true;
+    $this->conectado = true;
 
 
      return true;

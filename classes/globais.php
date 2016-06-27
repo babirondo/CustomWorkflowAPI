@@ -9,7 +9,7 @@ class Globais{
 		$usar = "mac";
 
 		$usar_ambiente = "dev";
-//		$usar_ambiente = "prod";
+	//$usar_ambiente = "prod";
 
 		if ($usar == "windows"){
 				// windows
@@ -35,7 +35,9 @@ class Globais{
 		}
 
 
-            $this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 12;
+						$this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 12;
+						$this->SYS_DEPARA_CAMPOS["Skills_mandatorias_vaga"] = 187;
+
             $this->SYS_DEPARA_CAMPOS["Responsável"] = -1;
             $this->SYS_DEPARA_CAMPOS["bt_handover"] = "Salvar e Avancar >";
 
@@ -59,12 +61,12 @@ class Globais{
 	//	echo "<BR> aa ".$texto_original;
 		$texto_original = preg_replace_callback( '%{.*?}%i',
 
-                    function($match) use ($valor) {
-                                    //echo "<BR> trafuziu ".str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
-                                    return str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
+			    function($match) use ($valor) {
+			                    //echo "<BR> trafuziu ".str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
+			                    return str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
 
 
-                    },
+			    },
 		$texto_original);
 
 		return $texto_original;
