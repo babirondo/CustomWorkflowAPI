@@ -4,29 +4,14 @@ class db
 {
 	function conecta()
 	{
-                $usar = "windows";
-                $usar = "mac";
-
-                if ($usar == "windows"){
-                    // windows
-                      $localhost = "127.0.0.1";
-                      $db ="customworkflow";
-                      $username = "postgres";
-                      $password = "rodr1gues";
-
-                }
-                else{
-                            // mac
-                       $localhost = "localhost";
-                       $db ="customworkflow";
-                       $username = "postgres";
-                       $password = "rodr1gues";
-
-                }
-
+		require_once("classes/globais.php");
+		$this->globais = new Globais();
 
 		try {
-			$this->pdo = new PDO("pgsql:host=$localhost;dbname=$db", $username, $password);
+			$this->pdo = new PDO("pgsql:host=".$this->globais->localhost.";
+														dbname=".  $this->globais->db ,
+														$this->globais->username,
+														$this->globais->password);
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			$this->pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, true );
 
@@ -41,7 +26,7 @@ class db
                 $this->conectado = true;
 
 
-                return true;
+     return true;
 	}
 
 

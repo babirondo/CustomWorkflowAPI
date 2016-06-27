@@ -62,9 +62,13 @@ class Workflow{
             }
             $erro = 0;
             //var_dump($json);
-           $sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'";
-            echo $sql;
-            $this->con->executa(    $sql, null, __LINE__);
+						if ($json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor] > 0)
+						{
+							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro	
+							$sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'";
+	            $this->con->executa(    $sql, null, __LINE__);
+
+						}
         }
 
 

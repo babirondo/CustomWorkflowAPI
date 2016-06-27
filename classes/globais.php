@@ -5,6 +5,36 @@ set_time_limit(2);
 class Globais{
 	function Globais( ){
 
+		$usar = "windows";
+		$usar = "mac";
+
+		$usar_ambiente = "dev";
+//		$usar_ambiente = "prod";
+
+		if ($usar == "windows"){
+				// windows
+					$this->localhost = "127.0.0.1";
+					$this->username = "postgres";
+					$this->password = "rodr1gues";
+
+		}
+		else if ($usar == "mac"){
+								// mac
+					 $this->localhost = "localhost";
+					 $this->username = "postgres";
+					 $this->password = "rodr1gues";
+
+		}
+
+		if ($usar_ambiente == "prod"){
+			$this->db ="customworkflow_prod";
+
+		}
+		else if ($usar_ambiente == "dev"){
+			$this->db ="customworkflow";
+		}
+
+
             $this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 12;
             $this->SYS_DEPARA_CAMPOS["Responsável"] = -1;
             $this->SYS_DEPARA_CAMPOS["bt_handover"] = "Salvar e Avancar >";
@@ -40,7 +70,7 @@ class Globais{
 		return $texto_original;
 
 	}
- 
+
 		 	Function ArrayMergeKeepKeys() {
 				$arg_list = func_get_args();
 

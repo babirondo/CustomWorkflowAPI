@@ -55,6 +55,9 @@ $app->post('/Registrar/:idworkflow/:idposto', function ( $idworkflow , $idposto)
 }  );
 
 $app->post('/Autenticar/', function () use ($app)  {
+
+
+
 	$Auth = new Auth();
 	$Auth->Autenticar($app, $app->request->getBody() );
 }  );

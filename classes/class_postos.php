@@ -218,13 +218,16 @@ class Postos{
             $array_dados = $this->BuscarDadosProcesso($idprocesso , $idposto, $debug, $listar, $posto, $jsonfiltros);
 
 
-					  if (is_array($array_dados)){
+						if (is_array($array_dados) && is_array($array) ){
 							$array_completo =  array_replace_recursive($array_dados, $array);
-							//$array_completo =  array_merge_recursive($array_dados, $array);
-
 						}
-            else
-                $array_completo = $array;
+						else if (is_array($array_dados)   ){
+							$array_completo =  $array_dados;
+						}
+						else if (is_array($array)   ){
+							$array_completo =  $array;
+						}
+           
 
 								//echo "<PRE>"; var_dump($array);
 								//echo "<PRE>"; var_dump($array_dados);

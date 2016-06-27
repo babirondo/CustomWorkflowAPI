@@ -1,0 +1,2 @@
+docker run -d eg_postgresql
+docker run -d -p 8080:80 -v /Library/WebServer/Documents/:/var/www/html/ richarvey/nginx-php-fpm
