@@ -343,8 +343,8 @@ class Postos{
 
 
                if ($this->con->dados["tramitacao_idusuario"]>0){
-                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsável"] ."-ID"] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ."-ID"]   = $this->con->dados["tramitacao_idusuario"];
-                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsável"] ] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ]   = $this->con->dados["tramitacao_usuario"];
+                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ."-ID"] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ."-ID"]   = $this->con->dados["tramitacao_idusuario"];
+                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ]   = $this->con->dados["tramitacao_usuario"];
                     $idworkflowdado_assumir = "teve";
                }
 

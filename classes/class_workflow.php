@@ -45,7 +45,7 @@ class Workflow{
             $erro = 0;
             // var_dump($json);
 
-            $this->con->executa( "update   workflow_tramitacao set id_usuario_associado = null where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'", null, __LINE__);
+            $this->con->executa( "update   workflow_tramitacao set id_usuario_associado = null where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][idtramitacao]."'", null, __LINE__);
         }
 
         function AssociarRegistronoPosto($jsonRAW, $idposto){
@@ -62,10 +62,10 @@ class Workflow{
             }
             $erro = 0;
             //var_dump($json);
-						if ($json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor] > 0)
+						if ($json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor] > 0)
 						{
 							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro	
-							$sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsável"]][idtramitacao]."'";
+							$sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][idtramitacao]."'";
 	            $this->con->executa(    $sql, null, __LINE__);
 
 						}
@@ -241,18 +241,18 @@ class Workflow{
                     $usuarios = $this->posto->getUsuariosbyTecnologia($idtec);
                     $usuario_aleatorio = rand(0, (COUNT( $usuarios["USUARIO_TECNOLOGIA"] [$idtec])-1) );
 
-                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$idtec][$usuario_aleatorio]   ;
-                    $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idtramitacao"]  = $idtramitacao ;
-                    $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsável"]]["idworkflowdado"]  = null ;
+                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$idtec][$usuario_aleatorio]   ;
+                    $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]]["idtramitacao"]  = $idtramitacao ;
+                    $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]]["idworkflowdado"]  = null ;
                     $associarRegistro [processo][valor]  = $idprocesso;
-                    //echo "\n associado: $idprocesso Posto: $avanca_processo usuario:  ".$associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor];
+                    //echo "\n associado: $idprocesso Posto: $avanca_processo usuario:  ".$associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor];
 
                     $this->Posto_Usuario->AssociarProcessonoPosto($app, json_encode($associarRegistro) , $avanca_processo );
                 BREAK;
             }
 
 
-            return $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsável"] ][valor];
+            return $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor];
         }
 
 

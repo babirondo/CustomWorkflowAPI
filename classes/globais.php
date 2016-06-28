@@ -39,7 +39,7 @@ class Globais{
 						$this->SYS_DEPARA_CAMPOS["Skills_mandatorias_vaga"] = 187;
 						$this->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] = 182;
 
-            $this->SYS_DEPARA_CAMPOS["Responsável"] = -1;
+            $this->SYS_DEPARA_CAMPOS["Responsavel"] = -1;
             $this->SYS_DEPARA_CAMPOS["bt_handover"] = "Salvar e Avancar >";
 
             $this->SYS_CAMPOS_ESPECIAIS["gestorselecao"] = "Bruno Siqueira - Gestor Seleção";
