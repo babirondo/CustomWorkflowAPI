@@ -268,7 +268,7 @@ header: $headers</PRE> ";
         $sql = "select  *
                 from sla s
                        left join sla_notificacoes sn ON (sn.idsla = s.id)
-                where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' minutes' AS INTERVAL))   " ;
+                where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' hours' AS INTERVAL))   " ;
 
        $this->con->executa( $sql);
 
