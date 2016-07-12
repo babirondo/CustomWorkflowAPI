@@ -1676,18 +1676,18 @@ SELECT pg_catalog.setval('relacionamento_postos_id_seq', 26, true);
 --
 
 COPY sla (id, nomeregra, idnotificacao, tabela, sla_emhorascorridas, campo_calculado, campo_localizador, valor_localizador, where_tabela, idpai) FROM stdin;
-41	Tempo no posto Roteamento	8	workflow_tramitacao wt	24	wt.inicio	wt.id	4	wt.fim is null and wt.idworkflowposto = 4	\N
 46	Tempo no Posto Negociar com COnsultoria	9	workflow_tramitacao wt	24	wt.inicio	wt.id	8	wt.fim is null and wt.idworkflowposto = 8	\N
-45	Tempo no Posto Entrevistados	10	workflow_tramitacao wt	24	wt.inicio	wt.id	6	wt.fim is null and wt.idworkflowposto = 6	\N
-44	Tempo no Posto Entrevista Presencial	11	workflow_tramitacao wt	24	wt.inicio	wt.id	5	wt.fim is null and wt.idworkflowposto = 5	\N
-42	Tempo no Posto Primeira Avaliação	12	workflow_tramitacao wt	24	wt.inicio	wt.id	3	wt.fim is null and wt.idworkflowposto = 3	\N
-43	Tempo no Posto Segunda Avaliação	12	workflow_tramitacao wt	24	wt.inicio	wt.id	287	wt.fim is null and wt.idworkflowposto = 287	\N
-39	Tempo no Posto Onboarding	13	workflow_tramitacao wt	24	wt.inicio	wt.id	7	wt.fim is null and wt.idworkflowposto = 7	\N
-40	Tempo máximo de Candidatura	14	processos p	24	p.inicio	p.id		p.status IN (null,   'Em Andamento') and p.idtipoprocesso = 2	\N
-49	Escalonamento, nível 1, Tempo máximo de candidatura	17	sla_notificacoes sn 	24	sn.datanotificacao	sn.chave	\N	sn.idsla = 40	40
-48	Escalonamento, nível 2, posto Primeira Avaliação	16	sla_notificacoes sn	24	sn.datanotificacao	sn.chave	\N	sn.idsla = 47	47
-50	Escalonamento nível 2, tempo máximo de processo do candidato	18	sla_notificacoes sn	24	sn.datanotificacao	sn.chave	\N	sn.idsla = 49	49
-47	Escalonamento, nível 1, posto Primeira Avaliação	15	sla_notificacoes sn	24	sn.datanotificacao	sn.chave	\N	sn.idsla = 42	42
+40	Tempo máximo de Candidatura	14	processos p	720	p.inicio	p.id		p.status IN (null,   'Em Andamento') and p.idtipoprocesso = 2	\N
+41	Tempo no posto Roteamento	8	workflow_tramitacao wt	72	wt.inicio	wt.id	4	wt.fim is null and wt.idworkflowposto = 4	\N
+42	Tempo no Posto Primeira Avaliação	12	workflow_tramitacao wt	72	wt.inicio	wt.id	3	wt.fim is null and wt.idworkflowposto = 3	\N
+43	Tempo no Posto Segunda Avaliação	12	workflow_tramitacao wt	72	wt.inicio	wt.id	287	wt.fim is null and wt.idworkflowposto = 287	\N
+39	Tempo no Posto Onboarding	13	workflow_tramitacao wt	48	wt.inicio	wt.id	7	wt.fim is null and wt.idworkflowposto = 7	\N
+45	Tempo no Posto Entrevistados	10	workflow_tramitacao wt	168	wt.inicio	wt.id	6	wt.fim is null and wt.idworkflowposto = 6	\N
+44	Tempo no Posto Entrevista Presencial	11	workflow_tramitacao wt	168	wt.inicio	wt.id	5	wt.fim is null and wt.idworkflowposto = 5	\N
+49	Escalonamento, nível 1, Tempo máximo de candidatura	17	sla_notificacoes sn 	48	sn.datanotificacao	sn.chave	\N	sn.idsla = 40	40
+50	Escalonamento nível 2, tempo máximo de processo do candidato	18	sla_notificacoes sn	120	sn.datanotificacao	sn.chave	\N	sn.idsla = 49	49
+47	Escalonamento, nível 1, posto Primeira Avaliação	15	sla_notificacoes sn	48	sn.datanotificacao	sn.chave	\N	sn.idsla = 42	42
+48	Escalonamento, nível 2, posto Primeira Avaliação	16	sla_notificacoes sn	48	sn.datanotificacao	sn.chave	\N	sn.idsla = 47	47
 \.
 
 
@@ -1703,33 +1703,13 @@ SELECT pg_catalog.setval('sla_id_seq', 50, true);
 --
 
 COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
-38111	41	2016-07-12 19:38:09.0111	2899
-38112	41	2016-07-12 19:38:09.073058	2858
-38113	41	2016-07-12 19:38:09.080522	2898
-38114	41	2016-07-12 19:38:09.087684	2901
-38115	41	2016-07-12 19:38:09.094559	2900
-38116	41	2016-07-12 19:38:09.101457	2902
-38117	41	2016-07-12 19:38:09.108563	2897
-38118	41	2016-07-12 19:38:09.115464	2865
-38119	41	2016-07-12 19:38:09.122661	2866
-38120	41	2016-07-12 19:38:09.130093	2896
-38121	45	2016-07-12 19:38:09.137845	2891
-38122	42	2016-07-12 19:38:09.144877	2855
-38123	43	2016-07-12 19:38:09.151878	2856
-38124	40	2016-07-12 19:38:09.159482	47700
-38125	40	2016-07-12 19:38:09.165979	47727
-38126	40	2016-07-12 19:38:09.172376	8
-38127	40	2016-07-12 19:38:09.178782	47736
-38128	40	2016-07-12 19:38:09.185206	47718
-38129	40	2016-07-12 19:38:09.190928	47715
-38130	40	2016-07-12 19:38:09.197297	47743
-38131	40	2016-07-12 19:38:09.204174	47706
-38132	40	2016-07-12 19:38:09.209916	47733
-38133	40	2016-07-12 19:38:09.216127	47730
-38134	40	2016-07-12 19:38:09.222179	47709
-38135	40	2016-07-12 19:38:09.228258	47739
-38136	40	2016-07-12 19:38:09.23447	47721
-38137	40	2016-07-12 19:38:09.240535	47712
+38138	41	2016-07-12 19:53:00.287771	2858
+38139	41	2016-07-12 19:53:00.412112	2865
+38140	41	2016-07-12 19:53:00.439464	2866
+38141	41	2016-07-12 19:53:00.466425	2896
+38142	42	2016-07-12 19:53:00.493531	2855
+38143	43	2016-07-12 19:53:00.520307	2856
+38144	45	2016-07-12 19:53:00.547725	2891
 \.
 
 
@@ -1737,7 +1717,7 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 -- Name: sla_notificacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sla_notificacoes_id_seq', 38137, true);
+SELECT pg_catalog.setval('sla_notificacoes_id_seq', 38144, true);
 
 
 --

@@ -26,6 +26,7 @@ class SLA{
 	      $sql = "select * from sla where id IN ($idsla) ";
 	   else
 	      $sql = "select * from sla   ";
+
 	  //$sql = "select * from sla   ";
 	  //$sql = "select * from sla where idpai is not null ";
 
@@ -39,8 +40,8 @@ class SLA{
 	                  where  (NOW() - ".$this->con->dados["campo_calculado"].") >  INTERVAL '".$this->con->dados["sla_emhorascorridas"]." hours'  "
 	                        . (($this->con->dados["where_tabela"])?" and ".$this->con->dados["where_tabela"]:"")
 	                  ."  GROUP BY 1  ";
-
 	          $this->con2->executa( $sql);
+					//	echo "<BR>".$this->con2->nrw." = $sql";
 
 	          if ($this->con2->nrw >0)
 	          {

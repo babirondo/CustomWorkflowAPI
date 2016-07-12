@@ -12,8 +12,8 @@ class Notificacoes{
 
 		$this->con = new db();
 		$this->con->conecta();
-                $this->globais = new Globais();
-                $this->posto = new Postos();
+    $this->globais = new Globais();
+    $this->posto = new Postos();
 		$this->campos = new Campos();
 
 		$this->debug = null;
@@ -256,10 +256,17 @@ header: $headers</PRE> ";
             $para = $this->TraduzirEmail($dados_notificacao  [para], $data_atual);
 
 
-            $this->registranotificacao($idsla,   $idnotificacao, $chave);
-            return $this->EnviaEmail($de, $para, $titulo, $corpo);
+						$corpo = $corpo . " \n<BR> SLA reportado: $idsla";
 
+						if ($this->globais->ambiente == "dev")
+							$titulo = "[".$this->globais->ambiente."] " .$titulo;
 
+            if (  $this->registranotificacao($idsla,   $idnotificacao, $chave) )
+						{
+							$this->EnviaEmail($de, $para, $titulo, $corpo);
+							return true;
+						}
+			return false;
 	}
 
   function registranotificacao( $idsla,   $idnotificacao, $chave)
@@ -269,15 +276,20 @@ header: $headers</PRE> ";
                 from sla s
                        left join sla_notificacoes sn ON (sn.idsla = s.id)
                 where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' hours' AS INTERVAL))   " ;
-
        $this->con->executa( $sql);
+			 //echo "<BR> ( ".$this->con->nrw.") -------------$sql";
 
        if ($this->con->nrw==0)
        {
-             echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
+        //    echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
             $sql ="insert into sla_notificacoes ( idsla, datanotificacao, chave) values ($idsla,  NOW(), $chave) ";
             $this->con->executa($sql);
+
+						return true;
        }
+			 else {
+				 	return false;
+			 }
 
 	}
 

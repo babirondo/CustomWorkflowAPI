@@ -9,8 +9,8 @@ class Globais{
 		$usar = "windows";
 		$usar = "mac";
 
-		$usar_ambiente = "dev";
-	//$usar_ambiente = "prod";
+		$this->ambiente = "dev";
+	//$this->ambiente = "prod";
 
 		if ($usar == "windows"){
 				// windows
@@ -27,11 +27,11 @@ class Globais{
 
 		}
 
-		if ($usar_ambiente == "prod"){
+		if ($this->ambiente == "prod"){
 			$this->db ="customworkflow_prod";
 
 		}
-		else if ($usar_ambiente == "dev"){
+		else if ($this->ambiente == "dev"){
 			$this->db ="customworkflow";
 		}
 

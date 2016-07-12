@@ -1664,6 +1664,8 @@ SELECT pg_catalog.setval('sla_id_seq', 50, true);
 --
 
 COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
+37542	42	2016-07-12 19:55:24.598514	2896
+37543	43	2016-07-12 19:55:24.66609	2897
 \.
 
 
@@ -1671,7 +1673,7 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 -- Name: sla_notificacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37541, true);
+SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37543, true);
 
 
 --
