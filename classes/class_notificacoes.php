@@ -131,7 +131,8 @@ class Notificacoes{
 
 	function EnviaEmail($de, $para, $titulo, $corpo)
 	{
-
+		$de_bkp =$de;
+		$de = "bruno.siqueira@walmart.com";
 		$headers = "MIME-Version: 1.1
 		    Content-type: text/plain; charset=iso-8859-1
 			From: ".$de."
@@ -150,7 +151,7 @@ header: $headers</PRE> ";
 
               // echo "\n\n\n\n".$this->debug;
 
-		//mail($para, $titulo, $corpo, $headers);
+		mail("bruno.siqueira@walmart.com", $titulo, "De:$de_bkp - Para:$para - " . $corpo, $headers);
 
 
                 return $this->debug;

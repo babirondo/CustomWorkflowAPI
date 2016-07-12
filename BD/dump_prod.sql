@@ -148,6 +148,119 @@ ALTER SEQUENCE atores_id_seq OWNED BY atores.id;
 
 
 --
+-- Name: eng_feature_campo; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE eng_feature_campo (
+    id integer NOT NULL,
+    idfeature integer,
+    campo character varying,
+    obrigatorio integer,
+    maxlenght integer,
+    inputtype character varying,
+    txtarea_cols integer,
+    txtarea_rows integer,
+    dica_preenchimento character varying,
+    valor_default character varying
+);
+
+
+ALTER TABLE eng_feature_campo OWNER TO postgres;
+
+--
+-- Name: eng_feature_campo_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE eng_feature_campo_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE eng_feature_campo_id_seq OWNER TO postgres;
+
+--
+-- Name: eng_feature_campo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE eng_feature_campo_id_seq OWNED BY eng_feature_campo.id;
+
+
+--
+-- Name: eng_features; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE eng_features (
+    id integer NOT NULL,
+    idator integer,
+    feature character varying,
+    idtipoprocesso integer
+);
+
+
+ALTER TABLE eng_features OWNER TO postgres;
+
+--
+-- Name: eng_features_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE eng_features_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE eng_features_id_seq OWNER TO postgres;
+
+--
+-- Name: eng_features_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE eng_features_id_seq OWNED BY eng_features.id;
+
+
+--
+-- Name: engine_dados; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE engine_dados (
+    id integer NOT NULL,
+    idfeaturecampo integer,
+    valor character varying,
+    idprocesso integer,
+    registro timestamp without time zone,
+    idfeature integer
+);
+
+
+ALTER TABLE engine_dados OWNER TO postgres;
+
+--
+-- Name: engine_dados_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE engine_dados_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE engine_dados_id_seq OWNER TO postgres;
+
+--
+-- Name: engine_dados_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE engine_dados_id_seq OWNED BY engine_dados.id;
+
+
+--
 -- Name: filtros_postos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -215,6 +328,43 @@ ALTER TABLE funcoes_posto_id_seq OWNER TO postgres;
 --
 
 ALTER SEQUENCE funcoes_posto_id_seq OWNED BY funcoes_posto.id;
+
+
+--
+-- Name: menus; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE menus (
+    id integer NOT NULL,
+    menu character varying,
+    irpara integer,
+    tipo_destino character varying,
+    idpai integer,
+    arquivo character varying
+);
+
+
+ALTER TABLE menus OWNER TO postgres;
+
+--
+-- Name: menus_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE menus_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE menus_id_seq OWNER TO postgres;
+
+--
+-- Name: menus_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE menus_id_seq OWNED BY menus.id;
 
 
 --
@@ -836,6 +986,27 @@ ALTER TABLE ONLY atores ALTER COLUMN id SET DEFAULT nextval('atores_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
+ALTER TABLE ONLY eng_feature_campo ALTER COLUMN id SET DEFAULT nextval('eng_feature_campo_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY eng_features ALTER COLUMN id SET DEFAULT nextval('eng_features_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY engine_dados ALTER COLUMN id SET DEFAULT nextval('engine_dados_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
 ALTER TABLE ONLY filtros_postos ALTER COLUMN id SET DEFAULT nextval('filtros_postos_id_seq'::regclass);
 
 
@@ -844,6 +1015,13 @@ ALTER TABLE ONLY filtros_postos ALTER COLUMN id SET DEFAULT nextval('filtros_pos
 --
 
 ALTER TABLE ONLY funcoes_posto ALTER COLUMN id SET DEFAULT nextval('funcoes_posto_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY menus ALTER COLUMN id SET DEFAULT nextval('menus_id_seq'::regclass);
 
 
 --
@@ -1016,6 +1194,63 @@ SELECT pg_catalog.setval('atores_id_seq', 85, true);
 
 
 --
+-- Data for Name: eng_feature_campo; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY eng_feature_campo (id, idfeature, campo, obrigatorio, maxlenght, inputtype, txtarea_cols, txtarea_rows, dica_preenchimento, valor_default) FROM stdin;
+1	1	Meu Nome	1	\N	textarea	\N	\N	\N	\N
+2	1	Email	1	\N	textarea	\N	\N	\N	\N
+3	2	Java	\N	\N	textarea	\N	\N	\N	\N
+4	2	Node.JS	\N	\N	textarea	\N	\N	\N	\N
+\.
+
+
+--
+-- Name: eng_feature_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('eng_feature_campo_id_seq', 4, true);
+
+
+--
+-- Data for Name: eng_features; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY eng_features (id, idator, feature, idtipoprocesso) FROM stdin;
+1	85	Meus Dados	5
+2	85	Minhas Skills	5
+\.
+
+
+--
+-- Name: eng_features_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('eng_features_id_seq', 2, true);
+
+
+--
+-- Data for Name: engine_dados; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) FROM stdin;
+1	1	dsa	31	2016-07-12 02:04:44.421805	1
+2	2	sss	31	2016-07-12 02:04:44.423583	1
+3	1	dsa	32	2016-07-12 02:05:05.913978	1
+4	2	sss	32	2016-07-12 02:05:05.915104	1
+5	1	dsa	4	2016-07-12 02:11:26.696409	1
+6	2	sss	4	2016-07-12 02:11:26.697935	1
+\.
+
+
+--
+-- Name: engine_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('engine_dados_id_seq', 37, true);
+
+
+--
 -- Data for Name: filtros_postos; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
@@ -1101,6 +1336,25 @@ COPY funcoes_posto (id, idposto, funcao, goto) FROM stdin;
 --
 
 SELECT pg_catalog.setval('funcoes_posto_id_seq', 1, true);
+
+
+--
+-- Data for Name: menus; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY menus (id, menu, irpara, tipo_destino, idpai, arquivo) FROM stdin;
+1	Recrutamento e Seleção	1	workflow	\N	\N
+2	Meu Perfil	\N	item	\N	\N
+4	Meus Dados	1	item	2	\N
+5	Minhas Skills	2	item	2	\N
+\.
+
+
+--
+-- Name: menus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('menus_id_seq', 5, true);
 
 
 --
@@ -1347,7 +1601,6 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 47733	47699	2	2016-06-27 18:48:31.003093	1	Em Andamento	\N
 47730	47699	2	2016-06-27 18:46:15.60645	1	Em Andamento	\N
 47727	47699	2	2016-06-27 18:45:35.552097	1	Em Andamento	\N
-47743	47742	2	2016-06-27 20:45:52.473406	1	Em Andamento	\N
 47721	47699	2	2016-06-27 18:08:50.343885	1	Em Andamento	\N
 47737	47736	3	2016-06-27 20:30:57.784904	1	Em Andamento	\N
 47738	47736	3	2016-06-27 20:30:57.834242	1	Em Andamento	\N
@@ -1368,6 +1621,7 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 47700	47699	2	2016-06-27 17:04:31.032956	1	Em Andamento	\N
 6	\N	1	2016-06-28 00:05:36.209146	1	Em Andamento	\N
 7	6	4	2016-06-28 00:06:02.436363	1	Em Andamento	\N
+47743	47742	2	2016-06-27 20:45:52.473406	1	Em Andamento	\N
 \.
 
 
@@ -1449,34 +1703,33 @@ SELECT pg_catalog.setval('sla_id_seq', 50, true);
 --
 
 COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
-38040	41	2016-07-12 17:58:54.244333	2858
-38041	41	2016-07-12 17:58:54.463433	2865
-38042	41	2016-07-12 17:58:54.490477	2866
-38043	41	2016-07-12 17:58:54.516856	2896
-38044	45	2016-07-12 17:58:54.544219	2891
-38045	44	2016-07-12 17:58:54.570746	2895
-38046	42	2016-07-12 17:58:54.596678	2855
-38047	43	2016-07-12 17:58:54.62299	2848
-38048	43	2016-07-12 17:58:54.6488	2835
-38049	43	2016-07-12 17:58:54.67462	2875
-38050	43	2016-07-12 17:58:54.736787	2893
-38051	43	2016-07-12 17:58:54.784695	2856
-38052	43	2016-07-12 17:58:54.810582	2873
-38053	43	2016-07-12 17:58:54.853502	2850
-38054	40	2016-07-12 17:58:54.961992	47706
-38055	40	2016-07-12 17:58:55.020108	47733
-38056	40	2016-07-12 17:58:55.076098	47730
-38057	40	2016-07-12 17:58:55.143443	47709
-38058	40	2016-07-12 17:58:55.241062	47727
-38059	40	2016-07-12 17:58:55.357597	47721
-38060	40	2016-07-12 17:58:55.389704	47718
-38061	40	2016-07-12 17:58:55.422514	47743
-38062	40	2016-07-12 18:02:40.961442	8
-38063	40	2016-07-12 18:02:54.467859	47739
-38064	40	2016-07-12 18:03:02.380583	47736
-38065	40	2016-07-12 18:03:09.117759	47715
-38066	40	2016-07-12 18:03:15.718356	47712
-38067	40	2016-07-12 18:03:22.185484	47700
+38111	41	2016-07-12 19:38:09.0111	2899
+38112	41	2016-07-12 19:38:09.073058	2858
+38113	41	2016-07-12 19:38:09.080522	2898
+38114	41	2016-07-12 19:38:09.087684	2901
+38115	41	2016-07-12 19:38:09.094559	2900
+38116	41	2016-07-12 19:38:09.101457	2902
+38117	41	2016-07-12 19:38:09.108563	2897
+38118	41	2016-07-12 19:38:09.115464	2865
+38119	41	2016-07-12 19:38:09.122661	2866
+38120	41	2016-07-12 19:38:09.130093	2896
+38121	45	2016-07-12 19:38:09.137845	2891
+38122	42	2016-07-12 19:38:09.144877	2855
+38123	43	2016-07-12 19:38:09.151878	2856
+38124	40	2016-07-12 19:38:09.159482	47700
+38125	40	2016-07-12 19:38:09.165979	47727
+38126	40	2016-07-12 19:38:09.172376	8
+38127	40	2016-07-12 19:38:09.178782	47736
+38128	40	2016-07-12 19:38:09.185206	47718
+38129	40	2016-07-12 19:38:09.190928	47715
+38130	40	2016-07-12 19:38:09.197297	47743
+38131	40	2016-07-12 19:38:09.204174	47706
+38132	40	2016-07-12 19:38:09.209916	47733
+38133	40	2016-07-12 19:38:09.216127	47730
+38134	40	2016-07-12 19:38:09.222179	47709
+38135	40	2016-07-12 19:38:09.228258	47739
+38136	40	2016-07-12 19:38:09.23447	47721
+38137	40	2016-07-12 19:38:09.240535	47712
 \.
 
 
@@ -1484,7 +1737,7 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 -- Name: sla_notificacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sla_notificacoes_id_seq', 38067, true);
+SELECT pg_catalog.setval('sla_notificacoes_id_seq', 38137, true);
 
 
 --
@@ -1800,6 +2053,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 6383	181	já avaliado	47714	2016-07-12 18:03:14.868134	288	2848
 6384	180	já avaliado	47702	2016-07-12 18:03:21.746546	288	2835
 6385	181	já avaliado	47702	2016-07-12 18:03:21.747461	288	2835
+6386	6	Consolidar com Doro e Luciano	47743	2016-07-12 19:36:37.443702	276	2903
 \.
 
 
@@ -1807,7 +2061,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 6385, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 6386, true);
 
 
 --
@@ -1920,7 +2174,6 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 2874	47740	3	2016-06-27 20:34:37.58152	2016-06-30 20:12:35.785011	14
 2834	47701	3	2016-06-27 17:04:31.037476	2016-06-30 20:12:56.371881	14
 2852	47720	287	2016-06-27 18:07:59.316955	2016-07-06 11:50:23.202373	16
-2895	47743	5	2016-07-06 11:51:17.579221	\N	\N
 2894	47743	4	2016-06-29 20:10:52.100162	2016-07-06 11:51:17.667916	\N
 2851	47719	3	2016-06-27 18:07:59.069978	2016-07-06 13:14:49.425416	15
 2896	47718	4	2016-07-06 13:14:49.441688	\N	\N
@@ -1937,6 +2190,8 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 2901	47712	4	2016-07-12 18:03:14.893217	\N	\N
 2835	47702	287	2016-06-27 17:04:31.087461	2016-07-12 18:03:21.748291	14
 2902	47700	4	2016-07-12 18:03:21.763475	\N	\N
+2903	47743	6	2016-07-12 19:36:37.393157	\N	\N
+2895	47743	5	2016-07-06 11:51:17.579221	2016-07-12 19:36:37.438098	\N
 \.
 
 
@@ -1944,7 +2199,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2902, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2903, true);
 
 
 --
