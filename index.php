@@ -9,6 +9,11 @@ require_Once("classes/class_Auth.php");
 require_Once("classes/class_relatorios.php");
 require_Once("classes/class_processos.php");
 
+require_Once("classes/engine/class_engine_feature.php");
+require_Once("classes/engine/class_menus.php");
+require_Once("classes/engine/class_engine.php");
+
+
 require 'vendor/autoload.php';
 // tentando commitar pro github
  /// teste no atom
@@ -22,8 +27,15 @@ $app = new \Slim\Slim( array(
 
 
 
-//defina a rota
-//CHANGED: akkaakakk
+
+$app->post('/Engine/Registrar/:idfeature', function (  $idfeature) use ($app)  {
+	$Engine = new Engine(  );
+	$Engine->Registrar($app, $app->request->getBody(), $idfeature );
+}  );
+$app->get('/Engine/getCampos/:idfeature', function ( $idfeature   ) use ($app)  {
+	$Engine_Feature = new Engine_Feature(  );
+	$Engine_Feature->getCampos($app, $idfeature );
+}  );
 
 $app->post('/Relatorios/', function (    ) use ($app)  {
 	$Relatorios = new Relatorios(  );
@@ -33,6 +45,16 @@ $app->post('/Relatorios/', function (    ) use ($app)  {
 $app->get('/getWorkflows/', function () use ($app)  {
 	$Workflow = new Workflow();
 	$Workflow->getWorkflows($app );
+}  );
+
+$app->get('/getMenus/', function () use ($app)  {
+	$Menus = new Menus();
+	$Menus->getMenus($app );
+}  );
+
+$app->post('/getSubMenus/:idmenu', function ($idmenu) use ($app)  {
+	$SubMenus = new Menus();
+	$SubMenus->getSubMenus($app, $idmenu, $app->request->getBody() );
 }  );
 
 $app->post('/:idworkflow/getPostos/', function ( $idworkflow ) use ($app)  {

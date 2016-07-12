@@ -1,2 +1,5 @@
-docker run -d -v /Users/bsiquei/source/:/mnt/source/ eg_postgresql;
+docker run -d -paintedfox/postgresql;
 docker run -d -p 8080:80 -v /Users/bsiquei/source/:/var/www/html nginx-php;
+
+
+ 

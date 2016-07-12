@@ -64,7 +64,7 @@ class Workflow{
             //var_dump($json);
 						if ($json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor] > 0)
 						{
-							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro	
+							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro
 							$sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][idtramitacao]."'";
 	            $this->con->executa(    $sql, null, __LINE__);
 
@@ -560,7 +560,29 @@ class Workflow{
 
             }
             else{
-                $idprocesso = $json[processo][valor];
+								if (!$json[processo][valor]){
+										// caso workflow de MyProfile - workflows simples, sem conexao
+
+									$sql = "select   wp.id_workflow,
+													wp.idtipoprocesso idtipoprocesso_atual,
+													wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
+												from workflow_postos wp
+																inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+																inner join workflow w ON (w.id = wp.id_workflow)
+												where wp.id = $idposto  ";
+		 //echo $sql;exit;
+										$this->con->executa( $sql , null, __LINE__);
+			//   echo "\n IDados do Posto:    ";
+										$this->con->navega(0);
+
+										$idtpproc = $this->con->dados["idtipoprocesso_atual"];
+										$idwok = $this->con->dados["id_workflow"];
+
+										$idprocesso = $this->CriarProcesso($idtpproc, "null", $idwok, $json, null, null);
+
+								}
+								else
+                	$idprocesso = $json[processo][valor];
 								$salvar_dados_form = 1;
                 if (is_array($json))
                 {
@@ -572,7 +594,10 @@ class Workflow{
                           if ($campo == "processo") continue;
                          // echo "\n $campo = ".$valor[valor];
 
-                          $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo, $json[processo][idworkflowtramitacao_original]);
+												 if ( $json[processo][idworkflowtramitacao_original] > 0 )
+												 	$this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo , $json[processo][idworkflowtramitacao_original]  );
+												 else
+                         	 $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo  );
                       }
                 }
 
@@ -589,6 +614,7 @@ class Workflow{
 
             return $idprocesso;
         }
+
 
         function CriarProcesso($idtpproc, $id_pai, $idwok, $json, $idposto, $proximo_posto )
         {
