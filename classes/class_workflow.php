@@ -1,9 +1,10 @@
 <?php
+namespace raiz;
 set_time_limit(2);
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Workflow{
-	function Workflow( ){
+	function __construct( ){
 
             require_once("classes/globais.php");
 

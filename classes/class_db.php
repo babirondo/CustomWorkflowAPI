@@ -1,5 +1,9 @@
 <?php
+namespace raiz;
+use PDO;
+
 set_time_limit( 2 );
+error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 class db
 {
 	function conecta()
@@ -7,8 +11,10 @@ class db
 		require_once("classes/globais.php");
 		$this->globais = new Globais();
 
+ 
+
 		try {
-			$this->pdo = new PDO("pgsql:host=".$this->globais->localhost.";
+			$this->pdo = new PDO("pgsql:host=".$this->globais->localhost."
 														dbname=".  $this->globais->db ,
 														$this->globais->username,
 														$this->globais->password);

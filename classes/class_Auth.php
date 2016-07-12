@@ -1,8 +1,8 @@
 <?php
-
+namespace raiz;
 set_time_limit( 2 );
 class Auth{
-	function Auth( ){
+	function __construct( ){
 
 
 		require("classes/class_db.php");

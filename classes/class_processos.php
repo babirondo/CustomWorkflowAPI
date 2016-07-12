@@ -1,9 +1,10 @@
 <?php
+namespace raiz;
 error_reporting(E_ALL ^ E_DEPRECATED);
 
 class Processos{
 
-	function Processos( ){
+	function __construct( ){
 
     require_once("classes/class_db.php");
     require_once("classes/class_postos.php");

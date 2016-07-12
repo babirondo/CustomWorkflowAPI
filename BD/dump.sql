@@ -3,7 +3,7 @@
 --
 
 -- Dumped from database version 9.5.2
--- Dumped by pg_dump version 9.5.2
+-- Dumped by pg_dump version 9.5.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -1249,7 +1249,7 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) F
 -- Name: engine_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('engine_dados_id_seq', 6, true);
+SELECT pg_catalog.setval('engine_dados_id_seq', 37, true);
 
 
 --
@@ -1579,6 +1579,10 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 31	\N	5	2016-07-12 02:04:44.418481	\N	\N	\N
 32	\N	5	2016-07-12 02:05:05.910205	\N	\N	\N
 4	\N	5	2016-07-12 02:11:26.693317	\N	\N	\N
+33	\N	1	2016-07-12 19:16:10.809356	1	Em Andamento	\N
+34	33	2	2016-07-12 19:16:23.860706	1	\N	\N
+35	34	3	2016-07-12 19:16:23.863679	1	Em Andamento	\N
+36	34	3	2016-07-12 19:16:23.943816	1	Em Andamento	\N
 \.
 
 
@@ -1633,18 +1637,18 @@ SELECT pg_catalog.setval('relacionamento_postos_id_seq', 26, true);
 --
 
 COPY sla (id, nomeregra, idnotificacao, tabela, sla_emhorascorridas, campo_calculado, campo_localizador, valor_localizador, where_tabela, idpai) FROM stdin;
-41	Tempo no posto Roteamento	8	workflow_tramitacao wt	1	wt.inicio	wt.id	4	wt.fim is null and wt.idworkflowposto = 4	\N
-46	Tempo no Posto Negociar com COnsultoria	9	workflow_tramitacao wt	1	wt.inicio	wt.id	8	wt.fim is null and wt.idworkflowposto = 8	\N
-45	Tempo no Posto Entrevistados	10	workflow_tramitacao wt	1	wt.inicio	wt.id	6	wt.fim is null and wt.idworkflowposto = 6	\N
-44	Tempo no Posto Entrevista Presencial	11	workflow_tramitacao wt	1	wt.inicio	wt.id	5	wt.fim is null and wt.idworkflowposto = 5	\N
-42	Tempo no Posto Primeira Avaliação	12	workflow_tramitacao wt	1	wt.inicio	wt.id	3	wt.fim is null and wt.idworkflowposto = 3	\N
-43	Tempo no Posto Segunda Avaliação	12	workflow_tramitacao wt	1	wt.inicio	wt.id	287	wt.fim is null and wt.idworkflowposto = 287	\N
-39	Tempo no Posto Onboarding	13	workflow_tramitacao wt	1	wt.inicio	wt.id	7	wt.fim is null and wt.idworkflowposto = 7	\N
-40	Tempo máximo de Candidatura	14	processos p	1	p.inicio	p.id		p.status IN (null,   'Em Andamento') and p.idtipoprocesso = 2	\N
-49	Escalonamento, nível 1, Tempo máximo de candidatura	17	sla_notificacoes sn 	1	sn.datanotificacao	sn.chave	\N	sn.idsla = 40	40
-48	Escalonamento, nível 2, posto Primeira Avaliação	16	sla_notificacoes sn	1	sn.datanotificacao	sn.chave	\N	sn.idsla = 47	47
-50	Escalonamento nível 2, tempo máximo de processo do candidato	18	sla_notificacoes sn	1	sn.datanotificacao	sn.chave	\N	sn.idsla = 49	49
-47	Escalonamento, nível 1, posto Primeira Avaliação	15	sla_notificacoes sn	1	sn.datanotificacao	sn.chave	\N	sn.idsla = 42	42
+41	Tempo no posto Roteamento	8	workflow_tramitacao wt	5	wt.inicio	wt.id	4	wt.fim is null and wt.idworkflowposto = 4	\N
+46	Tempo no Posto Negociar com COnsultoria	9	workflow_tramitacao wt	5	wt.inicio	wt.id	8	wt.fim is null and wt.idworkflowposto = 8	\N
+45	Tempo no Posto Entrevistados	10	workflow_tramitacao wt	5	wt.inicio	wt.id	6	wt.fim is null and wt.idworkflowposto = 6	\N
+44	Tempo no Posto Entrevista Presencial	11	workflow_tramitacao wt	5	wt.inicio	wt.id	5	wt.fim is null and wt.idworkflowposto = 5	\N
+42	Tempo no Posto Primeira Avaliação	12	workflow_tramitacao wt	5	wt.inicio	wt.id	3	wt.fim is null and wt.idworkflowposto = 3	\N
+43	Tempo no Posto Segunda Avaliação	12	workflow_tramitacao wt	5	wt.inicio	wt.id	287	wt.fim is null and wt.idworkflowposto = 287	\N
+39	Tempo no Posto Onboarding	13	workflow_tramitacao wt	5	wt.inicio	wt.id	7	wt.fim is null and wt.idworkflowposto = 7	\N
+40	Tempo máximo de Candidatura	14	processos p	5	p.inicio	p.id		p.status IN (null,   'Em Andamento') and p.idtipoprocesso = 2	\N
+49	Escalonamento, nível 1, Tempo máximo de candidatura	17	sla_notificacoes sn 	5	sn.datanotificacao	sn.chave	\N	sn.idsla = 40	40
+48	Escalonamento, nível 2, posto Primeira Avaliação	16	sla_notificacoes sn	5	sn.datanotificacao	sn.chave	\N	sn.idsla = 47	47
+50	Escalonamento nível 2, tempo máximo de processo do candidato	18	sla_notificacoes sn	5	sn.datanotificacao	sn.chave	\N	sn.idsla = 49	49
+47	Escalonamento, nível 1, posto Primeira Avaliação	15	sla_notificacoes sn	5	sn.datanotificacao	sn.chave	\N	sn.idsla = 42	42
 \.
 
 
@@ -1660,83 +1664,8 @@ SELECT pg_catalog.setval('sla_id_seq', 50, true);
 --
 
 COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
-37419	42	2016-07-12 00:20:33.417173	2896
-37420	43	2016-07-12 00:20:33.425222	2897
-37421	42	2016-07-12 00:46:22.211792	2896
-37422	43	2016-07-12 00:46:22.218928	2897
-37423	47	2016-07-12 00:46:22.22822	2896
-37424	42	2016-07-12 00:47:25.247083	2896
-37425	43	2016-07-12 00:47:25.259164	2897
-37426	48	2016-07-12 00:47:25.282554	2896
-37427	47	2016-07-12 00:47:25.304182	2896
-37428	42	2016-07-12 01:12:05.185736	2896
-37429	43	2016-07-12 01:12:05.194536	2897
-37430	48	2016-07-12 01:12:05.203751	2896
-37431	47	2016-07-12 01:12:05.211057	2896
-37432	42	2016-07-12 01:13:22.334203	2896
-37433	43	2016-07-12 01:13:22.341	2897
-37434	48	2016-07-12 01:13:22.349214	2896
-37435	47	2016-07-12 01:13:22.35645	2896
-37436	42	2016-07-12 01:16:13.05995	2896
-37437	43	2016-07-12 01:16:13.084846	2897
-37438	48	2016-07-12 01:16:13.093871	2896
-37439	47	2016-07-12 01:16:13.101483	2896
-37440	42	2016-07-12 01:17:27.739605	2896
-37441	43	2016-07-12 01:17:27.746248	2897
-37442	48	2016-07-12 01:17:27.755026	2896
-37443	47	2016-07-12 01:17:27.761986	2896
-37444	42	2016-07-12 01:18:36.980574	2896
-37445	43	2016-07-12 01:18:36.989191	2897
-37446	48	2016-07-12 01:18:37.000485	2896
-37447	47	2016-07-12 01:18:37.010117	2896
-37448	42	2016-07-12 01:21:30.420555	2896
-37449	43	2016-07-12 01:21:30.427776	2897
-37450	48	2016-07-12 01:21:30.436229	2896
-37451	47	2016-07-12 01:21:30.442976	2896
-37452	42	2016-07-12 01:23:28.531527	2896
-37453	43	2016-07-12 01:23:28.538375	2897
-37454	48	2016-07-12 01:23:28.54692	2896
-37455	47	2016-07-12 01:23:28.553768	2896
-37456	42	2016-07-12 01:25:21.914801	2896
-37457	43	2016-07-12 01:25:21.921721	2897
-37458	48	2016-07-12 01:25:21.930389	2896
-37459	47	2016-07-12 01:25:21.936991	2896
-37460	42	2016-07-12 01:28:26.943368	2896
-37461	43	2016-07-12 01:28:26.951514	2897
-37462	48	2016-07-12 01:28:26.962882	2896
-37463	47	2016-07-12 01:28:26.970983	2896
-37464	42	2016-07-12 01:32:21.421467	2896
-37465	43	2016-07-12 01:32:21.428507	2897
-37466	48	2016-07-12 01:32:21.4373	2896
-37467	47	2016-07-12 01:32:21.443994	2896
-37468	42	2016-07-12 01:43:24.794649	2896
-37469	43	2016-07-12 01:43:24.801563	2897
-37470	48	2016-07-12 01:43:24.810434	2896
-37471	47	2016-07-12 01:43:24.817313	2896
-37472	42	2016-07-12 01:45:00.709801	2896
-37473	43	2016-07-12 01:45:00.716821	2897
-37474	48	2016-07-12 01:45:00.726057	2896
-37475	47	2016-07-12 01:45:00.733288	2896
-37476	42	2016-07-12 01:46:08.794568	2896
-37477	43	2016-07-12 01:46:08.801401	2897
-37478	48	2016-07-12 01:46:08.809875	2896
-37479	47	2016-07-12 01:46:08.816402	2896
-37480	42	2016-07-12 01:48:45.445805	2896
-37481	43	2016-07-12 01:48:45.453004	2897
-37482	48	2016-07-12 01:48:45.461063	2896
-37483	47	2016-07-12 01:48:45.470301	2896
-37484	42	2016-07-12 01:50:26.868646	2896
-37485	43	2016-07-12 01:50:26.876033	2897
-37486	48	2016-07-12 01:50:26.886207	2896
-37487	47	2016-07-12 01:50:26.892935	2896
-37488	42	2016-07-12 01:54:02.114082	2896
-37489	43	2016-07-12 01:54:02.121405	2897
-37490	48	2016-07-12 01:54:02.130137	2896
-37491	47	2016-07-12 01:54:02.138113	2896
-37492	42	2016-07-12 02:11:51.127096	2896
-37493	43	2016-07-12 02:11:51.149489	2897
-37494	48	2016-07-12 02:11:51.176646	2896
-37495	47	2016-07-12 02:11:51.19786	2896
+37537	42	2016-07-12 19:12:57.342378	2896
+37538	43	2016-07-12 19:12:57.349727	2897
 \.
 
 
@@ -1744,7 +1673,7 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 -- Name: sla_notificacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37495, true);
+SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37538, true);
 
 
 --
@@ -1840,7 +1769,7 @@ SELECT pg_catalog.setval('usuarios_avaliadores_tecnologias_id_seq', 56, true);
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 32, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 36, true);
 
 
 --
@@ -1877,6 +1806,18 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 6386	192	d	4	2016-07-12 00:40:10.12851	297	\N
 6387	193	dx	4	2016-07-12 00:40:10.129467	297	\N
 6388	194	f	4	2016-07-12 00:40:10.130209	297	\N
+6389	13	nov	33	2016-07-12 19:16:10.896727	1	2898
+6390	174	nova	33	2016-07-12 19:16:10.897822	1	2898
+6391	1	nova	33	2016-07-12 19:16:10.898231	1	2898
+6392	186	nov	33	2016-07-12 19:16:10.898616	1	2898
+6393	188	vano	33	2016-07-12 19:16:10.899036	1	2898
+6394	187	5	33	2016-07-12 19:16:10.89944	1	2898
+6395	189	ddd	33	2016-07-12 19:16:10.899846	1	2898
+6396	11	new	34	2016-07-12 19:16:23.861444	273	2899
+6397	182	3	34	2016-07-12 19:16:23.861954	273	2899
+6398	2	new	34	2016-07-12 19:16:23.862346	273	2899
+6399	166	new	34	2016-07-12 19:16:23.862733	273	2899
+6400	12	3	34	2016-07-12 19:16:23.863109	273	2899
 \.
 
 
@@ -1884,7 +1825,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 6388, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 6400, true);
 
 
 --
@@ -1947,6 +1888,10 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 2895	23	2	2016-07-12 00:19:08.545709	\N	\N
 2896	25	3	2016-07-12 00:19:31.059212	\N	14
 2897	26	287	2016-07-12 00:19:31.109415	\N	14
+2898	33	1	2016-07-12 19:16:10.817039	2016-07-12 19:16:10.817039	\N
+2899	33	2	2016-07-12 19:16:10.861511	\N	\N
+2900	35	3	2016-07-12 19:16:23.864363	\N	21
+2901	36	287	2016-07-12 19:16:23.944464	\N	21
 \.
 
 
@@ -1954,7 +1899,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2897, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2901, true);
 
 
 --

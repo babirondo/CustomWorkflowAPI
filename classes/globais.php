@@ -1,9 +1,10 @@
 <?php
+namespace raiz;
 set_time_limit(2);
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Globais{
-	function Globais( ){
+	function __construct( ){
 
 		$usar = "windows";
 		$usar = "mac";

@@ -1,9 +1,10 @@
 <?php
+namespace raiz;
 error_reporting(E_ALL ^ E_DEPRECATED);
 
 class SLA{
 //        void __construct ([ mixed $args [, $... ]] )
-	function SLA( ){
+	function __construct( ){
 
 		require_once("classes/class_db.php");
 		require_once("classes/class_notificacoes.php");
@@ -21,12 +22,6 @@ class SLA{
 
 	function checkar_todos_SLAs( $idsla )
 	{
-		//todo: jsjsjs
-		//TODO: sksnkjsaj
-
-
-		//NOTE: jnksdnkjasd
-
 	   if ($idsla)
 	      $sql = "select * from sla where id IN ($idsla) ";
 	   else
@@ -44,10 +39,9 @@ class SLA{
 	                  where  (NOW() - ".$this->con->dados["campo_calculado"].") >  INTERVAL '".$this->con->dados["sla_emhorascorridas"]." minutes'  "
 	                        . (($this->con->dados["where_tabela"])?" and ".$this->con->dados["where_tabela"]:"")
 	                  ."  GROUP BY 1  ";
-
-	              ;
+ 
 	          $this->con2->executa( $sql);
-//FIXME: aamamama
+
 	          if ($this->con2->nrw >0)
 	          {
 	              while ($this->con2->navega(0)){

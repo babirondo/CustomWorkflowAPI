@@ -1,5 +1,5 @@
 <?php
-
+namespace raiz;
 class Auxiliar {
     function CallAPI($method, $url, $data = false)
     {
@@ -42,6 +42,6 @@ class Auxiliar {
             curl_close($curl);
 
             return  json_decode( $result , true);
-    } 
-    
+    }
+
 }

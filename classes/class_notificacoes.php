@@ -1,12 +1,13 @@
 <?php
+namespace raiz;
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Notificacoes{
-	function Notificacoes( ){
+	function __construct( ){
 
 		require_once("classes/class_postos.php");
 		require_once("classes/class_campo.php");
-                include_once("classes/globais.php");
+    include_once("classes/globais.php");
 		require_once("classes/class_db.php");
 
 		$this->con = new db();
@@ -260,22 +261,22 @@ header: $headers</PRE> ";
 
 	}
 
-        function registranotificacao( $idsla,   $idnotificacao, $chave)
+  function registranotificacao( $idsla,   $idnotificacao, $chave)
 	{
 
-                $sql = "select  *
-                        from sla s
-                               left join sla_notificacoes sn ON (sn.idsla = s.id)
-                        where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' minutes' AS INTERVAL))   " ;
+        $sql = "select  *
+                from sla s
+                       left join sla_notificacoes sn ON (sn.idsla = s.id)
+                where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' minutes' AS INTERVAL))   " ;
 
-               $this->con->executa( $sql);
+       $this->con->executa( $sql);
 
-               if ($this->con->nrw==0)
-               {
-                    // echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
-                    $sql ="insert into sla_notificacoes ( idsla, datanotificacao, chave) values ($idsla,  NOW(), $chave) ";
-                    $this->con->executa($sql);
-               }
+       if ($this->con->nrw==0)
+       {
+             echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
+            $sql ="insert into sla_notificacoes ( idsla, datanotificacao, chave) values ($idsla,  NOW(), $chave) ";
+            $this->con->executa($sql);
+       }
 
 	}
 

@@ -1,8 +1,9 @@
 <?php
+namespace raiz;
 error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Engine_Feature{
-	function Engine_Feature( ){
+	function __construct( ){
 
 		require_once("classes/class_db.php");
 		include_once("classes/globais.php");

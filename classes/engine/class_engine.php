@@ -1,9 +1,10 @@
 <?php
+namespace raiz;
 set_time_limit(2);
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Engine{
-	function Engine( ){
+	function __construct( ){
 
             require_once("classes/globais.php");
 
@@ -282,7 +283,7 @@ class Engine{
         function CriarProcesso(  $json  )
         {
 
-				 
+
             $sql = "INSERT INTO  processos (id, idtipoprocesso, idpai, inicio, idworkflow )
                     VALUES ( ".$json["processo"]["valor"]." ,/*aqui*/ 5   ,null, NOW() , null )
 
