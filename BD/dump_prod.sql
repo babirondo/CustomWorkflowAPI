@@ -746,38 +746,18 @@ CREATE TABLE usuarios (
 ALTER TABLE usuarios OWNER TO postgres;
 
 --
--- Name: usuarios_avaliadores_tecnologias; Type: TABLE; Schema: public; Owner: postgres
+-- Name: usuarios_avaliadores_tecnologias; Type: VIEW; Schema: public; Owner: bsiquei
 --
 
-CREATE TABLE usuarios_avaliadores_tecnologias (
-    id integer NOT NULL,
-    idusuario integer,
-    idtecnologia integer
-);
+CREATE VIEW usuarios_avaliadores_tecnologias AS
+ SELECT ed.idprocesso AS idusuario,
+    efc.campo
+   FROM (engine_dados ed
+     JOIN eng_feature_campo efc ON ((efc.id = ed.idfeaturecampo)))
+  WHERE (((ed.valor)::text = ANY (ARRAY[('3'::character varying)::text, ('4'::character varying)::text, ('5'::character varying)::text])) AND (ed.idfeaturecampo = ANY (ARRAY[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 99])));
 
 
-ALTER TABLE usuarios_avaliadores_tecnologias OWNER TO postgres;
-
---
--- Name: usuarios_avaliadores_tecnologias_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
---
-
-CREATE SEQUENCE usuarios_avaliadores_tecnologias_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE usuarios_avaliadores_tecnologias_id_seq OWNER TO postgres;
-
---
--- Name: usuarios_avaliadores_tecnologias_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
---
-
-ALTER SEQUENCE usuarios_avaliadores_tecnologias_id_seq OWNED BY usuarios_avaliadores_tecnologias.id;
-
+ALTER TABLE usuarios_avaliadores_tecnologias OWNER TO bsiquei;
 
 --
 -- Name: usuarios_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -1105,13 +1085,6 @@ ALTER TABLE ONLY usuarios ALTER COLUMN id SET DEFAULT nextval('usuarios_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY usuarios_avaliadores_tecnologias ALTER COLUMN id SET DEFAULT nextval('usuarios_avaliadores_tecnologias_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY workflow ALTER COLUMN id SET DEFAULT nextval('workflow_id_seq'::regclass);
 
 
@@ -1198,10 +1171,62 @@ SELECT pg_catalog.setval('atores_id_seq', 85, true);
 --
 
 COPY eng_feature_campo (id, idfeature, campo, obrigatorio, maxlenght, inputtype, txtarea_cols, txtarea_rows, dica_preenchimento, valor_default) FROM stdin;
-1	1	Meu Nome	1	\N	textarea	\N	\N	\N	\N
-2	1	Email	1	\N	textarea	\N	\N	\N	\N
-3	2	Java	\N	\N	textarea	\N	\N	\N	\N
-4	2	Node.JS	\N	\N	textarea	\N	\N	\N	\N
+1	1	Meu Nome	1	\N	text	\N	\N	\N	\N
+2	1	Email	1	\N	text	\N	\N	\N	\N
+3	2	Java	\N	\N	text	\N	\N	\N	\N
+4	2	NodeJS	\N	\N	text	\N	\N	\N	\N
+5	2	Python	\N	\N	text	\N	\N	\N	\N
+6	2	Scala	\N	\N	text	\N	\N	\N	\N
+7	2	Go	\N	\N	text	\N	\N	\N	\N
+8	2	Ruby	\N	\N	text	\N	\N	\N	\N
+9	2	.Net	\N	\N	text	\N	\N	\N	\N
+10	2	Spring	\N	\N	text	\N	\N	\N	\N
+11	2	Ruby on Rails	\N	\N	text	\N	\N	\N	\N
+12	2	Resteasy	\N	\N	text	\N	\N	\N	\N
+13	2	Spring Core	\N	\N	text	\N	\N	\N	\N
+14	2	Spring MVC	\N	\N	text	\N	\N	\N	\N
+15	2	Spring Data	\N	\N	text	\N	\N	\N	\N
+16	2	Apache Camel	\N	\N	text	\N	\N	\N	\N
+17	2	React	\N	\N	text	\N	\N	\N	\N
+18	2	Javascript	\N	\N	text	\N	\N	\N	\N
+19	2	CSS	\N	\N	text	\N	\N	\N	\N
+20	2	Kraken	\N	\N	text	\N	\N	\N	\N
+21	2	Angular	\N	\N	text	\N	\N	\N	\N
+22	2	Sass	\N	\N	text	\N	\N	\N	\N
+23	2	Stylus	\N	\N	text	\N	\N	\N	\N
+24	2	Atomic Css	\N	\N	text	\N	\N	\N	\N
+25	2	Bootstrap	\N	\N	text	\N	\N	\N	\N
+26	2	Grunt	\N	\N	text	\N	\N	\N	\N
+27	2	Gulp	\N	\N	text	\N	\N	\N	\N
+28	2	Siteprism	\N	\N	text	\N	\N	\N	\N
+29	2	Sonar	\N	\N	text	\N	\N	\N	\N
+30	2	BDD	\N	\N	text	\N	\N	\N	\N
+31	2	Capybara	\N	\N	text	\N	\N	\N	\N
+32	2	Selenium	\N	\N	text	\N	\N	\N	\N
+33	2	Httparty	\N	\N	text	\N	\N	\N	\N
+34	2	Rest-Assured	\N	\N	text	\N	\N	\N	\N
+35	2	WireMock	\N	\N	text	\N	\N	\N	\N
+36	2	Cucumber	\N	\N	text	\N	\N	\N	\N
+37	2	Redis	\N	\N	text	\N	\N	\N	\N
+38	2	Hazelcast	\N	\N	text	\N	\N	\N	\N
+39	2	Mongo	\N	\N	text	\N	\N	\N	\N
+40	2	Oracle	\N	\N	text	\N	\N	\N	\N
+41	2	SQL Server	\N	\N	text	\N	\N	\N	\N
+42	2	MySQL	\N	\N	text	\N	\N	\N	\N
+43	2	Rabbit MQ	\N	\N	text	\N	\N	\N	\N
+44	2	ActiveMQ	\N	\N	text	\N	\N	\N	\N
+45	2	nginx	\N	\N	text	\N	\N	\N	\N
+46	2	Git	\N	\N	text	\N	\N	\N	\N
+47	2	Docker	\N	\N	text	\N	\N	\N	\N
+48	2	Jenkins	\N	\N	text	\N	\N	\N	\N
+49	2	rpm	\N	\N	text	\N	\N	\N	\N
+50	2	Backbone	\N	\N	text	\N	\N	\N	\N
+51	2	Oracle Forms	\N	\N	text	\N	\N	\N	\N
+52	2	Oracle Reports	\N	\N	text	\N	\N	\N	\N
+53	2	Cassandra	\N	\N	text	\N	\N	\N	\N
+54	2	PL/SQL	\N	\N	text	\N	\N	\N	\N
+55	2	PHP	\N	\N	text	\N	\N	\N	\N
+99	2	Perl	\N	\N	text	\N	\N	\N	\N
 \.
 
 
@@ -1234,12 +1259,62 @@ SELECT pg_catalog.setval('eng_features_id_seq', 2, true);
 --
 
 COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) FROM stdin;
-1	1	dsa	31	2016-07-12 02:04:44.421805	1
-2	2	sss	31	2016-07-12 02:04:44.423583	1
-3	1	dsa	32	2016-07-12 02:05:05.913978	1
-4	2	sss	32	2016-07-12 02:05:05.915104	1
-5	1	dsa	4	2016-07-12 02:11:26.696409	1
-6	2	sss	4	2016-07-12 02:11:26.697935	1
+38	3	1	4	2016-07-13 02:38:50.613617	2
+39	4		4	2016-07-13 02:38:50.614939	2
+40	5		4	2016-07-13 02:38:50.615672	2
+41	6		4	2016-07-13 02:38:50.616067	2
+42	7		4	2016-07-13 02:38:50.616436	2
+43	8		4	2016-07-13 02:38:50.616843	2
+44	9		4	2016-07-13 02:38:50.617251	2
+45	10		4	2016-07-13 02:38:50.617689	2
+46	11		4	2016-07-13 02:38:50.618098	2
+47	12		4	2016-07-13 02:38:50.618492	2
+48	13		4	2016-07-13 02:38:50.618919	2
+49	14		4	2016-07-13 02:38:50.619312	2
+50	15		4	2016-07-13 02:38:50.619699	2
+51	16		4	2016-07-13 02:38:50.620086	2
+52	17		4	2016-07-13 02:38:50.62049	2
+53	18	3	4	2016-07-13 02:38:50.620848	2
+54	19	2	4	2016-07-13 02:38:50.621211	2
+55	20		4	2016-07-13 02:38:50.621557	2
+56	21		4	2016-07-13 02:38:50.621922	2
+57	22	1	4	2016-07-13 02:38:50.622275	2
+58	23		4	2016-07-13 02:38:50.622636	2
+59	24		4	2016-07-13 02:38:50.623004	2
+60	25	1	4	2016-07-13 02:38:50.62336	2
+61	26		4	2016-07-13 02:38:50.623751	2
+62	27		4	2016-07-13 02:38:50.62408	2
+63	28		4	2016-07-13 02:38:50.624416	2
+64	29		4	2016-07-13 02:38:50.624921	2
+65	30		4	2016-07-13 02:38:50.625289	2
+66	31		4	2016-07-13 02:38:50.625649	2
+67	32		4	2016-07-13 02:38:50.62599	2
+68	33		4	2016-07-13 02:38:50.62634	2
+69	34		4	2016-07-13 02:38:50.626695	2
+70	35		4	2016-07-13 02:38:50.627043	2
+71	36		4	2016-07-13 02:38:50.627388	2
+72	37		4	2016-07-13 02:38:50.627741	2
+73	38		4	2016-07-13 02:38:50.628076	2
+74	39		4	2016-07-13 02:38:50.628426	2
+75	40	4	4	2016-07-13 02:38:50.628769	2
+76	41	3	4	2016-07-13 02:38:50.629109	2
+77	42	2	4	2016-07-13 02:38:50.629455	2
+78	43		4	2016-07-13 02:38:50.629799	2
+79	44		4	2016-07-13 02:38:50.630156	2
+80	45	1	4	2016-07-13 02:38:50.630535	2
+81	46	2	4	2016-07-13 02:38:50.630988	2
+82	47	1	4	2016-07-13 02:38:50.63134	2
+83	48		4	2016-07-13 02:38:50.631695	2
+84	49		4	2016-07-13 02:38:50.632054	2
+85	50		4	2016-07-13 02:38:50.632439	2
+86	51		4	2016-07-13 02:38:50.632783	2
+87	52		4	2016-07-13 02:38:50.633132	2
+88	53		4	2016-07-13 02:38:50.633486	2
+89	54	3	4	2016-07-13 02:38:50.633839	2
+90	55	5	4	2016-07-13 02:38:50.634255	2
+91	99		4	2016-07-13 02:38:50.634601	2
+92	1	Bruno Rodrigues Siqueira	4	2016-07-13 02:39:14.283006	1
+93	2	bruno.siqueira@walmart.com	4	2016-07-13 02:39:14.284379	1
 \.
 
 
@@ -1247,7 +1322,7 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) F
 -- Name: engine_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('engine_dados_id_seq', 37, true);
+SELECT pg_catalog.setval('engine_dados_id_seq', 93, true);
 
 
 --
@@ -1783,36 +1858,6 @@ COPY usuarios (id, email, nome, senha, login, admin) FROM stdin;
 23	\N	Vitor Mendes	teste123	vitor.mendes	\N
 24	\N	Adelar Junior	teste123	adelar.junior	\N
 \.
-
-
---
--- Data for Name: usuarios_avaliadores_tecnologias; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY usuarios_avaliadores_tecnologias (id, idusuario, idtecnologia) FROM stdin;
-44	14	1
-45	15	5
-46	16	9
-47	16	10
-48	16	11
-49	16	13
-50	15	2
-51	15	5
-52	15	6
-53	15	7
-54	15	11
-56	21	3
-57	23	2
-58	23	6
-59	24	3
-\.
-
-
---
--- Name: usuarios_avaliadores_tecnologias_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
---
-
-SELECT pg_catalog.setval('usuarios_avaliadores_tecnologias_id_seq', 59, true);
 
 
 --
