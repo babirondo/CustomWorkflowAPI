@@ -48,17 +48,19 @@ class Postos{
 	}
 
 
-	function getUsuariosbyTecnologia($idtecnologia  ){
+	function getUsuariosbyTecnologia($tecnologia , $idprocesso, $idposto ){
 
-            $sql = "select u.id
-                    from usuarios u
-                           inner join usuarios_avaliadores_tecnologias uat ON (uat.idusuario = u.id)
-                    where uat.idtecnologia =$idtecnologia ";
-           // echo $sql;
+            $sql = "select *
+										from usuarios_avaliadores_tecnologias
+										where lower(trim(campo)) like lower(trim('$tecnologia'))
+										 and idusuario NOT IN ( select id_usuario_associado from workflow_tramitacao where idprocesso = (select id from processos where idpai = (select idpai from processos where id = $idprocesso) and id != $idprocesso) and idworkflowposto IN (3,287) )    ";
+
             $this->con->executa( $sql);
+						//FIXME: postos de avaliacao tecnica chumbados na query, favor tipos_processo_para_preencher
+
 
             while ($this->con->navega(0)){
-                $array["USUARIO_TECNOLOGIA"] [$idtecnologia][]    = $this->con->dados["id"];
+                $array["USUARIO_TECNOLOGIA"] [$tecnologia][]    = $this->con->dados["idusuario"];
             }
 
             return $array;

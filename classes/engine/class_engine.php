@@ -259,10 +259,12 @@ class Engine{
 
         function ControlaCriacaoProcesso($json , $idfeature, $proximo_feature, $app)
         {
+						if (!$json[processo][valor]  )
+							$idprocesso = $this->CriarProcesso(  $json );
+						else
+							$idprocesso = $json[processo][valor];
 
-                $idprocesso = $this->CriarProcesso(  $json );
-
-                 if (is_array($json))
+                if (is_array($json))
                 {
                       // Registra os dados que foram submetidos no form
                       $valor=null;
@@ -306,15 +308,18 @@ class Engine{
             //TODO nÃo está dando load nos salvos no feature
             if ( $valor["idworkflowdado"] > 0 )
             {
-                if (!$this->con->executa( "UPDATE engine_dados SET valor = '".$valor[valor]."' WHERE id  ='".$valor[idworkflowdado]."'" , null, __LINE__ ))
+								$sql = "UPDATE engine_dados SET valor = '".$valor[valor]."' WHERE id  ='".$valor[idworkflowdado]."'" ;
+                if (!$this->con->executa(   $sql , null, __LINE__ ))
                 $erro++;
             }
             else
             {
-                if (!$this->con->executa( "INSERT INTO engine_dados (idfeaturecampo, valor, idprocesso, registro, idfeature)
-                                        VALUES (/*4*/ '$campo','$valor[valor]', $idprocesso, NOW(), $idfeature)  " , null, __LINE__ ))
+								$sql =  "INSERT INTO engine_dados (idfeaturecampo, valor, idprocesso, registro, idfeature)
+                                        VALUES (/*4*/ '$campo','$valor[valor]', $idprocesso, NOW(), $idfeature)  " ;
+                if (!$this->con->executa( $sql , null, __LINE__ ))
                 $erro++;
             }
+						//echo "<br> $sql";
 
         }
 
@@ -436,6 +441,7 @@ class Engine{
 
         function SalvarnoBanco($json, $idfeature, $origem  , $app)
         {
+
             $idprocesso = $this->ControlaCriacaoProcesso($json,$idfeature, $proximos_feature, $app);
 
 

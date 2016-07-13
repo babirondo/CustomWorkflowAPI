@@ -238,11 +238,11 @@ class Workflow{
                 CASE("AUTO-DIRECIONADO"):
                     $vida_processo = $this->posto->LoadCampos( null, $idprocesso, null, null, null );
 
-                    $idtec = $vida_processo["FETCH"][$idprocesso][$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]."-original"];
-                    $usuarios = $this->posto->getUsuariosbyTecnologia($idtec);
-                    $usuario_aleatorio = rand(0, (COUNT( $usuarios["USUARIO_TECNOLOGIA"] [$idtec])-1) );
+                    $tecnologias = $vida_processo["FETCH"][$idprocesso][$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] ];
+                    $usuarios = $this->posto->getUsuariosbyTecnologia($tecnologias, $idprocesso, $avanca_processo);
+                    $usuario_aleatorio = rand(0, (COUNT( $usuarios["USUARIO_TECNOLOGIA"] [$tecnologias])-1) );
 
-                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$idtec][$usuario_aleatorio]   ;
+                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$tecnologias][$usuario_aleatorio]   ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]]["idtramitacao"]  = $idtramitacao ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]]["idworkflowdado"]  = null ;
                     $associarRegistro [processo][valor]  = $idprocesso;

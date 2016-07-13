@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.2
+-- Dumped from database version 9.5.3
 -- Dumped by pg_dump version 9.5.3
 
 SET statement_timeout = 0;
@@ -1703,13 +1703,13 @@ SELECT pg_catalog.setval('sla_id_seq', 50, true);
 --
 
 COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
-38138	41	2016-07-12 19:53:00.287771	2858
-38139	41	2016-07-12 19:53:00.412112	2865
-38140	41	2016-07-12 19:53:00.439464	2866
-38141	41	2016-07-12 19:53:00.466425	2896
-38142	42	2016-07-12 19:53:00.493531	2855
-38143	43	2016-07-12 19:53:00.520307	2856
-38144	45	2016-07-12 19:53:00.547725	2891
+38145	41	2016-07-12 20:11:08.375474	2858
+38146	41	2016-07-12 20:11:08.546427	2865
+38147	41	2016-07-12 20:11:08.575524	2866
+38148	41	2016-07-12 20:11:08.603298	2896
+38149	42	2016-07-12 20:11:08.629952	2855
+38150	43	2016-07-12 20:11:08.675739	2856
+38151	45	2016-07-12 20:11:08.718645	2891
 \.
 
 
@@ -1717,7 +1717,7 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 -- Name: sla_notificacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sla_notificacoes_id_seq', 38144, true);
+SELECT pg_catalog.setval('sla_notificacoes_id_seq', 38151, true);
 
 
 --

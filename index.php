@@ -33,9 +33,9 @@ $app->post('/Engine/Registrar/:idfeature', function (  $idfeature) use ($app)  {
 	$Engine = new Engine(  );
 	$Engine->Registrar($app, $app->request->getBody(), $idfeature );
 }  );
-$app->get('/Engine/getCampos/:idfeature', function ( $idfeature   ) use ($app)  {
+$app->post('/Engine/getCampos/:idfeature', function ( $idfeature   ) use ($app)  {
 	$Engine_Feature = new Engine_Feature(  );
-	$Engine_Feature->getCampos($app, $idfeature );
+	$Engine_Feature->getCampos($app, $idfeature ,  $app->request->getBody() );
 }  );
 
 $app->post('/Relatorios/', function (    ) use ($app)  {
