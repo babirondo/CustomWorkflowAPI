@@ -28,12 +28,16 @@ $app = new \Slim\Slim( array(
 
 
 
+$app->post('/Engine/:idfeature/Lista', function ( $idfeature) use ($app)  {
+  $Engine_Feature = new Engine_Feature(  );
+	$Engine_Feature->getLista($app, $idfeature , $app->request->getBody());
+}  );
 
 $app->post('/Engine/Registrar/:idfeature', function (  $idfeature) use ($app)  {
 	$Engine = new Engine(  );
 	$Engine->Registrar($app, $app->request->getBody(), $idfeature );
 }  );
-$app->post('/Engine/getCampos/:idfeature', function ( $idfeature   ) use ($app)  {
+$app->post('/Engine/:idfeature/Form', function ( $idfeature   ) use ($app)  {
 	$Engine_Feature = new Engine_Feature(  );
 	$Engine_Feature->getCampos($app, $idfeature ,  $app->request->getBody() );
 }  );

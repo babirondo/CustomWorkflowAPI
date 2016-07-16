@@ -235,6 +235,40 @@ ALTER SEQUENCE eng_feature_campo_id_seq OWNED BY eng_feature_campo.id;
 
 
 --
+-- Name: eng_feature_campos_lista; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE eng_feature_campos_lista (
+    id integer NOT NULL,
+    idfeature integer,
+    idfeaturecampo integer
+);
+
+
+ALTER TABLE eng_feature_campos_lista OWNER TO postgres;
+
+--
+-- Name: eng_feature_campos_lista_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE eng_feature_campos_lista_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE eng_feature_campos_lista_id_seq OWNER TO postgres;
+
+--
+-- Name: eng_feature_campos_lista_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE eng_feature_campos_lista_id_seq OWNED BY eng_feature_campos_lista.id;
+
+
+--
 -- Name: eng_features; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -242,7 +276,8 @@ CREATE TABLE eng_features (
     id integer NOT NULL,
     idator integer,
     feature character varying,
-    idtipoprocesso integer
+    idtipoprocesso integer,
+    lista character varying
 );
 
 
@@ -384,9 +419,9 @@ CREATE TABLE menus (
     id integer NOT NULL,
     menu character varying,
     irpara integer,
-    tipo_destino character varying,
     idpai integer,
-    arquivo character varying
+    arquivo character varying,
+    tipodestino character varying
 );
 
 
@@ -982,6 +1017,13 @@ ALTER TABLE ONLY eng_feature_campo ALTER COLUMN id SET DEFAULT nextval('eng_feat
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
+ALTER TABLE ONLY eng_feature_campos_lista ALTER COLUMN id SET DEFAULT nextval('eng_feature_campos_lista_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
 ALTER TABLE ONLY eng_features ALTER COLUMN id SET DEFAULT nextval('eng_features_id_seq'::regclass);
 
 
@@ -1240,12 +1282,31 @@ SELECT pg_catalog.setval('eng_feature_campo_id_seq', 109, true);
 
 
 --
+-- Data for Name: eng_feature_campos_lista; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY eng_feature_campos_lista (id, idfeature, idfeaturecampo) FROM stdin;
+1	3	1
+2	3	2
+\.
+
+
+--
+-- Name: eng_feature_campos_lista_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('eng_feature_campos_lista_id_seq', 2, true);
+
+
+--
 -- Data for Name: eng_features; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY eng_features (id, idator, feature, idtipoprocesso) FROM stdin;
-1	85	Meus Dados	5
-2	85	Minhas Skills	5
+COPY eng_features (id, idator, feature, idtipoprocesso, lista) FROM stdin;
+1	85	Meus Dados	5	F
+2	85	Minhas Skills	5	F
+3	85	Usuários	5	L
+4	85	Recrutamento e Seleção	1	L
 \.
 
 
@@ -1253,7 +1314,7 @@ COPY eng_features (id, idator, feature, idtipoprocesso) FROM stdin;
 -- Name: eng_features_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('eng_features_id_seq', 2, true);
+SELECT pg_catalog.setval('eng_features_id_seq', 4, true);
 
 
 --
@@ -1270,7 +1331,6 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) F
 74	12	6	4	2016-07-13 01:23:20.036935	2
 75	13	3	4	2016-07-13 01:23:20.037333	2
 76	14	5	4	2016-07-13 01:23:20.03775	2
-58	1	Bruno Siqueira	4	2016-07-13 01:15:13.97038	1
 59	2	bruno.siqueira@walmart.com	4	2016-07-13 01:15:13.971771	1
 62	1	Bruno Silva	14	2016-07-13 01:17:49.331506	1
 63	2	bruno.silva@ginga.com	14	2016-07-13 01:17:49.333504	1
@@ -1387,6 +1447,7 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) F
 181	14		14	2016-07-13 02:30:14.028769	2
 182	15		14	2016-07-13 02:30:14.029134	2
 183	16		14	2016-07-13 02:30:14.029499	2
+58	1	Bruno Siqueira	4	2016-07-13 01:15:13.97038	1
 184	17		14	2016-07-13 02:30:14.029868	2
 185	18		14	2016-07-13 02:30:14.030533	2
 186	19		14	2016-07-13 02:30:14.030922	2
@@ -1480,6 +1541,118 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) F
 274	54		22	2016-07-13 02:30:52.331424	2
 275	55	4	22	2016-07-13 02:30:52.331793	2
 276	4		22	2016-07-13 02:30:52.332169	2
+277	2	bruno.siqueira@walmart.com	4	2016-07-16 20:34:15.958433	1
+278	1	Rorigues	4	2016-07-16 20:34:16.047026	1
+279	10	333333	4	2016-07-16 20:34:25.145581	2
+280	11	5	4	2016-07-16 20:34:25.147164	2
+281	12	6	4	2016-07-16 20:34:25.147586	2
+282	13	3	4	2016-07-16 20:34:25.148033	2
+283	14	5	4	2016-07-16 20:34:25.148422	2
+284	15	6	4	2016-07-16 20:34:25.148789	2
+285	16	3	4	2016-07-16 20:34:25.14936	2
+286	17	2	4	2016-07-16 20:34:25.149787	2
+287	18	4	4	2016-07-16 20:34:25.15021	2
+288	19		4	2016-07-16 20:34:25.150613	2
+289	20	2	4	2016-07-16 20:34:25.151004	2
+290	21	6	4	2016-07-16 20:34:25.151406	2
+291	22	8	4	2016-07-16 20:34:25.151786	2
+292	23	5	4	2016-07-16 20:34:25.152213	2
+293	24	3	4	2016-07-16 20:34:25.152619	2
+294	25	7	4	2016-07-16 20:34:25.153017	2
+295	26	4	4	2016-07-16 20:34:25.153441	2
+296	27	2	4	2016-07-16 20:34:25.153849	2
+297	28	6	4	2016-07-16 20:34:25.154229	2
+298	29	4	4	2016-07-16 20:34:25.154599	2
+299	30	2	4	2016-07-16 20:34:25.154993	2
+300	31	7	4	2016-07-16 20:34:25.155371	2
+301	32	8	4	2016-07-16 20:34:25.15575	2
+302	33	4	4	2016-07-16 20:34:25.156133	2
+303	34	3	4	2016-07-16 20:34:25.156522	2
+304	35	7	4	2016-07-16 20:34:25.156911	2
+305	36	8	4	2016-07-16 20:34:25.157292	2
+306	37	5	4	2016-07-16 20:34:25.157656	2
+307	38	3	4	2016-07-16 20:34:25.158023	2
+308	39	7	4	2016-07-16 20:34:25.15849	2
+309	40	5	4	2016-07-16 20:34:25.158913	2
+310	41	8	4	2016-07-16 20:34:25.159287	2
+311	42	5	4	2016-07-16 20:34:25.159655	2
+312	43	3	4	2016-07-16 20:34:25.160026	2
+313	44	78	4	2016-07-16 20:34:25.1604	2
+314	45	4	4	2016-07-16 20:34:25.160797	2
+315	46	7	4	2016-07-16 20:34:25.161164	2
+316	47	4	4	2016-07-16 20:34:25.16153	2
+317	48	7	4	2016-07-16 20:34:25.161899	2
+318	49	5	4	2016-07-16 20:34:25.162296	2
+319	50	4	4	2016-07-16 20:34:25.162714	2
+320	51	76	4	2016-07-16 20:34:25.16323	2
+321	52	7	4	2016-07-16 20:34:25.163598	2
+322	53	4	4	2016-07-16 20:34:25.163979	2
+323	54	6	4	2016-07-16 20:34:25.164327	2
+324	55	5	4	2016-07-16 20:34:25.164679	2
+325	4	3	4	2016-07-16 20:34:25.16511	2
+326	3	3	4	2016-07-16 20:34:25.165549	2
+327	99	1	4	2016-07-16 20:34:25.165919	2
+328	9	4	4	2016-07-16 20:34:25.166295	2
+329	5	2	4	2016-07-16 20:34:25.166728	2
+330	6	34	4	2016-07-16 20:34:25.167132	2
+331	7	5	4	2016-07-16 20:34:25.16752	2
+332	8	3	4	2016-07-16 20:34:25.167899	2
+333	2	bruno.siqueira@walmart.com	4	2016-07-16 20:34:38.920798	1
+334	1	Bruno Siqueira	4	2016-07-16 20:34:38.922211	1
+335	10	3	4	2016-07-16 20:34:49.577038	2
+336	11	5	4	2016-07-16 20:34:49.578485	2
+337	12	6	4	2016-07-16 20:34:49.579103	2
+338	13	3	4	2016-07-16 20:34:49.579485	2
+339	14	5	4	2016-07-16 20:34:49.579869	2
+340	15	6	4	2016-07-16 20:34:49.580284	2
+341	16	3	4	2016-07-16 20:34:49.580667	2
+342	17	2	4	2016-07-16 20:34:49.581058	2
+343	18	4	4	2016-07-16 20:34:49.581419	2
+344	19		4	2016-07-16 20:34:49.581791	2
+345	20	2	4	2016-07-16 20:34:49.582199	2
+346	21	6	4	2016-07-16 20:34:49.582564	2
+347	22	8	4	2016-07-16 20:34:49.582948	2
+348	23	5	4	2016-07-16 20:34:49.583304	2
+349	24	3	4	2016-07-16 20:34:49.583674	2
+350	25	7	4	2016-07-16 20:34:49.584053	2
+351	26	4	4	2016-07-16 20:34:49.584407	2
+352	27	2	4	2016-07-16 20:34:49.584788	2
+353	28	6	4	2016-07-16 20:34:49.585155	2
+354	29	4	4	2016-07-16 20:34:49.585527	2
+355	30	2	4	2016-07-16 20:34:49.585933	2
+356	31	7	4	2016-07-16 20:34:49.586307	2
+357	32	8	4	2016-07-16 20:34:49.586679	2
+358	33	4	4	2016-07-16 20:34:49.587068	2
+359	34	3	4	2016-07-16 20:34:49.587431	2
+360	35	7	4	2016-07-16 20:34:49.587795	2
+361	36	8	4	2016-07-16 20:34:49.58813	2
+362	37	5	4	2016-07-16 20:34:49.588498	2
+363	38	3	4	2016-07-16 20:34:49.588863	2
+364	39	7	4	2016-07-16 20:34:49.589226	2
+365	40	5	4	2016-07-16 20:34:49.589594	2
+366	41	8	4	2016-07-16 20:34:49.58995	2
+367	42	5	4	2016-07-16 20:34:49.590321	2
+368	43	3	4	2016-07-16 20:34:49.590683	2
+369	44	78	4	2016-07-16 20:34:49.591041	2
+370	45	4	4	2016-07-16 20:34:49.591391	2
+371	46	7	4	2016-07-16 20:34:49.591751	2
+372	47	4	4	2016-07-16 20:34:49.59211	2
+373	48	7	4	2016-07-16 20:34:49.592467	2
+374	49	5	4	2016-07-16 20:34:49.592818	2
+375	50	4	4	2016-07-16 20:34:49.593181	2
+376	51	76	4	2016-07-16 20:34:49.593588	2
+377	52	7	4	2016-07-16 20:34:49.594029	2
+378	53	4	4	2016-07-16 20:34:49.594396	2
+379	54	6	4	2016-07-16 20:34:49.594756	2
+380	55	5	4	2016-07-16 20:34:49.59518	2
+381	4	3	4	2016-07-16 20:34:49.595586	2
+382	3	3	4	2016-07-16 20:34:49.595962	2
+383	99	1	4	2016-07-16 20:34:49.596346	2
+384	9	4	4	2016-07-16 20:34:49.596699	2
+385	5	2	4	2016-07-16 20:34:49.597052	2
+386	6	34	4	2016-07-16 20:34:49.597469	2
+387	7	5	4	2016-07-16 20:34:49.597845	2
+388	8	3	4	2016-07-16 20:34:49.598204	2
 \.
 
 
@@ -1487,7 +1660,7 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idfeature) F
 -- Name: engine_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('engine_dados_id_seq', 276, true);
+SELECT pg_catalog.setval('engine_dados_id_seq', 388, true);
 
 
 --
@@ -1582,11 +1755,13 @@ SELECT pg_catalog.setval('funcoes_posto_id_seq', 1, true);
 -- Data for Name: menus; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY menus (id, menu, irpara, tipo_destino, idpai, arquivo) FROM stdin;
-1	Recrutamento e Seleção	1	workflow	\N	\N
-2	Meu Perfil	\N	item	\N	\N
-4	Meus Dados	1	item	2	\N
-5	Minhas Skills	2	item	2	\N
+COPY menus (id, menu, irpara, idpai, arquivo, tipodestino) FROM stdin;
+2	Meu Perfil	\N	\N	\N	unico
+4	Meus Dados	1	2	\N	unico
+5	Minhas Skills	2	2	\N	unico
+7	Usuários	3	6	\N	unico
+6	Admin	\N	\N	\N	unico
+1	Recrutamento e Seleção	1	\N	\N	workflow
 \.
 
 
@@ -1594,7 +1769,7 @@ COPY menus (id, menu, irpara, tipo_destino, idpai, arquivo) FROM stdin;
 -- Name: menus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('menus_id_seq', 5, true);
+SELECT pg_catalog.setval('menus_id_seq', 7, true);
 
 
 --
@@ -1868,6 +2043,7 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 69	33	2	2016-07-13 02:31:50.188129	1	\N	\N
 70	69	3	2016-07-13 02:31:50.191509	1	Em Andamento	\N
 71	69	3	2016-07-13 02:31:50.31362	1	Em Andamento	\N
+72	\N	1	2016-07-16 16:08:49.428817	1	Em Andamento	\N
 \.
 
 
@@ -1986,6 +2162,49 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 37576	48	2016-07-15 18:41:53.077604	2896
 37577	47	2016-07-15 18:41:53.120349	2896
 37578	47	2016-07-15 18:41:53.161941	2900
+37579	42	2016-07-16 15:36:34.547949	2902
+37580	42	2016-07-16 15:36:34.741759	2917
+37581	42	2016-07-16 15:36:34.790846	2913
+37582	42	2016-07-16 15:36:34.824812	2919
+37583	42	2016-07-16 15:36:34.869379	2906
+37584	42	2016-07-16 15:36:34.911754	2904
+37585	42	2016-07-16 15:36:34.943431	2896
+37586	42	2016-07-16 15:36:34.975899	2915
+37587	42	2016-07-16 15:36:35.011246	2921
+37588	42	2016-07-16 15:36:35.069976	2900
+37589	42	2016-07-16 15:36:35.125028	2923
+37590	42	2016-07-16 15:36:35.190544	2908
+37591	42	2016-07-16 15:36:35.252749	2912
+37592	42	2016-07-16 15:36:35.301463	2910
+37593	43	2016-07-16 15:36:35.349646	2918
+37594	43	2016-07-16 15:36:35.40475	2924
+37595	43	2016-07-16 15:36:35.443723	2897
+37596	43	2016-07-16 15:36:35.494524	2922
+37597	43	2016-07-16 15:36:35.522329	2916
+37598	43	2016-07-16 15:36:35.573347	2905
+37599	43	2016-07-16 15:36:35.619126	2909
+37600	43	2016-07-16 15:36:35.660177	2901
+37601	43	2016-07-16 15:36:35.699457	2911
+37602	43	2016-07-16 15:36:35.743173	2914
+37603	43	2016-07-16 15:36:35.785152	2920
+37604	43	2016-07-16 15:36:35.824193	2903
+37605	43	2016-07-16 15:36:35.908669	2907
+37606	48	2016-07-16 15:36:35.944341	2896
+37607	48	2016-07-16 15:36:35.990739	2900
+37608	47	2016-07-16 15:36:36.025473	2910
+37609	47	2016-07-16 15:36:36.068721	2896
+37610	47	2016-07-16 15:36:36.102057	2908
+37611	47	2016-07-16 15:36:36.135188	2902
+37612	47	2016-07-16 15:36:36.169322	2919
+37613	47	2016-07-16 15:36:36.195844	2917
+37614	47	2016-07-16 15:36:36.22193	2912
+37615	47	2016-07-16 15:36:36.247737	2904
+37616	47	2016-07-16 15:36:36.273861	2913
+37617	47	2016-07-16 15:36:36.299368	2906
+37618	47	2016-07-16 15:36:36.32545	2915
+37619	47	2016-07-16 15:36:36.350964	2921
+37620	47	2016-07-16 15:36:36.376736	2923
+37621	47	2016-07-16 15:36:36.402674	2900
 \.
 
 
@@ -1993,7 +2212,7 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 -- Name: sla_notificacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37578, true);
+SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37621, true);
 
 
 --
@@ -2062,7 +2281,7 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 71, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 72, true);
 
 
 --
@@ -2171,6 +2390,15 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 6458	2	c	69	2016-07-13 02:31:50.190039	273	2899
 6459	166	m	69	2016-07-13 02:31:50.190469	273	2899
 6460	12	3	69	2016-07-13 02:31:50.190888	273	2899
+6461	4	ccc	67	2016-07-16 16:08:11.076675	274	2921
+6462	10	xxxxxx	67	2016-07-16 16:08:11.093047	274	2921
+6463	13	mkonji	72	2016-07-16 16:08:49.608348	1	2925
+6464	174	mkl	72	2016-07-16 16:08:49.60889	1	2925
+6465	1	mnkl	72	2016-07-16 16:08:49.609309	1	2925
+6466	186	n	72	2016-07-16 16:08:49.609741	1	2925
+6467	188	lk	72	2016-07-16 16:08:49.610136	1	2925
+6468	187	5	72	2016-07-16 16:08:49.610539	1	2925
+6469	189	nlk	72	2016-07-16 16:08:49.610953	1	2925
 \.
 
 
@@ -2178,7 +2406,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 6460, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 6469, true);
 
 
 --
@@ -2255,19 +2483,21 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 2909	48	287	2016-07-13 02:15:16.841474	\N	4
 2910	50	3	2016-07-13 02:15:23.32754	\N	4
 2911	51	287	2016-07-13 02:15:23.424136	\N	4
-2912	53	3	2016-07-13 02:21:20.743773	\N	\N
 2913	55	3	2016-07-13 02:23:51.708867	\N	4
 2914	56	287	2016-07-13 02:23:51.774033	\N	4
-2915	58	3	2016-07-13 02:27:28.916381	\N	4
 2916	59	287	2016-07-13 02:27:29.020358	\N	\N
 2917	61	3	2016-07-13 02:29:10.114387	\N	14
 2918	62	287	2016-07-13 02:29:10.266282	\N	4
 2919	64	3	2016-07-13 02:31:15.993376	\N	22
 2920	65	287	2016-07-13 02:31:16.121577	\N	4
-2921	67	3	2016-07-13 02:31:32.384448	\N	4
 2922	68	287	2016-07-13 02:31:32.453857	\N	22
 2923	70	3	2016-07-13 02:31:50.192204	\N	22
 2924	71	287	2016-07-13 02:31:50.314476	\N	14
+2921	67	3	2016-07-13 02:31:32.384448	2016-07-16 16:08:11.093881	4
+2912	53	3	2016-07-13 02:21:20.743773	\N	4
+2915	58	3	2016-07-13 02:27:28.916381	\N	\N
+2925	72	1	2016-07-16 16:08:49.445615	2016-07-16 16:08:49.445615	\N
+2926	72	2	2016-07-16 16:08:49.550422	\N	\N
 \.
 
 
@@ -2275,7 +2505,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2924, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2926, true);
 
 
 --
