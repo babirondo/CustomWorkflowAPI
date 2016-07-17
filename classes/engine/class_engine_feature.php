@@ -34,11 +34,11 @@ class Engine_Feature{
 
   	$array = $this->LoadCampos($jsonRAW,   $idfeature);
 	                //  var_dump($array );
-/*
-			$this->con->executa( "select *
-	                          from feature_acao pa
-	                                  inner join workflow_features wp ON (wp.id = pa.goto)
-	                          where pa.idfeature =  $idfeature    ");
+			$sql = "select *
+							from engine_acao
+							where idfeature =  $idfeature    ";
+			$this->con->executa($sql );
+
 			//$this->con->navega();
 			$i=0;
 			while ($this->con->navega(0)){
@@ -49,7 +49,7 @@ class Engine_Feature{
 
 				$i++;
 			}
-			*/
+
       //$array["ACOES"]  [$this->con->dados["idprocesso"] ][idworkflowdado]   = $this->con->dados["idworkflowdado"]; // L ou F
 
 /*
@@ -204,23 +204,25 @@ class Engine_Feature{
                 }
                 if (is_array($emails))
                         $array["DADOS_feature"] [atoresdofeature]  = implode(",",$emails);
-
+*/
               //buscando funcoes do feature
-                $sql ="SELECT fp.*, wp.lista
-                        from funcoes_feature fp
-                            inner join workflow_features wp ON (wp.id = fp.goto)
-                        where fp.idfeature =  $idfeature  ";
-                //echo $sql;
+                $sql ="SELECT ef.*, func.goto, func.funcao
+												from menus m
+													inner join eng_features ef ON (ef.id = m.irpara)
+													inner join engine_funcoes func ON (func.idfeature = ef.id  )
+
+                        where m.id=  $idfeature  ";
+                // echo $sql;
                 $this->con->executa($sql);
 
                 $p=0;
                 while ($this->con->navega($p)){
 
-                    $array["FUNCOES_feature"][$this->con->dados["funcao"]][avanca_processo]  = $this->con->dados["goto"];
-                    $array["FUNCOES_feature"][$this->con->dados["funcao"]][lista]  = $this->con->dados["lista"];
+                    $array["FUNCOES_FEATURE"][$this->con->dados["funcao"]]["goto"]  = $this->con->dados["goto"];
+                    //$array["FUNCOES_FEATURE"][$this->con->dados["funcao"]][lista]  = $this->con->dados["lista"];
                     $p++;
                 }
-
+/*
 								//buscando opcoes de filtro do feature
 								$sql ="select fp.id, pc.campo, fp.tipofiltro
 												from filtros_features fp
@@ -264,7 +266,15 @@ class Engine_Feature{
                     $p++;
                 }
 */
-                $this->con->executa( "Select * from eng_feature_campo WHere idfeature = $idfeature  ");
+								$sql = "Select *
+												from menus m
+													inner join eng_features ef ON (ef.id = m.irpara)
+													inner join engine_feature_campos efc ON (efc.idfeature = ef.id)
+													inner join engine_campos ec ON (ec.id = efc.idcampo)
+												where m.id = $idfeature  ";
+                 //echo ($sql);
+								 $this->con->executa($sql );
+
 
                 while ($this->con->navega(0)){
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
@@ -328,15 +338,65 @@ class Engine_Feature{
 
 	}
 	*/
+	function BuscarDadosList($idfeature, $idprocesso){
+		if ($idfeature > 0 ) $and[] = " m.id = $idfeature ";
+		if ($idprocesso > 0 ) $and[] = " ed.idprocesso = $idprocesso ";
 
+		$where = ((is_array($and))?  " WHERE ".implode(" and ",$and): null);
 
+		$sql = "select ed.idprocesso chave, ed.idfeaturecampo idcampo, ed.valor valor, ec.campo
+						from menus m
+							inner join eng_features ef ON (ef.id = m.irpara)
+							inner join eng_feature_campos_lista efcl ON (efcl.idfeature = ef.id )
+							inner join engine_campos ec ON (ec.id = efcl.idfeaturecampo)
+							LEFT JOIN engine_dados ed ON (ed.idfeaturecampo = ec.id)
+						$where";
+//						echo $sql;
+		$this->con->executa( $sql, 0, __LINE__  );
+		//echo "\n SQL GERADO";
+
+		while ($this->con->navega(0) ){
+
+					$array["FETCH"] [$this->con->dados["chave"]][$this->con->dados["idcampo"] ]   =   $this->con->dados["valor"] ;
+					$array["FETCH_CAMPO"] [$this->con->dados["idcampo"]]["valor"]   =   $this->con->dados["valor"] ;
+		   		$array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
+		}
+		return $array;
+	}
+
+	function BuscarDadosForm($idfeature, $idprocesso){
+
+		if ($idfeature > 0 ) $and[] = " m.id = $idfeature ";
+		if ($idprocesso > 0 ) $and[] = " ed.idprocesso = $idprocesso ";
+
+		$where = ((is_array($and))?  " WHERE ".implode(" and ",$and): null);
+
+		$sql = "select   ec.id idcampo,  ec.campo, ed.valor, ed.id iddado
+						from menus m
+							inner join eng_features ef ON (ef.id = m.irpara)
+							INNER JOIN engine_feature_campos efc ON (efc.idfeature = ef.id)
+							INNER JOIN engine_campos ec ON (ec.id = efc.idcampo)
+							LEFT JOIN engine_dados ed ON (ed.idfeaturecampo = ec.id )
+							$where";
+							//echo $sql;
+		$this->con->executa( $sql, 0, __LINE__  );
+		//echo "\n SQL GERADO";
+
+		while ($this->con->navega(0) ){
+
+			$array["FETCH_CAMPO"] [$this->con->dados["idcampo"]]["valor"]   =   $this->con->dados["valor"] ;
+			$array["FETCH_CAMPO"] [$this->con->dados["idcampo"]]["idworkflowdado"]   =   $this->con->dados["iddado"] ;
+		}
+		return $array;
+	}
 
 	function BuscarDadosdoFilhoePai($idfeature, $idprocesso=null)
 	{
 
-		$sql = "select *
-						FROM eng_features
-						WHERE id =$idfeature";
+		$sql = "Select *
+						from menus m
+							inner join eng_features ef ON (ef.id = m.irpara)
+						where m.id = $idfeature";
 
 		$this->con->executa( $sql, 0, __LINE__  ); $sql = null;
 		$this->con->navega(0);
@@ -346,61 +406,17 @@ class Engine_Feature{
 
 		switch ($lista){
 			case("L"):
-				if ($idfeature > 0 ) $and[] = " efcl.idfeature = $idfeature ";
-				if ($idprocesso > 0 ) $and[] = " ed.idprocesso = $idprocesso ";
-
-				$where = ((is_array($and))?  " WHERE ".implode(" and ",$and): null);
-
-				$sql = "select ed.idprocesso chave, ed.idfeaturecampo idcampo, ed.valor valor, efc.campo
-								FROM eng_feature_campos_lista efcl
-									INNER JOIN eng_feature_campo efc ON (efc.id = efcl.idfeaturecampo)
-									LEFT JOIN engine_dados ed ON (ed.idfeaturecampo = efc.id)
-								$where";
+				$array = $this->BuscarDadosList($idfeature, $idprocesso);
 			break;
 
 			case("F"):
-				if ($idfeature > 0 ) $and[] = " efc.idfeature = $idfeature ";
-				if ($idprocesso > 0 ) $and[] = " ed.idprocesso = $idprocesso ";
-
-				$where = ((is_array($and))?  " WHERE ".implode(" and ",$and): null);
-
-				$sql = "select ed.idprocesso chave, ed.idfeaturecampo idcampo, ed.valor valor, efc.campo
-								FROM eng_feature_campo efc
-									LEFT JOIN engine_dados ed ON (ed.idfeaturecampo = efc.id)
-								$where";
+				if ($idprocesso > 0 ){
+					$array = $this->BuscarDadosForm($idfeature, $idprocesso);
+				}
 			break;
 		}
-//echo $sql;
-		$this->con->executa( $sql, 0, __LINE__  );
-	//	echo "<PRE>".$sql."</pre>"; exit;
-		//echo "\n SQL GERADO";
-
-		while ($this->con->navega(0) ){
-
-					$array["FETCH"] [$this->con->dados["chave"]][$this->con->dados["idcampo"] ]   =   $this->con->dados["valor"] ;
-					$array["FETCH_CAMPO"] [$this->con->dados["idcampo"]]["valor"]   =   $this->con->dados["valor"] ;
-		   		$array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
-		}
 
 
-				/*
-				$filtros = json_decode( $jsonfiltros, true );
-			//  $filtros = json_decode($jsonfiltros);
-				if (is_array($filtros))
-				{
-
-					foreach ($filtros as $filtrando ){
-						if ($filtrando != -1 && $filtrando){
-							$fils[] = "'$filtrando'" ;
-						}
-					}
-					if (is_array($fils) )
-					{
-						$gowhere_filtro = implode(",", $fils);
-						if ($gowhere_filtro) $gowhere_filtro = " and w.valor IN (".$gowhere_filtro.")";
-					}
-				}
-				*/
 /*
 				$busca_so_dados_do_feature = "left";
 			  $busca_entidades = "wt.idprocesso = p.id";

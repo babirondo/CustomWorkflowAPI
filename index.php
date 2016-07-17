@@ -27,6 +27,11 @@ $app = new \Slim\Slim( array(
 \Slim\Slim::registerAutoloader();
 
 
+$app->get('/Engine/:idfeature', function ($idfeature) use ($app)  {
+	$SubMenus = new Menus();
+	$SubMenus->getMenu($app, $idfeature );
+}  );
+
 
 $app->post('/Engine/:idfeature/Lista', function ( $idfeature) use ($app)  {
   $Engine_Feature = new Engine_Feature(  );

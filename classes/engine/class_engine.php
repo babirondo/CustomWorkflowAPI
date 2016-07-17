@@ -6,31 +6,32 @@ set_time_limit(2);
 class Engine{
 	function __construct( ){
 
-            require_once("classes/globais.php");
+	  require_once("classes/globais.php");
 
-            require_once("classes/engine/class_engine_feature.php");
-            require_once("classes/class_campo.php");
-            require_once("classes/class_db.php");
-            require_once("classes/class_notificacoes.php");
-            //require_once("classes/class_auxiliar.php");
+	  require_once("classes/engine/class_engine_feature.php");
+	  require_once("classes/class_campo.php");
+	  require_once("classes/class_db.php");
+	  require_once("classes/class_notificacoes.php");
+	  //require_once("classes/class_auxiliar.php");
 
-            $this->con = new db();
-            $this->con->conecta();
+	  $this->con = new db();
+	  $this->con->conecta();
 
-            $this->feature = new Engine_Feature();
-            $this->campos = new Campos();
-            $this->notificacoes = new Notificacoes();
-            //$this->auxiliar = new Auxiliar();
-            $this->globais = new GLobais();
+	  $this->feature = new Engine_Feature();
+	  $this->campos = new Campos();
+	  $this->notificacoes = new Notificacoes();
+	  //$this->auxiliar = new Auxiliar();
+	  $this->globais = new GLobais();
 
-            $this->idfeature = null;
-            $this->idprocesso = null;
-            $this->debug = null;
+	  $this->idfeature = null;
+	  $this->idprocesso = null;
+	  $this->debug = null;
 
 
 
 	}
 
+/*
         function DesassociarRegistronofeature($jsonRAW, $idfeature){
             $json = json_decode( $jsonRAW, true );
             IF ($json == NULL) {
@@ -100,7 +101,7 @@ class Engine{
 
 
                     $sql = "INSERT INTO workflow_tramitacao (idprocesso, idworkflowfeature, inicio  $c1 )
-                            VALUES( /*2*/ $idprocesso, $idfeature, NOW()   $c2 )
+                            VALUES(   $idprocesso, $idfeature, NOW()   $c2 )
                             RETURNING id" ;
                     if (  $this->con->executa( $sql , 1 , __LINE__) === false )
                         $erro = 1;
@@ -192,6 +193,7 @@ class Engine{
 
 
 	}
+	*/
 
  	function Registrar($app , $jsonRAW, $idfeature){
             $json = json_decode( $jsonRAW, true );
@@ -217,7 +219,7 @@ class Engine{
 
 	}
 
-
+/*
         function AutoAssociarProcessonofeature($idprocesso, $avanca_processo , $app, $idtramitacao )
         {
 
@@ -255,7 +257,7 @@ class Engine{
 
             return $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor];
         }
-
+*/
 
         function ControlaCriacaoProcesso($json , $idfeature, $proximo_feature, $app)
         {
@@ -286,8 +288,8 @@ class Engine{
         {
 
 
-            $sql = "INSERT INTO  processos (id, idtipoprocesso, idpai, inicio, idworkflow )
-                    VALUES ( ".$json["processo"]["valor"]." ,/*aqui*/ 5   ,null, NOW() , null )
+            $sql = "INSERT INTO  processos ( idtipoprocesso, idpai, inicio, idworkflow )
+                    VALUES (   /*aqui*/ 5   ,null, NOW() , null )
 
                     RETURNING idtipoprocesso, id       ";
           //  echo "\n".$sql." \n";
@@ -314,15 +316,15 @@ class Engine{
             }
             else
             {
-								$sql =  "INSERT INTO engine_dados (idfeaturecampo, valor, idprocesso, registro, idfeature)
-                                        VALUES (/*4*/ '$campo','$valor[valor]', $idprocesso, NOW(), $idfeature)  " ;
+								$sql =  "INSERT INTO engine_dados (idfeaturecampo, valor, idprocesso, registro, idmenu)
+                                        VALUES ( '$campo','$valor[valor]', $idprocesso, NOW(), $idfeature)  " ;
                 if (!$this->con->executa( $sql , null, __LINE__ ))
                 $erro++;
             }
 						//echo "<br> $sql";
 
         }
-
+/*
 
         function HandoverSemDestino( $idtramitacao )
         {
@@ -437,7 +439,7 @@ class Engine{
 
 
 
-
+*/
 
         function SalvarnoBanco($json, $idfeature, $origem  , $app)
         {
@@ -454,4 +456,5 @@ class Engine{
 
 
         }
+
 }

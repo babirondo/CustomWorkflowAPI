@@ -37,11 +37,11 @@ class Menus{
 
 
 			while ($this->con->navega(0)){
-				$array["FETCH"][$this->con->dados["irpara"]]["menu"]  = $this->con->dados["menu"];
-				$array["FETCH"][$this->con->dados["irpara"]]["irpara"]  = $this->con->dados["irpara"];
-				$array["FETCH"][$this->con->dados["irpara"]]["tipodestino"]  = $this->con->dados["tipo_destino"];
-				$array["FETCH"][$this->con->dados["irpara"]]["lista"]  = $this->con->dados["lista"];
-				$array["FETCH"][$this->con->dados["irpara"]]["idmenu"]  = $this->con->dados["id"];
+				$array["FETCH"][$this->con->dados["id"]]["menu"]  = $this->con->dados["menu"];
+				$array["FETCH"][$this->con->dados["id"]]["irpara"]  = $this->con->dados["irpara"];
+				$array["FETCH"][$this->con->dados["id"]]["tipodestino"]  = $this->con->dados["tipo_destino"];
+				$array["FETCH"][$this->con->dados["id"]]["lista"]  = $this->con->dados["lista"];
+				$array["FETCH"][$this->con->dados["id"]]["idmenu"]  = $this->con->dados["id"];
 
 			}
 
@@ -53,6 +53,35 @@ class Menus{
 
 
 		}
+
+
+			function getMenu($app , $idfeature){
+
+				$sql = "Select ef.*, m.tipodestino, m.menu, m.irpara
+								from menus m
+									inner join eng_features ef ON (ef.id = m.irpara)
+								where m.id = $idfeature";
+				$this->con->executa( $sql , null, __LINE__);
+ 												//		 echo $sql;
+
+				while ($this->con->navega(0)){
+					$array["DADOS_FEATURE"]["menu"]  = $this->con->dados["menu"];
+					$array["DADOS_FEATURE"]["irpara"]  = $this->con->dados["irpara"];
+					$array["DADOS_FEATURE"]["tipodestino"]  = $this->con->dados["tipodestino"];
+					$array["DADOS_FEATURE"]["lista"]  = $this->con->dados["lista"];
+					$array["DADOS_FEATURE"]["idmenu"]  = $this->con->dados["id"];
+
+				}
+
+				$array["resultado"] = "SUCESSO";
+
+				$data =  	$array;
+
+				$app->render ('default.php',$data,200);
+
+
+			}
+
 
 	function getMenus($app ){
 
