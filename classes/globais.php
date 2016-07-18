@@ -52,6 +52,18 @@ class Globais{
             $this->SYS_ADD_CAMPOS["inicioprocesso"] = "p_inicio";
             $this->SYS_ADD_CAMPOS["atoresdoposto"] = "atoresdoposto";
 
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CODIGO] = "admin-criar-usuario";
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CAMPOS]["nome"] = "nome";
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CAMPOS]["email"] = "email";
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CAMPOS]["senha"] = "senha";
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CAMPOS]["login"] = "login";
+
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["ALTERAR"][CODIGO] = "admin-alterar-usuario";
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["ALTERAR"][CAMPOS]["nome"] = "nome";
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["ALTERAR"][CAMPOS]["email"] = "email";
+						$this->SYS_FEATURES_ADMIN["USUARIOS"]["ALTERAR"][CAMPOS]["senha"] = "senha";
+						//$this->SYS_FEATURES_ADMIN["USUARIOS"]["ALTERAR"][CAMPOS]["login"] = "login";
+
 
 
 	}

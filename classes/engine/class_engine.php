@@ -7,21 +7,23 @@ class Engine{
 	function __construct( ){
 
 	  require_once("classes/globais.php");
+		$this->globais = new GLobais();
 
 	  require_once("classes/engine/class_engine_feature.php");
 	  require_once("classes/class_campo.php");
 	  require_once("classes/class_db.php");
 	  require_once("classes/class_notificacoes.php");
 	  //require_once("classes/class_auxiliar.php");
+		require_once("classes/class_usuarios.php");
 
 	  $this->con = new db();
 	  $this->con->conecta();
 
 	  $this->feature = new Engine_Feature();
 	  $this->campos = new Campos();
-	  $this->notificacoes = new Notificacoes();
+		$this->notificacoes = new Notificacoes();
+		$this->usuarios = new Usuarios();
 	  //$this->auxiliar = new Auxiliar();
-	  $this->globais = new GLobais();
 
 	  $this->idfeature = null;
 	  $this->idprocesso = null;
@@ -209,13 +211,25 @@ class Engine{
             }
 
             $array = $this->SalvarnoBanco(  $json , $idfeature, "Salvando", $app); // indo array ?
+						if (!$array){
+							$array["resultado"] = "FALHOU";
+	            $array["DEBUG"] = $this->notificacoes->debug;
 
-            $array["resultado"] = "SUCESSO";
-            $array["DEBUG"] = $this->notificacoes->debug;
+	            $data =  	$array;
 
-            $data =  	$array;
+	            $app->render ('default.php',$data,500);
+						}
+						else{
+							$array=null;
+							$array["resultado"] = "SUCESSO";
+							$array["DEBUG"] = $this->notificacoes->debug;
 
-            $app->render ('default.php',$data,200);
+							$data =  	$array;
+
+							$app->render ('default.php',$data,200);
+
+						}
+
 
 	}
 
@@ -446,12 +460,91 @@ class Engine{
 
             $idprocesso = $this->ControlaCriacaoProcesso($json,$idfeature, $proximos_feature, $app);
 
+						//criar usuario, se os dados forem de admin > cadastro de usuarios
+						$sql = "SELECT tipodestino FROM menus WHERE id = $idfeature";
+						$this->con->executa( $sql, 0, __LINE__  );
+						$this->con->navega(0);
+						//echo "\n alterando....".$this->con->dados["tipodestino"];
+
+						switch ($this->con->dados["tipodestino"] )
+						{
+							case( $this->globais->SYS_FEATURES_ADMIN["USUARIOS"]["ALTERAR"][CODIGO] ):
+
+									$sql = "select ed.*, ec.administrativo
+													from engine_dados ed
+														inner join engine_campos ec ON (ec.id = ed.idfeaturecampo)
+													where idprocesso = $idprocesso";
+									$this->con->executa( $sql, 0, __LINE__  );
+
+									while ($this->con->navega(0) ){
+
+											$preenchido[ $this->con->dados["administrativo"] ] = $this->con->dados["valor"];
+									}
+									foreach ($this->globais->SYS_FEATURES_ADMIN["USUARIOS"]["ALTERAR"][CAMPOS] as $idx_tentativa => $tentativa)
+									{
+											if 	(empty($preenchido[ $idx_tentativa ]) ) {
+												$erro = 1;
+
+												//echo "\n erro de cmapo vazio - $idx_tentativa.."; var_dump($preenchido);
+
+												return false;
+											}
+									}
+									if (!$erro){
+										$preenchido[chave_primaria] = $idprocesso;
+
+										if ( $this->usuarios->AlterarUsuario( json_encode( $preenchido) ) ){
+												return true;
+										}
+										else{
+											return false;
+										}
+									}
+							break;
+
+
+							case( $this->globais->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CODIGO] ):
+
+									$sql = "select ed.*, ec.administrativo
+													from engine_dados ed
+														inner join engine_campos ec ON (ec.id = ed.idfeaturecampo)
+													where idprocesso = $idprocesso";
+									$this->con->executa( $sql, 0, __LINE__  );
+
+									while ($this->con->navega(0) ){
+
+											$preenchido[ $this->con->dados["administrativo"] ] = $this->con->dados["valor"];
+									}
+									foreach ($this->globais->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CAMPOS] as $idx_tentativa => $tentativa)
+									{
+											if 	(empty($preenchido[ $idx_tentativa ]) ) {
+												$erro = 1;
+
+												return false;
+											}
+									}
+									if (!$erro){
+										$preenchido[chave_primaria] = $idprocesso;
+
+										if ( $this->usuarios->CriarUsuario( json_encode( $preenchido) ) ){
+												return true;
+										}
+										else{
+											return false;
+										}
+									}
+							break;
+
+						}
 
             if (!$idprocesso) {
                   $RETORNO_function["ERRO"] = "Id Processo nulo";
 
                   return $RETORNO_function;
             }
+						else {
+							return true;
+						}
 
 
 
