@@ -14,6 +14,7 @@ require_Once("classes/engine/class_engine_feature.php");
 require_Once("classes/engine/class_menus.php");
 require_Once("classes/engine/class_engine.php");
 
+require_Once("classes/recrutamento/class_vagas.php");
 
 require 'vendor/autoload.php';
 // tentando commitar pro github
@@ -25,6 +26,18 @@ $app = new \Slim\Slim( array(
     'templates.path' => './templates'
 ) );
 \Slim\Slim::registerAutoloader();
+
+
+$app->post('/ListarCandidatos/', function (  ) use ($app)  {
+  $cVagas = new Vagas(  );
+	$cVagas->ListarCandidatosDaVaga($app,  $app->request->getBody());
+}  );
+
+
+$app->get('/Vaga/:idprocesso/Candidatos', function ( $idprocesso ) use ($app)  {
+  $cVagas= new Vagas(  );
+	$cVagas->CandidatosDaVaga($app, $idprocesso );
+}  );
 
 
 $app->get('/Engine/:idfeature', function ($idfeature) use ($app)  {
@@ -69,7 +82,7 @@ $app->post('/getSubMenus/:idmenu', function ($idmenu) use ($app)  {
 
 $app->post('/:idworkflow/getPostos/', function ( $idworkflow ) use ($app)  {
 	$Postos = new Postos(  );
-	$Postos->getPostos($app, $idworkflow , $app->request->getBody());
+	$Postos->getPostos($app, $idworkflow , $app->request->getBody() );
 }  );
 
 $app->get('/:idworkflow/:processo/getPosto/:idposto', function ( $idworkflow , $processo, $idposto ) use ($app)  {

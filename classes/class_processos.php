@@ -16,11 +16,8 @@ class Processos{
 
 	}
 
-
-  function Vida_Processo($app, $idprocesso)
-  {
-
-    $sql = "select proprio, filho, avo, bisavo, neto
+	function CarregarDadosdoProcesso($idprocesso){
+		$sql = "select proprio, filho, avo, bisavo, neto
             from arvore_processo
             where proprio =  $idprocesso  ";
     $this->con->executa( $sql);
@@ -56,7 +53,15 @@ class Processos{
     }
     $array = null;
 		*/
-    $array = $dados_processo;
+		return $dados_processo;
+	}
+
+
+  function Vida_Processo($app, $idprocesso)
+  {
+
+
+    $array = $this->CarregarDadosdoProcesso($idprocesso);
 
 
     $array["resultado"] = "SUCESSO";

@@ -56,14 +56,23 @@ class Campos{
 
 
             switch ($valor_default_campo){
-                case("{configuracoes.tecnologias}"):
+							case("{configuracoes.tecnologias}"):
 
-                    $this->con->executa( "select * from configuracoes.tecnologias");
-                    while ($this->con->navega(0)){
-                        $retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
-                    }
-                    return  $retorno;
-                break;
+									$this->con->executa( "select * from configuracoes.tecnologias");
+									while ($this->con->navega(0)){
+											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
+									}
+									return  $retorno;
+							break;
+
+							case("{public.atores}"):
+
+									$this->con->executa( "select * from public.atores " );
+									while ($this->con->navega(0)){
+											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["ator"] ;
+									}
+									return  $retorno;
+							break;
             }
 
 

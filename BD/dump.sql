@@ -636,24 +636,23 @@ ALTER SEQUENCE posto_acao_id_seq OWNED BY posto_acao.id;
 
 
 --
--- Name: postos_campo; Type: TABLE; Schema: public; Owner: postgres
+-- Name: workflow_campos; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE postos_campo (
+CREATE TABLE workflow_campos (
     id integer NOT NULL,
-    idposto integer,
     campo character varying,
-    obrigatorio integer,
     maxlenght integer,
     inputtype character varying,
     txtarea_cols integer,
     txtarea_rows integer,
     dica_preenchimento character varying,
-    valor_default character varying
+    valor_default character varying,
+    administrativo character varying
 );
 
 
-ALTER TABLE postos_campo OWNER TO postgres;
+ALTER TABLE workflow_campos OWNER TO postgres;
 
 --
 -- Name: postos_campo_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -673,7 +672,7 @@ ALTER TABLE postos_campo_id_seq OWNER TO postgres;
 -- Name: postos_campo_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE postos_campo_id_seq OWNED BY postos_campo.id;
+ALTER SEQUENCE postos_campo_id_seq OWNED BY workflow_campos.id;
 
 
 --
@@ -1003,6 +1002,41 @@ ALTER SEQUENCE workflow_id_seq OWNED BY workflow.id;
 
 
 --
+-- Name: workflow_posto_campos; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE workflow_posto_campos (
+    id integer NOT NULL,
+    idposto integer,
+    idcampo integer,
+    obrigatorio integer
+);
+
+
+ALTER TABLE workflow_posto_campos OWNER TO postgres;
+
+--
+-- Name: workflow_posto_campos_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE workflow_posto_campos_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE workflow_posto_campos_id_seq OWNER TO postgres;
+
+--
+-- Name: workflow_posto_campos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE workflow_posto_campos_id_seq OWNED BY workflow_posto_campos.id;
+
+
+--
 -- Name: workflow_postos; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -1198,13 +1232,6 @@ ALTER TABLE ONLY posto_acao ALTER COLUMN id SET DEFAULT nextval('posto_acao_id_s
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY postos_campo ALTER COLUMN id SET DEFAULT nextval('postos_campo_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
---
-
 ALTER TABLE ONLY postos_campo_lista ALTER COLUMN id SET DEFAULT nextval('postos_campo_lista_id_seq'::regclass);
 
 
@@ -1261,7 +1288,21 @@ ALTER TABLE ONLY workflow ALTER COLUMN id SET DEFAULT nextval('workflow_id_seq':
 -- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
+ALTER TABLE ONLY workflow_campos ALTER COLUMN id SET DEFAULT nextval('postos_campo_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
 ALTER TABLE ONLY workflow_dados ALTER COLUMN id SET DEFAULT nextval('workflow_dados_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY workflow_posto_campos ALTER COLUMN id SET DEFAULT nextval('workflow_posto_campos_id_seq'::regclass);
 
 
 --
@@ -1339,7 +1380,7 @@ SELECT pg_catalog.setval('atores_id_seq', 85, true);
 -- Name: eng_feature_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('eng_feature_campo_id_seq', 113, true);
+SELECT pg_catalog.setval('eng_feature_campo_id_seq', 114, true);
 
 
 --
@@ -1402,6 +1443,7 @@ SELECT pg_catalog.setval('engine_acao_id_seq', 2, true);
 --
 
 COPY engine_campos (id, campo, maxlenght, inputtype, txtarea_cols, txtarea_rows, dica_preenchimento, valor_default, administrativo) FROM stdin;
+114	Tipo de Usuário	\N	list	\N	\N	\N	{public.atores}	tipousuario
 3	Java	\N	text	\N	\N	\N	\N	\N
 99	Perl	\N	text	\N	\N	\N	\N	\N
 5	Python	\N	text	\N	\N	\N	\N	\N
@@ -1723,6 +1765,41 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idmenu) FROM
 669	1	nomee	126	2016-07-18 00:57:00.74957	8
 668	2	email	126	2016-07-18 00:57:00.749154	8
 667	112	teste123	126	2016-07-18 00:57:00.748729	8
+670	113	l	127	2016-07-18 23:39:24.95402	8
+671	112	l	127	2016-07-18 23:39:24.991525	8
+672	2	l	127	2016-07-18 23:39:24.992039	8
+673	1	l	127	2016-07-18 23:39:24.992537	8
+674	114	2	127	2016-07-18 23:39:24.99297	8
+675	113	l	128	2016-07-18 23:46:47.863732	8
+676	112	l	128	2016-07-18 23:46:47.864563	8
+677	2	l	128	2016-07-18 23:46:47.865018	8
+678	1	l	128	2016-07-18 23:46:47.865421	8
+679	114	2	128	2016-07-18 23:46:47.865829	8
+680	113	m	129	2016-07-18 23:47:10.129375	8
+681	112	kn	129	2016-07-18 23:47:10.130083	8
+682	2	dsa	129	2016-07-18 23:47:10.130487	8
+683	1	3	129	2016-07-18 23:47:10.1309	8
+684	114	3,5,85	129	2016-07-18 23:47:10.131323	8
+685	113	m	130	2016-07-18 23:47:15.233016	8
+686	112	kn	130	2016-07-18 23:47:15.23353	8
+687	2	dsa	130	2016-07-18 23:47:15.233955	8
+688	1	3	130	2016-07-18 23:47:15.234322	8
+689	114	3,5,85	130	2016-07-18 23:47:15.234693	8
+690	113	m	131	2016-07-18 23:50:46.629743	8
+691	112	kn	131	2016-07-18 23:50:46.630479	8
+692	2	dsa	131	2016-07-18 23:50:46.630977	8
+693	1	3	131	2016-07-18 23:50:46.631437	8
+694	114	3,5,85	131	2016-07-18 23:50:46.631866	8
+695	113	m	132	2016-07-18 23:54:23.273748	8
+696	112	kn	132	2016-07-18 23:54:23.274466	8
+697	2	dsa	132	2016-07-18 23:54:23.274887	8
+698	1	3	132	2016-07-18 23:54:23.275286	8
+699	114	3,5,85	132	2016-07-18 23:54:23.275655	8
+700	113	comator	133	2016-07-18 23:55:22.660921	8
+701	112	comator	133	2016-07-18 23:55:22.661457	8
+702	2	comator	133	2016-07-18 23:55:22.661842	8
+703	1	comator	133	2016-07-18 23:55:22.662196	8
+704	114	2	133	2016-07-18 23:55:22.662568	8
 \.
 
 
@@ -1730,7 +1807,7 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idmenu) FROM
 -- Name: engine_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('engine_dados_id_seq', 669, true);
+SELECT pg_catalog.setval('engine_dados_id_seq', 704, true);
 
 
 --
@@ -1802,6 +1879,7 @@ COPY engine_feature_campos (id, idcampo, idfeature, obrigatorio) FROM stdin;
 54	4	9	\N
 63	112	5	1
 64	113	5	1
+69	114	5	1
 \.
 
 
@@ -1809,7 +1887,7 @@ COPY engine_feature_campos (id, idcampo, idfeature, obrigatorio) FROM stdin;
 -- Name: engine_feature_campos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('engine_feature_campos_id_seq', 68, true);
+SELECT pg_catalog.setval('engine_feature_campos_id_seq', 69, true);
 
 
 --
@@ -1906,6 +1984,8 @@ SELECT pg_catalog.setval('filtros_postos_id_seq', 68, true);
 
 COPY funcoes_posto (id, idposto, funcao, goto) FROM stdin;
 1	2	Criar nova Vaga	1
+2	298	Novo Candidato	301
+3	303	Incluir nova vaga	304
 \.
 
 
@@ -1913,7 +1993,7 @@ COPY funcoes_posto (id, idposto, funcao, goto) FROM stdin;
 -- Name: funcoes_posto_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('funcoes_posto_id_seq', 1, true);
+SELECT pg_catalog.setval('funcoes_posto_id_seq', 3, true);
 
 
 --
@@ -1922,13 +2002,14 @@ SELECT pg_catalog.setval('funcoes_posto_id_seq', 1, true);
 
 COPY menus (id, menu, irpara, idpai, arquivo, tipodestino) FROM stdin;
 6	Admin	\N	\N	\N	unico
-1	Recrutamento e Seleção	1	\N	\N	workflow
 7	Usuários	3	6	\N	unico
 11	Meu Perfil	7	\N	\N	unico
 13	Minhas Skills	9	11	\N	unico
 8	Incluir novo Usuário	5	7	\N	admin-criar-usuario
 12	Meus Dados	8	11	\N	admin-alterar-usuario
 10	Editar usuário	6	7	\N	admin-alterar-usuario
+14	Candidatos	27	\N	\N	workflow
+17	Vagas	28	\N	\N	workflow
 \.
 
 
@@ -1936,7 +2017,7 @@ COPY menus (id, menu, irpara, idpai, arquivo, tipodestino) FROM stdin;
 -- Name: menus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('menus_id_seq', 13, true);
+SELECT pg_catalog.setval('menus_id_seq', 17, true);
 
 
 --
@@ -1996,6 +2077,8 @@ COPY posto_acao (id, idposto, acao, goto) FROM stdin;
 2	2	Lançar Candidato de Consultoria	273
 319	2	Encerrar Vaga	292
 318	2	Enviar para	294
+320	298	Solicitar análise	302
+321	303	Candidatos	305
 \.
 
 
@@ -2003,56 +2086,14 @@ COPY posto_acao (id, idposto, acao, goto) FROM stdin;
 -- Name: posto_acao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('posto_acao_id_seq', 319, true);
-
-
---
--- Data for Name: postos_campo; Type: TABLE DATA; Schema: public; Owner: postgres
---
-
-COPY postos_campo (id, idposto, campo, obrigatorio, maxlenght, inputtype, txtarea_cols, txtarea_rows, dica_preenchimento, valor_default) FROM stdin;
-11	273	nome	1	50	text	\N	\N	\N	\N
-13	1	tipovaga	1	30	text	\N	\N	\N	\N
-4	274	senioridade	\N	\N	\N	\N	\N	\N	\N
-163	278	Valor/Hora	\N	\N	\N	\N	\N	\N	\N
-164	278	Data de Inicio	\N	\N	\N	\N	\N	\N	\N
-5	275	Gestor Interessado	\N	\N	\N	\N	\N	\N	\N
-171	284	tst	\N	\N	\N	\N	\N	\N	\N
-177	279	Email	\N	\N	\N	\N	\N	\N	\N
-8	8	dados da negociacao	1	\N	textarea	90	10	\N	\N
-9	279	checklist executado ?	1	\N	textarea	90	10	\N	\N
-10	274	Parecer da Classificação dos Devs	1	\N	textarea	90	10	\N	\N
-6	276	Parecer do Gestor em Entrevista Presencial	1	\N	textarea	90	10	\N	\N
-7	277	Pos Entrevista, parecer decisorio	1	\N	textarea	90	10	\N	\N
-167	281	Motivo da ReprovacÃo	1	\N	textarea	90	10	\N	\N
-168	282	Motivo da ReprovacÃo	1	\N	textarea	90	10	\N	\N
-169	283	Motivo do Declinio	1	\N	textarea	90	10	\N	\N
-170	285	Justificativa da reativacão do Processo	1	\N	textarea	90	10	\N	\N
-172	286	Motivo do Arquivamento	1	\N	textarea	90	10	\N	\N
-174	1	Enunciado e Regras do Teste Técnico	1	\N	textarea	90	10	\N	\N
-1	1	job description	1	\N	textarea	90	10	\N	\N
-179	287	Parecer da Classificação dos Devs	1	\N	textarea	90	10	\N	\N
-180	288	senioridade	\N	\N	\N	\N	\N	\N	\N
-181	288	Parecer da Classificação dos Devs	1	\N	textarea	90	10	\N	\N
-3	273	cv	\N	\N	file	\N	\N	\N	\N
-183	292	Motivo do Encerramento da Vaga	1	\N	textarea	90	10	\N	\N
-184	294	Novos Destinatários	\N	\N	textarea	90	2	Separar os emails por ",". Exemplo: usuario@email.com, usuario2@email.com	\N
-186	1	Destinatários	1	\N	textarea	90	2	Separar os emails por ",". Exemplo: usuario@email.com, usuario2@email.com	consultoria1@email.com, consultoria2@eail.com
-182	273	Tecnologias que domina	1	\N	list	\N	\N	\N	{configuracoes.tecnologias}
-2	273	github	1	\N	\N	\N	\N	\N	\N
-166	273	Consultoria	1	\N	\N	\N	\N	\N	\N
-12	273	Tecnologia que o candidato fez o teste	1	\N	list	\N	\N	\N	{configuracoes.tecnologias}
-188	1	Gestor Demandante	1	\N	text	\N	\N	\N	\N
-187	1	Skills Técnicas mandatórias	1	\N	list	\N	\N	\N	{configuracoes.tecnologias}
-189	1	Proposta inicial de produto-destino	1	\N	text	\N	\N	\N	\N
-\.
+SELECT pg_catalog.setval('posto_acao_id_seq', 321, true);
 
 
 --
 -- Name: postos_campo_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('postos_campo_id_seq', 194, true);
+SELECT pg_catalog.setval('postos_campo_id_seq', 204, true);
 
 
 --
@@ -2060,80 +2101,13 @@ SELECT pg_catalog.setval('postos_campo_id_seq', 194, true);
 --
 
 COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_valor) FROM stdin;
-1	2	13	\N	\N
-2	2	1	\N	\N
-3	3	11	\N	\N
-4	3	12	\N	\N
-5	3	13	\N	\N
-6	4	4	\N	\N
-9	4	11	\N	\N
-11	4	13	\N	\N
-12	5	4	\N	\N
-13	5	10	\N	\N
-15	5	11	\N	\N
-16	5	12	\N	\N
-17	5	13	\N	\N
-18	5	5	\N	\N
-19	6	4	\N	\N
-20	6	10	\N	\N
-21	6	5	\N	\N
-22	6	11	\N	\N
-23	6	12	\N	\N
-24	6	13	\N	\N
-25	6	6	\N	\N
-26	8	4	\N	\N
-27	8	10	\N	\N
-28	8	5	\N	\N
-29	8	11	\N	\N
-30	8	12	\N	\N
-31	8	13	\N	\N
-32	8	7	\N	\N
-33	8	6	\N	\N
-42	7	4	\N	\N
-45	7	11	\N	\N
-46	7	12	\N	\N
-47	7	13	\N	\N
-50	7	163	\N	\N
-51	7	164	\N	\N
-52	280	1	\N	\N
-53	280	13	\N	\N
-54	280	11	\N	\N
-55	280	12	\N	\N
-56	280	4	\N	\N
-57	280	\N	Status do Processo	p_status
-59	280	\N	Inicio do Processo	p_inicio
-58	280	\N	No Posto desde	wt_inicio
-60	4	\N	No Posto desde	wt_inicio
-61	2	\N	No Posto desde	wt_inicio
-62	3	\N	No Posto desde	wt_inicio
-63	5	\N	No Posto desde	wt_inicio
-64	6	\N	No Posto desde	wt_inicio
-65	7	\N	No Posto desde	wt_inicio
-66	8	\N	No Posto desde	wt_inicio
-67	3	166	\N	\N
-68	4	166	\N	\N
-69	5	166	\N	\N
-70	6	166	\N	\N
-71	7	166	\N	\N
-72	8	166	\N	\N
-73	280	166	\N	\N
-74	280	177	\N	\N
-75	287	11	\N	\N
-76	287	12	\N	\N
-77	287	13	\N	\N
-78	287	\N	No Posto desde	wt_inicio
-79	287	166	\N	\N
-80	4	182	\N	\N
-81	4	180	\N	\N
-82	290	13	\N	\N
-83	290	174	\N	\N
-84	290	1	\N	\N
-85	2	187	\N	\N
-86	2	188	\N	\N
-87	2	189	\N	\N
-88	4	187	\N	\N
-89	5	181	\N	\N
-90	4	12	\N	\N
+95	298	202	\N	\N
+96	298	203	\N	\N
+97	303	203	\N	\N
+98	303	204	\N	\N
+99	305	202	\N	\N
+100	305	203	\N	\N
+101	305	204	\N	\N
 \.
 
 
@@ -2141,7 +2115,7 @@ COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_val
 -- Name: postos_campo_lista_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('postos_campo_lista_id_seq', 90, true);
+SELECT pg_catalog.setval('postos_campo_lista_id_seq', 101, true);
 
 
 --
@@ -2149,130 +2123,13 @@ SELECT pg_catalog.setval('postos_campo_lista_id_seq', 90, true);
 --
 
 COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_finalizacao) FROM stdin;
-101	\N	5	2016-07-18 00:22:56.673345	\N	\N	\N
-23	\N	1	2016-07-12 00:19:08.482449	1	Em Andamento	\N
-24	23	2	2016-07-12 00:19:31.054562	1	\N	\N
-25	24	3	2016-07-12 00:19:31.058472	1	Em Andamento	\N
-26	24	3	2016-07-12 00:19:31.10874	1	Em Andamento	\N
-28	\N	5	2016-07-12 02:02:45.219594	\N	\N	\N
-29	\N	5	2016-07-12 02:03:26.148287	\N	\N	\N
-30	\N	5	2016-07-12 02:03:51.423166	\N	\N	\N
-31	\N	5	2016-07-12 02:04:44.418481	\N	\N	\N
-32	\N	5	2016-07-12 02:05:05.910205	\N	\N	\N
-4	\N	5	2016-07-12 02:11:26.693317	\N	\N	\N
-102	\N	5	2016-07-18 00:26:35.60839	\N	\N	\N
-33	\N	1	2016-07-12 19:16:10.809356	1	Em Andamento	\N
-34	33	2	2016-07-12 19:16:23.860706	1	\N	\N
-35	34	3	2016-07-12 19:16:23.863679	1	Em Andamento	\N
-36	34	3	2016-07-12 19:16:23.943816	1	Em Andamento	\N
-4	\N	5	2016-07-13 00:08:26.469514	\N	\N	\N
-4	\N	5	2016-07-13 00:09:18.402534	\N	\N	\N
-4	\N	5	2016-07-13 00:10:24.825896	\N	\N	\N
-4	\N	5	2016-07-13 00:12:28.474318	\N	\N	\N
-4	\N	5	2016-07-13 00:28:39.17105	\N	\N	\N
-4	\N	5	2016-07-13 01:00:48.289299	\N	\N	\N
-4	\N	5	2016-07-13 01:01:15.287191	\N	\N	\N
-4	\N	5	2016-07-13 01:09:43.502853	\N	\N	\N
-4	\N	5	2016-07-13 01:09:48.565782	\N	\N	\N
-4	\N	5	2016-07-13 01:10:07.967062	\N	\N	\N
-4	\N	5	2016-07-13 01:10:53.323446	\N	\N	\N
-4	\N	5	2016-07-13 01:10:58.048175	\N	\N	\N
-37	33	2	2016-07-13 02:12:42.146279	1	\N	\N
-38	37	3	2016-07-13 02:12:42.164114	1	Em Andamento	\N
-39	37	3	2016-07-13 02:12:42.28024	1	Em Andamento	\N
-40	33	2	2016-07-13 02:13:07.090329	1	\N	\N
-41	40	3	2016-07-13 02:13:07.104399	1	Em Andamento	\N
-42	40	3	2016-07-13 02:13:07.920617	1	Em Andamento	\N
-43	33	2	2016-07-13 02:13:36.726364	1	\N	\N
-44	43	3	2016-07-13 02:13:36.729876	1	Em Andamento	\N
-45	43	3	2016-07-13 02:13:36.803985	1	Em Andamento	\N
-46	33	2	2016-07-13 02:15:16.771813	1	\N	\N
-47	46	3	2016-07-13 02:15:16.775161	1	Em Andamento	\N
-48	46	3	2016-07-13 02:15:16.840831	1	Em Andamento	\N
-49	33	2	2016-07-13 02:15:23.305506	1	\N	\N
-50	49	3	2016-07-13 02:15:23.326618	1	Em Andamento	\N
-51	49	3	2016-07-13 02:15:23.423133	1	Em Andamento	\N
-52	33	2	2016-07-13 02:21:20.720498	1	\N	\N
-53	52	3	2016-07-13 02:21:20.742899	1	\N	\N
-54	33	2	2016-07-13 02:23:51.704812	1	\N	\N
-55	54	3	2016-07-13 02:23:51.708247	1	Em Andamento	\N
-56	54	3	2016-07-13 02:23:51.773372	1	Em Andamento	\N
-57	33	2	2016-07-13 02:27:28.912196	1	\N	\N
-58	57	3	2016-07-13 02:27:28.915737	1	Em Andamento	\N
-59	57	3	2016-07-13 02:27:29.019691	1	Em Andamento	\N
-60	33	2	2016-07-13 02:29:10.110623	1	\N	\N
-61	60	3	2016-07-13 02:29:10.113769	1	Em Andamento	\N
-62	60	3	2016-07-13 02:29:10.265586	1	Em Andamento	\N
-63	33	2	2016-07-13 02:31:15.989568	1	\N	\N
-64	63	3	2016-07-13 02:31:15.992727	1	Em Andamento	\N
-65	63	3	2016-07-13 02:31:16.120644	1	Em Andamento	\N
-66	33	2	2016-07-13 02:31:32.380438	1	\N	\N
-67	66	3	2016-07-13 02:31:32.383816	1	Em Andamento	\N
-68	66	3	2016-07-13 02:31:32.453121	1	Em Andamento	\N
-69	33	2	2016-07-13 02:31:50.188129	1	\N	\N
-70	69	3	2016-07-13 02:31:50.191509	1	Em Andamento	\N
-71	69	3	2016-07-13 02:31:50.31362	1	Em Andamento	\N
-103	\N	5	2016-07-18 00:26:46.601507	\N	\N	\N
-72	\N	1	2016-07-16 16:08:49.428817	1	Em Andamento	\N
-4	\N	5	2016-07-16 23:07:40.973811	\N	\N	\N
-4	\N	5	2016-07-16 23:07:48.101753	\N	\N	\N
-4	\N	5	2016-07-16 23:09:40.561279	\N	\N	\N
-4	\N	5	2016-07-16 23:10:30.6615	\N	\N	\N
-4	\N	5	2016-07-17 01:18:31.293941	\N	\N	\N
-4	\N	5	2016-07-17 01:20:04.489751	\N	\N	\N
-4	\N	5	2016-07-17 01:20:48.241949	\N	\N	\N
-4	\N	5	2016-07-17 01:21:16.967627	\N	\N	\N
-73	\N	5	2016-07-17 01:22:43.939556	\N	\N	\N
-74	\N	5	2016-07-17 01:23:08.165276	\N	\N	\N
-75	\N	5	2016-07-17 01:33:05.176631	\N	\N	\N
-76	\N	5	2016-07-17 01:34:31.705199	\N	\N	\N
-77	\N	5	2016-07-17 01:36:47.974946	\N	\N	\N
-78	\N	5	2016-07-17 01:49:37.888505	\N	\N	\N
-79	\N	5	2016-07-17 23:29:01.67399	\N	\N	\N
-80	\N	5	2016-07-17 23:34:08.561388	\N	\N	\N
-81	\N	5	2016-07-17 23:47:33.13561	\N	\N	\N
-82	\N	5	2016-07-17 23:47:45.168501	\N	\N	\N
-83	\N	5	2016-07-17 23:48:02.428245	\N	\N	\N
-84	\N	5	2016-07-18 00:09:09.940847	\N	\N	\N
-85	\N	5	2016-07-18 00:10:01.222265	\N	\N	\N
-86	\N	5	2016-07-18 00:10:23.088115	\N	\N	\N
-87	\N	5	2016-07-18 00:10:30.343324	\N	\N	\N
-88	\N	5	2016-07-18 00:13:31.959414	\N	\N	\N
-89	\N	5	2016-07-18 00:13:38.90031	\N	\N	\N
-90	\N	5	2016-07-18 00:14:15.204431	\N	\N	\N
-91	\N	5	2016-07-18 00:14:37.026686	\N	\N	\N
-92	\N	5	2016-07-18 00:14:42.331036	\N	\N	\N
-93	\N	5	2016-07-18 00:15:08.277326	\N	\N	\N
-94	\N	5	2016-07-18 00:16:16.482212	\N	\N	\N
-95	\N	5	2016-07-18 00:20:44.96324	\N	\N	\N
-96	\N	5	2016-07-18 00:20:52.045012	\N	\N	\N
-97	\N	5	2016-07-18 00:22:11.968849	\N	\N	\N
-98	\N	5	2016-07-18 00:22:15.995998	\N	\N	\N
-99	\N	5	2016-07-18 00:22:33.115742	\N	\N	\N
-100	\N	5	2016-07-18 00:22:34.326669	\N	\N	\N
-104	\N	5	2016-07-18 00:28:01.798197	\N	\N	\N
-105	\N	5	2016-07-18 00:34:07.074153	\N	\N	\N
-106	\N	5	2016-07-18 00:34:38.557995	\N	\N	\N
-107	\N	5	2016-07-18 00:34:45.974402	\N	\N	\N
-108	\N	5	2016-07-18 00:34:55.21194	\N	\N	\N
-109	\N	5	2016-07-18 00:35:14.336033	\N	\N	\N
-110	\N	5	2016-07-18 00:35:59.903148	\N	\N	\N
-111	\N	5	2016-07-18 00:36:21.527186	\N	\N	\N
-112	\N	5	2016-07-18 00:36:22.150404	\N	\N	\N
-113	\N	5	2016-07-18 00:36:23.190832	\N	\N	\N
-114	\N	5	2016-07-18 00:36:42.700029	\N	\N	\N
-115	\N	5	2016-07-18 00:36:53.532582	\N	\N	\N
-116	\N	5	2016-07-18 00:37:29.151323	\N	\N	\N
-117	\N	5	2016-07-18 00:39:11.070753	\N	\N	\N
-118	\N	5	2016-07-18 00:39:40.057946	\N	\N	\N
-119	\N	5	2016-07-18 00:40:07.184436	\N	\N	\N
-120	\N	5	2016-07-18 00:40:40.838655	\N	\N	\N
-121	\N	5	2016-07-18 00:40:43.919918	\N	\N	\N
-122	\N	5	2016-07-18 00:40:45.416895	\N	\N	\N
-123	\N	5	2016-07-18 00:41:32.238871	\N	\N	\N
-124	\N	5	2016-07-18 00:41:35.264653	\N	\N	\N
-125	\N	5	2016-07-18 00:41:36.571914	\N	\N	\N
-126	\N	5	2016-07-18 00:57:00.746538	\N	\N	\N
+209	\N	2	2016-07-21 00:38:28.740803	27	Em Andamento	\N
+210	\N	2	2016-07-21 00:57:14.379942	27	Em Andamento	\N
+211	\N	2	2016-07-21 00:57:22.668577	27	Em Andamento	\N
+212	\N	1	2016-07-21 00:59:29.629633	28	Em Andamento	\N
+213	\N	1	2016-07-21 00:59:36.04331	28	Em Andamento	\N
+214	\N	1	2016-07-21 02:43:57.343665	28	Em Andamento	\N
+215	\N	2	2016-07-21 02:44:15.540882	27	Em Andamento	\N
 \.
 
 
@@ -2312,6 +2169,10 @@ COPY relacionamento_postos (id, avanca_processo, idposto_atual) FROM stdin;
 23	287	273
 25	293	292
 26	295	294
+29	298	301
+30	300	302
+31	299	302
+32	303	304
 \.
 
 
@@ -2319,7 +2180,7 @@ COPY relacionamento_postos (id, avanca_processo, idposto_atual) FROM stdin;
 -- Name: relacionamento_postos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('relacionamento_postos_id_seq', 26, true);
+SELECT pg_catalog.setval('relacionamento_postos_id_seq', 32, true);
 
 
 --
@@ -2596,6 +2457,89 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 37781	47	2016-07-17 23:27:55.452259	2923
 37782	47	2016-07-17 23:27:55.50492	2900
 37783	47	2016-07-17 23:27:55.546409	2904
+37784	42	2016-07-18 23:29:55.206568	2908
+37785	42	2016-07-18 23:29:55.681115	2904
+37786	42	2016-07-18 23:29:55.721656	2912
+37787	42	2016-07-18 23:29:55.766886	2900
+37788	42	2016-07-18 23:29:55.8038	2902
+37789	42	2016-07-18 23:29:55.848705	2917
+37790	42	2016-07-18 23:29:55.893772	2923
+37791	42	2016-07-18 23:29:55.968753	2896
+37792	42	2016-07-18 23:29:56.038264	2906
+37793	42	2016-07-18 23:29:56.126866	2915
+37794	42	2016-07-18 23:29:56.230221	2910
+37795	42	2016-07-18 23:29:56.350489	2913
+37796	42	2016-07-18 23:29:56.43062	2919
+37797	43	2016-07-18 23:29:56.485937	2905
+37798	43	2016-07-18 23:29:56.576264	2911
+37799	43	2016-07-18 23:29:56.616963	2918
+37800	43	2016-07-18 23:29:56.652344	2907
+37801	43	2016-07-18 23:29:56.689231	2909
+37802	43	2016-07-18 23:29:56.719858	2924
+37803	43	2016-07-18 23:29:56.763996	2914
+37804	43	2016-07-18 23:29:56.805789	2897
+37805	43	2016-07-18 23:29:56.84089	2903
+37806	43	2016-07-18 23:29:56.880016	2922
+37807	43	2016-07-18 23:29:56.911796	2920
+37808	43	2016-07-18 23:29:56.94851	2916
+37809	43	2016-07-18 23:29:56.985793	2901
+37810	48	2016-07-18 23:29:57.030496	2910
+37811	48	2016-07-18 23:29:57.064499	2896
+37812	48	2016-07-18 23:29:57.105773	2908
+37813	48	2016-07-18 23:29:57.139377	2902
+37814	48	2016-07-18 23:29:57.189849	2919
+37815	48	2016-07-18 23:29:57.26016	2917
+37816	48	2016-07-18 23:29:57.313884	2912
+37817	48	2016-07-18 23:29:57.349076	2913
+37818	48	2016-07-18 23:29:57.392931	2906
+37819	48	2016-07-18 23:29:57.43554	2915
+37820	48	2016-07-18 23:29:57.470937	2921
+37821	48	2016-07-18 23:29:57.514812	2923
+37822	48	2016-07-18 23:29:57.547228	2900
+37823	48	2016-07-18 23:29:57.583987	2904
+37824	47	2016-07-18 23:29:57.620839	2910
+37825	47	2016-07-18 23:29:57.704183	2896
+37826	47	2016-07-18 23:29:57.739257	2908
+37827	47	2016-07-18 23:29:57.784181	2902
+37828	47	2016-07-18 23:29:57.827976	2919
+37829	47	2016-07-18 23:29:57.866344	2917
+37830	47	2016-07-18 23:29:57.913981	2912
+37831	47	2016-07-18 23:29:57.948852	2913
+37832	47	2016-07-18 23:29:58.002233	2906
+37833	47	2016-07-18 23:29:58.041177	2915
+37834	47	2016-07-18 23:29:58.080151	2921
+37835	47	2016-07-18 23:29:58.110926	2923
+37836	47	2016-07-18 23:29:58.14543	2900
+37837	47	2016-07-18 23:29:58.188987	2904
+37838	40	2016-07-20 23:16:54.130943	191
+37839	48	2016-07-20 23:16:58.319763	2910
+37840	48	2016-07-20 23:16:58.531314	2896
+37841	48	2016-07-20 23:16:58.732735	2908
+37842	48	2016-07-20 23:16:58.942535	2902
+37843	48	2016-07-20 23:16:59.090002	2919
+37844	48	2016-07-20 23:16:59.687307	2917
+37845	48	2016-07-20 23:16:59.846153	2912
+37846	48	2016-07-20 23:16:59.971141	2913
+37847	48	2016-07-20 23:17:00.209241	2906
+37848	48	2016-07-20 23:17:00.415479	2915
+37849	48	2016-07-20 23:17:00.634645	2921
+37850	48	2016-07-20 23:17:00.746586	2923
+37851	48	2016-07-20 23:17:00.876411	2900
+37852	48	2016-07-20 23:17:01.110394	2904
+37853	47	2016-07-20 23:17:01.332985	2910
+37854	47	2016-07-20 23:17:01.47179	2896
+37855	47	2016-07-20 23:17:01.547805	2908
+37856	47	2016-07-20 23:17:01.71746	2902
+37857	47	2016-07-20 23:17:01.870932	2919
+37858	47	2016-07-20 23:17:01.993113	2917
+37859	47	2016-07-20 23:17:02.114745	2912
+37860	47	2016-07-20 23:17:02.261408	2913
+37861	47	2016-07-20 23:17:02.384884	2906
+37862	47	2016-07-20 23:17:02.570243	2915
+37863	47	2016-07-20 23:17:02.8316	2921
+37864	47	2016-07-20 23:17:02.940266	2923
+37865	47	2016-07-20 23:17:03.338253	2900
+37866	47	2016-07-20 23:17:03.461327	2904
 \.
 
 
@@ -2603,7 +2547,7 @@ COPY sla_notificacoes (id, idsla, datanotificacao, chave) FROM stdin;
 -- Name: sla_notificacoes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37783, true);
+SELECT pg_catalog.setval('sla_notificacoes_id_seq', 37866, true);
 
 
 --
@@ -2614,8 +2558,8 @@ COPY tipos_processo (id, tipo, id_pai, regra_finalizacao, regra_handover, avanca
 3	Avaliação	2	\N	ANYTIME	\N
 1	Vaga	\N	\N	ANYTIME	\N
 4	Prospecção	1	\N	ANYTIME	\N
-2	Candidato	1	\N	TODOS_FILHOS_FECHADOS	4
 5	Usuário	\N	\N	ANYTIME	\N
+2	Candidato	\N	\N	TODOS_FILHOS_FECHADOS	\N
 \.
 
 
@@ -2643,6 +2587,10 @@ COPY usuario_atores (id, idusuario, idator) FROM stdin;
 102	22	5
 103	22	2
 104	22	3
+105	132	3
+106	132	5
+107	132	85
+108	133	2
 \.
 
 
@@ -2650,7 +2598,7 @@ COPY usuario_atores (id, idusuario, idator) FROM stdin;
 -- Name: usuario_atores_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuario_atores_id_seq', 104, true);
+SELECT pg_catalog.setval('usuario_atores_id_seq', 108, true);
 
 
 --
@@ -2674,6 +2622,10 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 101	espirro	primeirao	s	l	\N	\N
 94	babirondo@gmail.com	siqueira	s3nha	babirondo	\N	\N
 126	email	nomee	teste123	novinho entao...	\N	\N
+127	l	l	l	l	\N	\N
+131	dsa	3	kn	m	\N	\N
+132	dsa	3	kn	m	\N	\N
+133	comator	comator	comator	comator	\N	\N
 \.
 
 
@@ -2681,7 +2633,7 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 126, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 215, true);
 
 
 --
@@ -2690,6 +2642,19 @@ SELECT pg_catalog.setval('usuarios_id_seq', 126, true);
 
 COPY workflow (id, workflow, posto_inicial, posto_final, penultimo_posto) FROM stdin;
 1	Recrutamento e Seleção	1	280	7
+27	Candidatos	301	\N	\N
+28	Vagas	304	\N	\N
+\.
+
+
+--
+-- Data for Name: workflow_campos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY workflow_campos (id, campo, maxlenght, inputtype, txtarea_cols, txtarea_rows, dica_preenchimento, valor_default, administrativo) FROM stdin;
+203	Tecnologias	\N	list	\N	\N	\N	{configuracoes.tecnologias}	skills
+204	Gestor demandante	\N	text	\N	\N	\N	\N	gestordemandante
+202	Nome do Candidato	\N	text	\N	\N	\N	\N	nome
 \.
 
 
@@ -2698,107 +2663,20 @@ COPY workflow (id, workflow, posto_inicial, posto_final, penultimo_posto) FROM s
 --
 
 COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idworkflowtramitacao) FROM stdin;
-6369	13	frontend	23	2016-07-12 00:19:08.579222	1	2894
-6370	174	enunciado...	23	2016-07-12 00:19:08.58001	1	2894
-6371	1	job descrition	23	2016-07-12 00:19:08.580426	1	2894
-6372	186	email1@email.com	23	2016-07-12 00:19:08.580817	1	2894
-6373	188	bruno	23	2016-07-12 00:19:08.581207	1	2894
-6374	187	1,3	23	2016-07-12 00:19:08.581585	1	2894
-6375	189	proxy	23	2016-07-12 00:19:08.581981	1	2894
-6376	11	novo candidato	24	2016-07-12 00:19:31.055391	273	2895
-6377	182	3	24	2016-07-12 00:19:31.055991	273	2895
-6378	2	x	24	2016-07-12 00:19:31.056945	273	2895
-6379	166	c	24	2016-07-12 00:19:31.057443	273	2895
-6380	12	1	24	2016-07-12 00:19:31.057865	273	2895
-6381	192	java meu usuario	4	2016-07-12 00:20:17.971145	297	\N
-6382	193	node my user	4	2016-07-12 00:20:17.972126	297	\N
-6383	194		4	2016-07-12 00:20:17.972977	297	\N
-6384	190	my name	4	2016-07-12 00:20:41.818051	296	\N
-6385	191	my email	4	2016-07-12 00:20:41.818979	296	\N
-6386	192	d	4	2016-07-12 00:40:10.12851	297	\N
-6387	193	dx	4	2016-07-12 00:40:10.129467	297	\N
-6388	194	f	4	2016-07-12 00:40:10.130209	297	\N
-6389	13	nov	33	2016-07-12 19:16:10.896727	1	2898
-6390	174	nova	33	2016-07-12 19:16:10.897822	1	2898
-6391	1	nova	33	2016-07-12 19:16:10.898231	1	2898
-6392	186	nov	33	2016-07-12 19:16:10.898616	1	2898
-6393	188	vano	33	2016-07-12 19:16:10.899036	1	2898
-6394	187	5	33	2016-07-12 19:16:10.89944	1	2898
-6395	189	ddd	33	2016-07-12 19:16:10.899846	1	2898
-6396	11	new	34	2016-07-12 19:16:23.861444	273	2899
-6397	182	3	34	2016-07-12 19:16:23.861954	273	2899
-6398	2	new	34	2016-07-12 19:16:23.862346	273	2899
-6399	166	new	34	2016-07-12 19:16:23.862733	273	2899
-6400	12	3	34	2016-07-12 19:16:23.863109	273	2899
-6401	11	laptop	37	2016-07-13 02:12:42.15154	273	2899
-6402	182	2	37	2016-07-13 02:12:42.162229	273	2899
-6403	2	k	37	2016-07-13 02:12:42.162695	273	2899
-6404	166	m	37	2016-07-13 02:12:42.163095	273	2899
-6405	12	2	37	2016-07-13 02:12:42.163479	273	2899
-6406	11	laptop	40	2016-07-13 02:13:07.093249	273	2899
-6407	182	2	40	2016-07-13 02:13:07.094042	273	2899
-6408	2	k	40	2016-07-13 02:13:07.096186	273	2899
-6409	166	m	40	2016-07-13 02:13:07.102527	273	2899
-6410	12	2	40	2016-07-13 02:13:07.103296	273	2899
-6411	11	laptop	43	2016-07-13 02:13:36.727235	273	2899
-6412	182	2	43	2016-07-13 02:13:36.728036	273	2899
-6413	2	k	43	2016-07-13 02:13:36.728454	273	2899
-6414	166	m	43	2016-07-13 02:13:36.728867	273	2899
-6415	12	2	43	2016-07-13 02:13:36.729266	273	2899
-6416	11	rubyyy	46	2016-07-13 02:15:16.772583	273	2899
-6417	182	2	46	2016-07-13 02:15:16.773373	273	2899
-6418	2	xx	46	2016-07-13 02:15:16.773769	273	2899
-6419	166	ccc	46	2016-07-13 02:15:16.774163	273	2899
-6420	12	6	46	2016-07-13 02:15:16.774598	273	2899
-6421	11	rubyyy	49	2016-07-13 02:15:23.306304	273	2899
-6422	182	2	49	2016-07-13 02:15:23.306801	273	2899
-6423	2	xx	49	2016-07-13 02:15:23.324604	273	2899
-6424	166	ccc	49	2016-07-13 02:15:23.325331	273	2899
-6425	12	6	49	2016-07-13 02:15:23.325801	273	2899
-6426	11	rubyyy	52	2016-07-13 02:21:20.72134	273	2899
-6427	182	2	52	2016-07-13 02:21:20.721819	273	2899
-6428	2	xx	52	2016-07-13 02:21:20.740906	273	2899
-6429	166	ccc	52	2016-07-13 02:21:20.741641	273	2899
-6430	12	6	52	2016-07-13 02:21:20.742123	273	2899
-6431	11	rubyyy	54	2016-07-13 02:23:51.705631	273	2899
-6432	182	2	54	2016-07-13 02:23:51.706377	273	2899
-6433	2	xx	54	2016-07-13 02:23:51.706837	273	2899
-6434	166	ccc	54	2016-07-13 02:23:51.707284	273	2899
-6435	12	6	54	2016-07-13 02:23:51.707663	273	2899
-6436	11	novo ruby	57	2016-07-13 02:27:28.912961	273	2899
-6437	182	2	57	2016-07-13 02:27:28.913855	273	2899
-6438	2	xas	57	2016-07-13 02:27:28.914283	273	2899
-6439	166	ss	57	2016-07-13 02:27:28.914752	273	2899
-6440	12	6	57	2016-07-13 02:27:28.915157	273	2899
-6441	11	novo nodejs	60	2016-07-13 02:29:10.111353	273	2899
-6442	182	3	60	2016-07-13 02:29:10.11213	273	2899
-6443	2	x	60	2016-07-13 02:29:10.112501	273	2899
-6444	166	z	60	2016-07-13 02:29:10.112863	273	2899
-6445	12	5	60	2016-07-13 02:29:10.113237	273	2899
-6446	11	novo php	63	2016-07-13 02:31:15.990367	273	2899
-6447	182	4	63	2016-07-13 02:31:15.990878	273	2899
-6448	2	x	63	2016-07-13 02:31:15.991252	273	2899
-6449	166	c	63	2016-07-13 02:31:15.991669	273	2899
-6450	12	3	63	2016-07-13 02:31:15.992157	273	2899
-6451	11	outor php	66	2016-07-13 02:31:32.381171	273	2899
-6452	182	3	66	2016-07-13 02:31:32.381999	273	2899
-6453	2	q	66	2016-07-13 02:31:32.382414	273	2899
-6454	166	e	66	2016-07-13 02:31:32.382872	273	2899
-6455	12	3	66	2016-07-13 02:31:32.383254	273	2899
-6456	11	outor pp	69	2016-07-13 02:31:50.188911	273	2899
-6457	182	4	69	2016-07-13 02:31:50.189635	273	2899
-6458	2	c	69	2016-07-13 02:31:50.190039	273	2899
-6459	166	m	69	2016-07-13 02:31:50.190469	273	2899
-6460	12	3	69	2016-07-13 02:31:50.190888	273	2899
-6461	4	ccc	67	2016-07-16 16:08:11.076675	274	2921
-6462	10	xxxxxx	67	2016-07-16 16:08:11.093047	274	2921
-6463	13	mkonji	72	2016-07-16 16:08:49.608348	1	2925
-6464	174	mkl	72	2016-07-16 16:08:49.60889	1	2925
-6465	1	mnkl	72	2016-07-16 16:08:49.609309	1	2925
-6466	186	n	72	2016-07-16 16:08:49.609741	1	2925
-6467	188	lk	72	2016-07-16 16:08:49.610136	1	2925
-6468	187	5	72	2016-07-16 16:08:49.610539	1	2925
-6469	189	nlk	72	2016-07-16 16:08:49.610953	1	2925
+6822	202	Bruno	209	2016-07-21 00:38:28.775521	301	3027
+6823	203	3	209	2016-07-21 00:38:28.776246	301	3027
+6824	202	Trias	210	2016-07-21 00:57:14.417811	301	3028
+6825	203	2	210	2016-07-21 00:57:14.418515	301	3028
+6826	202	Siqueira	211	2016-07-21 00:57:22.706623	301	3029
+6827	203	2,3	211	2016-07-21 00:57:22.707402	301	3029
+6828	203	2	212	2016-07-21 00:59:29.66897	304	3030
+6829	204	ssss	212	2016-07-21 00:59:29.669607	304	3030
+6830	203	2	213	2016-07-21 00:59:36.083399	304	3031
+6831	204	ssss	213	2016-07-21 00:59:36.084146	304	3031
+6832	203	3	214	2016-07-21 02:43:57.380811	304	3032
+6833	204	bauer	214	2016-07-21 02:43:57.381502	304	3032
+6834	203	1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,20,21,22	215	2016-07-21 02:44:15.576813	301	3033
+6835	202	Stefany	215	2016-07-21 02:44:15.577473	301	3033
 \.
 
 
@@ -2806,14 +2684,33 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 6469, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 6835, true);
 
 
 --
 -- Name: workflow_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_id_seq', 26, true);
+SELECT pg_catalog.setval('workflow_id_seq', 28, true);
+
+
+--
+-- Data for Name: workflow_posto_campos; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY workflow_posto_campos (id, idposto, idcampo, obrigatorio) FROM stdin;
+42	301	202	1
+43	301	203	1
+44	304	203	1
+45	304	204	\N
+\.
+
+
+--
+-- Name: workflow_posto_campos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('workflow_posto_campos_id_seq', 45, true);
 
 
 --
@@ -2850,6 +2747,14 @@ COPY workflow_postos (id, id_workflow, idator, posto, ordem_cronologica, princip
 295	1	85	Prospecções em Andamento	\N	0	L	4	\N	\N	19	\N	\N
 292	1	85	Encerrar Vaga	\N	0	F	1	\N	\N	\N	\N	\N
 293	1	85	Vagas Arquivadas	\N	0	L	1	\N	\N	20	\N	\N
+299	27	2	Primeira avaliação	\N	1	L	3	\N	\N	\N	\N	\N
+300	27	2	Segunda avaliaçÃo	\N	1	L	3	\N	\N	\N	\N	\N
+301	27	2	Cadastrar novo candidato	\N	0	F	2	\N	\N	\N	\N	\N
+298	27	2	BAse de Candidatos	\N	1	L	2	\N	\N	\N	\N	\N
+302	27	2	Encaminhar para análise	\N	0	F	3	\N	\N	\N	\N	\N
+303	28	2	Vagas	\N	1	L	1	\N	\N	\N	\N	\N
+304	28	2	Incluir nova Vaga	\N	0	F	1	\N	\N	\N	\N	\N
+305	28	2	Candidatos para esta vaga	\N	0	VagaXCandidato	2	\N	\N	\N	\N	\N
 \.
 
 
@@ -2857,7 +2762,7 @@ COPY workflow_postos (id, id_workflow, idator, posto, ordem_cronologica, princip
 -- Name: workflow_postos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_postos_id_seq', 297, true);
+SELECT pg_catalog.setval('workflow_postos_id_seq', 305, true);
 
 
 --
@@ -2865,39 +2770,13 @@ SELECT pg_catalog.setval('workflow_postos_id_seq', 297, true);
 --
 
 COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuario_associado) FROM stdin;
-2894	23	1	2016-07-12 00:19:08.500417	2016-07-12 00:19:08.500417	\N
-2895	23	2	2016-07-12 00:19:08.545709	\N	\N
-2896	25	3	2016-07-12 00:19:31.059212	\N	14
-2897	26	287	2016-07-12 00:19:31.109415	\N	14
-2898	33	1	2016-07-12 19:16:10.817039	2016-07-12 19:16:10.817039	\N
-2899	33	2	2016-07-12 19:16:10.861511	\N	\N
-2900	35	3	2016-07-12 19:16:23.864363	\N	21
-2901	36	287	2016-07-12 19:16:23.944464	\N	21
-2902	38	3	2016-07-13 02:12:42.164854	\N	14
-2903	39	287	2016-07-13 02:12:42.280913	\N	14
-2904	41	3	2016-07-13 02:13:07.121012	\N	14
-2905	42	287	2016-07-13 02:13:07.965786	\N	14
-2906	44	3	2016-07-13 02:13:36.730594	\N	4
-2907	45	287	2016-07-13 02:13:36.80485	\N	14
-2908	47	3	2016-07-13 02:15:16.775817	\N	4
-2909	48	287	2016-07-13 02:15:16.841474	\N	4
-2910	50	3	2016-07-13 02:15:23.32754	\N	4
-2911	51	287	2016-07-13 02:15:23.424136	\N	4
-2913	55	3	2016-07-13 02:23:51.708867	\N	4
-2914	56	287	2016-07-13 02:23:51.774033	\N	4
-2916	59	287	2016-07-13 02:27:29.020358	\N	\N
-2917	61	3	2016-07-13 02:29:10.114387	\N	14
-2918	62	287	2016-07-13 02:29:10.266282	\N	4
-2919	64	3	2016-07-13 02:31:15.993376	\N	22
-2920	65	287	2016-07-13 02:31:16.121577	\N	4
-2922	68	287	2016-07-13 02:31:32.453857	\N	22
-2923	70	3	2016-07-13 02:31:50.192204	\N	22
-2924	71	287	2016-07-13 02:31:50.314476	\N	14
-2921	67	3	2016-07-13 02:31:32.384448	2016-07-16 16:08:11.093881	4
-2912	53	3	2016-07-13 02:21:20.743773	\N	4
-2915	58	3	2016-07-13 02:27:28.916381	\N	\N
-2925	72	1	2016-07-16 16:08:49.445615	2016-07-16 16:08:49.445615	\N
-2926	72	2	2016-07-16 16:08:49.550422	\N	\N
+3027	209	298	2016-07-21 00:38:28.742073	\N	\N
+3028	210	298	2016-07-21 00:57:14.381673	\N	\N
+3029	211	298	2016-07-21 00:57:22.669838	\N	\N
+3030	212	303	2016-07-21 00:59:29.631175	\N	\N
+3031	213	303	2016-07-21 00:59:36.044661	\N	\N
+3032	214	303	2016-07-21 02:43:57.344775	\N	\N
+3033	215	298	2016-07-21 02:44:15.54201	\N	\N
 \.
 
 
@@ -2905,7 +2784,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2926, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3033, true);
 
 
 --

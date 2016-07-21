@@ -18,15 +18,15 @@ class Postos{
 
 	}
 
-        function UsuariosdoPosto($app, $idposto  ){
-            $array = $this->getUsuarios($idposto);
+    function UsuariosdoPosto($app, $idposto  ){
+        $array = $this->getUsuarios($idposto);
 
-            $array["resultado"] = "SUCESSO";
+        $array["resultado"] = "SUCESSO";
 
-            $data =  	$array;
+        $data =  	$array;
 
-            $app->render ('default.php',$data,200);
-        }
+        $app->render ('default.php',$data,200);
+    }
 
 	function getUsuarios($idposto  ){
 
@@ -119,6 +119,7 @@ class Postos{
 	}
 
 	function LoadCampos(  $idposto, $idprocesso, $posto="entrando", $debug=null, $listar="Lista" , $jsonfiltros="" ){
+						//echo "\n LoadCampos - idposto ; $idposto";
             if ($idposto>0)
             {
                 // busca o email dos atores do posto
@@ -152,7 +153,7 @@ class Postos{
                     $array["FUNCOES_POSTO"][$this->con->dados["funcao"]][lista]  = $this->con->dados["lista"];
                     $p++;
                 }
-
+/*
 								//buscando opcoes de filtro do posto
 								$sql ="select fp.id, pc.campo, fp.tipofiltro
 												from filtros_postos fp
@@ -168,7 +169,7 @@ class Postos{
 										$array["FILTROS_POSTO"] [$this->con->dados["id"]][TIPO]  = $this->con->dados["tipofiltro"];
 
 								}
-
+*/
 
                 //buscando dados do posto
                 $sql ="Select wp.*, nsp.de, nsp.para, nsp.titulo, nsp.corpo, rp.avanca_processo
@@ -176,7 +177,7 @@ class Postos{
                                 LEFT JOIN notificacoes_email nsp ON (nsp.id = wp.".(($posto=="entrando")?"notif_entrandoposto":"notif_saindoposto").")
                                 LEFT JOIN relacionamento_postos rp ON (rp.idposto_atual = wp.id)
                         WHERE wp.id = $idposto  ";
-                //echo $sql;
+                //echo "\n SQL: ".$sql;
                 $this->con->executa($sql);
 
                 $p=0;
@@ -196,7 +197,12 @@ class Postos{
                     $p++;
                 }
 
-                $this->con->executa( "Select * from postos_campo WHere idposto = $idposto  ");
+								$sql = "Select *
+												from workflow_posto_campos wpc
+													inner join workflow_campos wc ON (wc.id = wpc.idcampo)
+												WHere wpc.idposto = $idposto  ";
+//												echo $sql;
+								$this->con->executa( $sql);
 
                 while ($this->con->navega(0)){
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
@@ -264,6 +270,7 @@ class Postos{
 
 	function BuscarDadosdoFilhoePai($idposto, $idprocesso=null, $debug=null, $listar = "Lista", $posto, $jsonfiltros= null)
 	{
+				/*
 				$filtros = json_decode( $jsonfiltros, true );
 			//  $filtros = json_decode($jsonfiltros);
 				if (is_array($filtros))
@@ -280,6 +287,7 @@ class Postos{
 						if ($gowhere_filtro) $gowhere_filtro = " and w.valor IN (".$gowhere_filtro.")";
 					}
 				}
+				*/
 
 				$busca_so_dados_do_posto = "left";
 			  $busca_entidades = "wt.idprocesso = p.id";
@@ -317,15 +325,17 @@ class Postos{
                  INNER JOIN workflow_tramitacao wt ON ( $busca_entidades  ".(($posto=="saindo")?"  ": " and wt.fim is null " )."  )
                  $busca_so_dados_do_posto JOIN workflow_dados w ON (w.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo ) $sodados_doposto )
                  INNER JOIN workflow_postos wp ON (wp.id = wt.idworkflowposto)
-                 LEFT JOIN  postos_campo pc ON ( pc.id = w.idpostocampo )
+								 LEFT JOIN workflow_posto_campos wpc ON (wpc.idposto = w.idposto)
+                 LEFT JOIN  workflow_campos pc ON ( pc.id = wpc.idcampo )
                  LEFT JOIN usuarios u ON (u.id = wt.id_usuario_associado)
 								 LEFT JOIN filtros_postos fp ON (fp.idposto = wp.id and fp.idpostocampo = pc.id)
                  $comp
              WHERE  $comp_ini w.idpostocampo > 0 ".(($idprocesso>0)?" and ap.proprio = $idprocesso":"")."
 						 	$gowhere_filtro
 						 $orderby ";
+
         $this->con->executa( $sql, 0, __LINE__  );
-      //	echo "<PRE>".$sql."</pre>"; exit;
+      //	echo "<PRE>".$sql."</pre>"; //exit;
         //echo "\n SQL GERADO";
         $i=0;
 
@@ -397,6 +407,10 @@ class Postos{
 
       $i++;
 		}
+
+
+
+		//var_dump($array);
 
 		return $array;
 	}

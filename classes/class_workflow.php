@@ -285,22 +285,23 @@ class Workflow{
 
                 foreach ($proximos_postos as $proximo_posto)
                 {
+									echo "\n proximo posto: $proximo_posto";
                      // 8***** INcluido rotina de criacao de processo e historico
 										 	$rodar_preenchedor_processos = null;
 
                       $erro = 0;
 
                         // echo "\n Id Processo do JSON vazio  ";
-                        $sql = "select wp2.id idtipoprocesso, wp.id_workflow, rp.avanca_processo,
-                                                                                        wp.idtipoprocesso idtipoprocesso_atual,
-                                                                                        wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
-                                                        from workflow_postos wp
-                                                                        inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
-                                                                        inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-                                                                        inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
-                                                                        inner join workflow w ON (w.id = wp.id_workflow)
-                                                        where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
-                // echo $sql;
+                      $sql = "select wp2.id idtipoprocesso, wp.id_workflow, rp.avanca_processo,
+                                    wp.idtipoprocesso idtipoprocesso_atual,
+                                    wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
+                              from workflow_postos wp
+                                  inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
+                                  inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                                  inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
+                                  inner join workflow w ON (w.id = wp.id_workflow)
+                              where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
+      // echo $sql;
                         $this->con->executa( $sql , null, __LINE__);
           //   echo "\n IDados do Posto:    ";
                         $this->con->navega(0);
@@ -384,7 +385,7 @@ class Workflow{
                       }
 						if (!$json[processo][valor])
 						{
-
+								echo "\n   Rodar Preenchedor: $rodar_preenchedor_processos";
                     if ( $rodar_preenchedor_processos ==1  )
                     {
                         // se precisa criar um processo, quando a tramitacao é de um posto para outro de mesmo tipo
@@ -462,17 +463,25 @@ class Workflow{
                          }  // fim loop
                     }
 
+
+
+
+									echo "\n   PostoInicial == Idposto ($idposto_inicial == $idposto)";
                    if ($idposto_inicial == $idposto ) {
   									//		echo " \n Processo Starter  :    $id_pai  ";
                         // starter
                         $id_pai = $this->CriarProcesso($idtpproc, $id_pai, $idwok, $json, $idposto,  $proximo_posto);
+												echo "\n   (starter) idPai criado:  $id_pai";
 
 												if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] )
 												{
+													echo "\n   (starter) json processo acao = gloabis | ".  $json[processo][acao]."  == ". $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] ." ";
 												//    echo "\n criar tramitacao \n ";
 														// cria proximo posto em branco ja que o inicial ja nasce fechado
-														$idtramitacaogerada_pai = $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
-														$idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+														$idtramitacaogerada_pai = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+														echo "\n   (starter) tramitacao pai = $idtramitacaogerada_pai  ";
+														//$idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+														//echo "\n   (starter) tramitacao  = $idtramitacaogerada  ";
 													//  $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);
 
 												}
@@ -487,12 +496,15 @@ class Workflow{
                                   /// ".";
 
                                   $this->registraDadosdoPosto($valor, $idposto, $id_pai, $campo, $idtramitacaogerada_pai);
+																	echo "\n   (starter) dados salvos  =   ".var_export($valor[valor]);
+
                               }
                         }
 
 //                                  $cria_processo=1;
                     }
 
+										echo "\n   cria_processo== 1 | $cria_processo  ";
                               if ($cria_processo == 1 )
                               {
 
@@ -526,6 +538,7 @@ class Workflow{
                               else {
                                   $idprocesso = $id_pai;
                               }
+															echo "\n   idprocesso :  $idprocesso  ";
                       }
                       else{
 														if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
@@ -561,6 +574,7 @@ class Workflow{
 
             }
             else{
+								echo "\n sem relacionamento_postos";
 								if (!$json[processo][valor]){
 										// caso workflow de MyProfile - workflows simples, sem conexao
 
@@ -580,10 +594,42 @@ class Workflow{
 										$idwok = $this->con->dados["id_workflow"];
 
 										$idprocesso = $this->CriarProcesso($idtpproc, "null", $idwok, $json, null, null);
+										echo "\n idprocesso criado : $idprocesso";
 
 								}
 								else
                 	$idprocesso = $json[processo][valor];
+
+/*
+									$sql = "SELECT posto_inicial
+													FROM workflow w
+														INNER JOIN workflow_postos wp ON (wp.id_workflow = w.id)
+													WHERE wp.id = $idposto		";
+							//   echo " \n $sql \n";
+									$this->con->executa( $sql, null, __LINE__);
+									$this->con->navega(0);
+
+
+									echo "\n idpostoinicial == idposto   : ".$this->con->dados["posto_inicial"]." == $idposto";
+
+									//grava tramitacao de primeiro posto
+									if ($this->con->dados["posto_inicial"] == $idposto ) {
+
+											 if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] )
+											 {
+												 echo "\n    json processo acao = gloabis | ".  $json[processo][acao]."  == ". $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] ." ";
+											 //    echo "\n criar tramitacao \n ";
+													 // cria proximo posto em branco ja que o inicial ja nasce fechado
+													 $idtramitacaogerada = $this->SalvarHistorico($idprocesso, $idposto, null, $idposto);
+													 echo "\n     tramitacao   = $idtramitacaogerada  ";
+													 //$idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+													 //echo "\n     tramitacao  = $idtramitacaogerada  ";
+												 //  $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);
+
+											 }
+									}
+*/
+
 								$salvar_dados_form = 1;
                 if (is_array($json))
                 {
@@ -595,12 +641,16 @@ class Workflow{
                           if ($campo == "processo") continue;
                          // echo "\n $campo = ".$valor[valor];
 
+												 echo "\n      salvando dados  : $valor[valor]";
+
 												 if ( $json[processo][idworkflowtramitacao_original] > 0 )
 												 	$this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo , $json[processo][idworkflowtramitacao_original]  );
 												 else
                          	 $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo  );
                       }
                 }
+
+								echo "\n grava handover sem destino ? :  ".$json[processo][idworkflowtramitacao_original];
 
                 if ($json[processo][idworkflowtramitacao_original]){
                     // caso o handover seja em posto sem destino ou posto finalizador

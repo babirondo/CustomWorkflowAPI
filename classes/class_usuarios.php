@@ -12,6 +12,9 @@ class Usuarios{
 		require_once("classes/globais.php");
 		$this->globais = new GLobais();
 
+		require_once("classes/class_usuario_atores.php");
+		$this->UsuarioAtores = new UsuarioAtores();
+
 	}
 
 
@@ -43,9 +46,10 @@ class Usuarios{
 
 
 
-	function CriarUsuario($jsonRAW)
+	function CriarUsuario($preenchidoRAW)
 	{
-		$json = json_decode( $jsonRAW, true );
+
+		$json = json_decode( $preenchidoRAW, true );
 		IF ($json == NULL) {
 			$data = array("data"=>
 
@@ -68,7 +72,13 @@ class Usuarios{
 			return false;
 		else{
 			if ($json["chave_primaria"] == $this->con->dados["id"]){
-				return true;
+				// relacionar tipos de usuario ao usuario recem criado
+
+					if ( $this->UsuarioAtores->vincular($this->con->dados["id"], explode(",",$json["tipousuario"]) ) )
+						return true;
+					else {
+						return false;
+					}
 			}
 			else {
 				return false;
