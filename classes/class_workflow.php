@@ -206,8 +206,11 @@ class Workflow{
                     return false;
             }
 
-            $array = $this->SalvarnoBanco(  $json , $idposto, "Salvando", $app); // indo array ?
+             $this->SalvarnoBanco(  $json , $idposto, "Salvando", $app); // indo array ?
 
+
+
+ 
             $array["resultado"] = "SUCESSO";
             $array["DEBUG"] = $this->notificacoes->debug;
 
@@ -269,6 +272,7 @@ class Workflow{
             $sql = "select avanca_processo
                     from RELACIONAMENTO_POSTOS
                     where idposto_atual= $idposto";
+						//echo "\n $sql";
             $this->con->executa($sql , null, __LINE__);
 //echo $sql;
             while ($this->con->navega(0)) {
@@ -301,7 +305,7 @@ class Workflow{
                                   inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
                                   inner join workflow w ON (w.id = wp.id_workflow)
                               where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
-      // echo $sql;
+       echo "\n".$sql;
                         $this->con->executa( $sql , null, __LINE__);
           //   echo "\n IDados do Posto:    ";
                         $this->con->navega(0);
@@ -315,11 +319,11 @@ class Workflow{
 
                         // dentro de um posto com pai já existente...
                         $sql = "select tp.id, rp.avanca_processo, wp.tipodesignacao, wp.idtipoprocesso posto_idpai , tp.id_pai
-                                                        from workflow_postos wp
-                                                                        inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
-                                                                        left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-                                                        where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
-                 //echo $sql;
+                                from workflow_postos wp
+                                                inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
+                                                left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                                where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
+                 echo "\n\n ".$sql;
                 //  echo "\n tem idposto e idprocesso do json    ";
          //echo $sql;
                         $this->con->executa($sql, null, __LINE__ );
@@ -333,6 +337,7 @@ class Workflow{
                       //$id_pai = "null";
                      // echo "\n )))))))))))))))))) iniciando rotina de controle de criacao de processo ";
 
+										 	echo "\n idposto e idprocesso: $idposto - ".$json[processo][valor];
                       if ($idposto && $json[processo][valor] )
                       {
 
@@ -350,6 +355,7 @@ class Workflow{
 
 
 													//echo "\n aqui";
+													echo "\n idtipoprocess_posto != idtipoprocess_processo | $idtipoprocess_posto != $idtipoprocess_processo";
                           if ( $idtipoprocess_posto != $idtipoprocess_processo){
                               // se o próximo posto tem tipo de processo diferente do atual, entra aqui
                               $id_pai = $json[processo][valor];
@@ -385,7 +391,7 @@ class Workflow{
                       }
 						if (!$json[processo][valor])
 						{
-								echo "\n   Rodar Preenchedor: $rodar_preenchedor_processos";
+								echo "\n   Rodar Preenchedor -> $rodar_preenchedor_processos";
                     if ( $rodar_preenchedor_processos ==1  )
                     {
                         // se precisa criar um processo, quando a tramitacao é de um posto para outro de mesmo tipo
@@ -399,7 +405,7 @@ class Workflow{
 												$this->con->navega(0);
 
 												$tipos_processo_para_preencher=null;
-												//echo "\n\n processos faltantes ? $idtpproc, $id_pai";
+												echo "\n\n processos faltantes ? $idtpproc, $id_pai";
 												$tipos_processo_para_preencher = $this->Tipos_Processo_Faltantes($idtpproc, $id_pai);
 
 													//$tipos_processo_para_preencher[] = 2;
@@ -504,7 +510,7 @@ class Workflow{
 //                                  $cria_processo=1;
                     }
 
-										echo "\n   cria_processo== 1 | $cria_processo  ";
+										echo "\n   cria_processo -> $cria_processo  ";
                               if ($cria_processo == 1 )
                               {
 
@@ -833,7 +839,7 @@ class Workflow{
                   return $RETORNO_function;
             }
 
-
+					 return $idprocesso;
 
         }
 }

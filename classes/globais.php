@@ -39,7 +39,8 @@ class Globais{
 						//$this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 12;
 						//$this->SYS_DEPARA_CAMPOS["Skills_mandatorias_vaga"] = 187;
 
-						$this->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] = 203;
+						$this->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] = 223; // 223
+						$this->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] = 203;
 
             $this->SYS_DEPARA_CAMPOS["Responsavel"] = -1;
             $this->SYS_DEPARA_CAMPOS["bt_handover"] = "Salvar e Avancar >";

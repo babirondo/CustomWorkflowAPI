@@ -270,33 +270,17 @@ class Postos{
 
 	function BuscarDadosdoFilhoePai($idposto, $idprocesso=null, $debug=null, $listar = "Lista", $posto, $jsonfiltros= null)
 	{
-				/*
-				$filtros = json_decode( $jsonfiltros, true );
-			//  $filtros = json_decode($jsonfiltros);
-				if (is_array($filtros))
-				{
 
-					foreach ($filtros as $filtrando ){
-						if ($filtrando != -1 && $filtrando){
-							$fils[] = "'$filtrando'" ;
-						}
-					}
-					if (is_array($fils) )
-					{
-						$gowhere_filtro = implode(",", $fils);
-						if ($gowhere_filtro) $gowhere_filtro = " and w.valor IN (".$gowhere_filtro.")";
-					}
-				}
-				*/
 
 				$busca_so_dados_do_posto = "left";
 			  $busca_entidades = "wt.idprocesso = p.id";
 
         switch ($listar)
         {
-            case ("Lista"):
+					case ("Agrupada"):
+					case ("Lista"):
                 $comp = "left join postos_campo_lista pcl ON (pcl.idpostocampo = pc.id and pcl.idposto = wp.id)";
-                $camp = ", pcl.id estaprevistapralista";
+                $camp = ", pcl.id estaprevistapralista, pcl.agrupar";
             break;
 
 						case ("VidaProcesso"):
@@ -323,10 +307,10 @@ class Postos{
              FROM  arvore_processo ap
 					  		 INNER JOIN processos p ON (p.id = ap.proprio)
                  INNER JOIN workflow_tramitacao wt ON ( $busca_entidades  ".(($posto=="saindo")?"  ": " and wt.fim is null " )."  )
-                 $busca_so_dados_do_posto JOIN workflow_dados w ON (w.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo ) $sodados_doposto )
+                 $busca_so_dados_do_posto JOIN workflow_dados w ON (w.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo , ap.neto) $sodados_doposto )
                  INNER JOIN workflow_postos wp ON (wp.id = wt.idworkflowposto)
 								 LEFT JOIN workflow_posto_campos wpc ON (wpc.idposto = w.idposto)
-                 LEFT JOIN  workflow_campos pc ON ( pc.id = wpc.idcampo )
+                 LEFT JOIN  workflow_campos pc ON ( pc.id = w.idpostocampo ) -- wpc.idcampo
                  LEFT JOIN usuarios u ON (u.id = wt.id_usuario_associado)
 								 LEFT JOIN filtros_postos fp ON (fp.idposto = wp.id and fp.idpostocampo = pc.id)
                  $comp
@@ -335,58 +319,22 @@ class Postos{
 						 $orderby ";
 
         $this->con->executa( $sql, 0, __LINE__  );
-      //	echo "<PRE>".$sql."</pre>"; //exit;
-        //echo "\n SQL GERADO";
-        $i=0;
+    		//echo "<PRE>".$sql."</pre>"; //exit;
 
-        while ($this->con->navega($i) ){
-               $idworkflowdado_assumir = null;
+				switch ($listar){
+						case("Agrupada"):
+							$array = $this->montar_lista_Agrupada();
+						break;
 
-
-							$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
-							$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
-
-							// seta a info para o filtro
-							if ($this->con->dados["idfiltro"] > 0)
-								$array["FILTROS_POSTO"] [$this->con->dados["idfiltro"]] ["ITENS"][$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]] = $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
-
-               $array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"];
-
-            //   $array["FETCH"] [$this->con->dados["idprocesso"]]["POSTO_ATUAL" ][$this->con->dados["idworkflowposto"]]   = $this->con->dados["idworkflowposto"];
-
-
-               if ($this->con->dados["tramitacao_idusuario"]>0){
-                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ."-ID"] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ."-ID"]   = $this->con->dados["tramitacao_idusuario"];
-                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ]   = $this->con->dados["tramitacao_usuario"];
-                    $idworkflowdado_assumir = "teve";
-               }
-
-                // adiciona ao Fetch os valores que sao buscados na traducao dos colchetes nos emails
-                foreach ($this->globais->SYS_ADD_CAMPOS as $idx => $val){
-                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$idx] = $array["FETCH"] [$this->con->dados["idprocesso"]][$idx]   =   $this->con->dados["$val"]  ;
-                }
-
-                $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"];
-
-               if ($this->con->dados["estaprevistapralista"])
-                   $array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
-               else if ($idworkflowdado_assumir == "teve")
-                   $array["TITULO"] [-1]   = array_search(-1, $this->globais->SYS_DEPARA_CAMPOS);
-
-//							 $array["FETCH_POSTO"] [$this->con->dados["idposto"]] [$this->con->dados["idprocesso"]]  = $this->globais->ArrayMergeKeepKeys($array["FETCH_POSTO"] [$this->con->dados["idposto"]] [$this->con->dados["idprocesso"]], $array["FETCH"] [$this->con->dados["idprocesso"]])		 	;
-
-               $i++;
-        }
-
+						default:
+							$array = $this->montar_lista();
+				}
 
 
         if ( $idposto>0 )
-        {
             $comp_ini = " and wp.id =$idposto ";
-        }
                 // BUSCANDO ATRIBUTOS DO PROCESSO
-		$sql = "
-                    select *, p.status p_status, p.id idprocesso, to_char(wt.inicio, 'dd/mm/yyyy') wt_inicio ,
+		$sql = "select *, p.status p_status, p.id idprocesso, to_char(wt.inicio, 'dd/mm/yyyy') wt_inicio ,
                                     to_char(p.inicio, 'dd/mm/yyyy') p_inicio ,wt.idworkflowposto, p.inicio entradanoposto,
                                     u.nome usuarioassociado
                     from workflow_tramitacao wt
@@ -408,63 +356,160 @@ class Postos{
       $i++;
 		}
 
-
-
 		//var_dump($array);
 
 		return $array;
 	}
 
 
+	function montar_lista()
+	{
+			$i=0;
+		        while ($this->con->navega($i) ){
+		               $idworkflowdado_assumir = null;
+
+
+									$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+									$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
+
+									// seta a info para o filtro
+									if ($this->con->dados["idfiltro"] > 0)
+										$array["FILTROS_POSTO"] [$this->con->dados["idfiltro"]] ["ITENS"][$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]] = $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
+
+		               $array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"];
+
+		            //   $array["FETCH"] [$this->con->dados["idprocesso"]]["POSTO_ATUAL" ][$this->con->dados["idworkflowposto"]]   = $this->con->dados["idworkflowposto"];
+
+
+		               if ($this->con->dados["tramitacao_idusuario"]>0){
+		                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ."-ID"] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ."-ID"]   = $this->con->dados["tramitacao_idusuario"];
+		                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ] = $array["FETCH"] [$this->con->dados["idprocesso"]][ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ]   = $this->con->dados["tramitacao_usuario"];
+		                    $idworkflowdado_assumir = "teve";
+		               }
+
+		                // adiciona ao Fetch os valores que sao buscados na traducao dos colchetes nos emails
+		                foreach ($this->globais->SYS_ADD_CAMPOS as $idx => $val){
+		                    $array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$idx] = $array["FETCH"] [$this->con->dados["idprocesso"]][$idx]   =   $this->con->dados["$val"]  ;
+		                }
+
+		                $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"];
+
+		               if ($this->con->dados["estaprevistapralista"])
+		                   $array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
+		               else if ($idworkflowdado_assumir == "teve")
+		                   $array["TITULO"] [-1]   = array_search(-1, $this->globais->SYS_DEPARA_CAMPOS);
+
+		//							 $array["FETCH_POSTO"] [$this->con->dados["idposto"]] [$this->con->dados["idprocesso"]]  = $this->globais->ArrayMergeKeepKeys($array["FETCH_POSTO"] [$this->con->dados["idposto"]] [$this->con->dados["idprocesso"]], $array["FETCH"] [$this->con->dados["idprocesso"]])		 	;
+
+		               $i++;
+		        }
+
+
+		return $array;
+	}
+
+
+		function montar_lista_Agrupada()
+		{
+				$i=0;
+        while ($this->con->navega($i) ){
+
+				 		$array["FETCH"] [$this->con->dados["idprocesso"]][tramitacao_idusuario ]   = $this->con->dados["tramitacao_idusuario"];
+            $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"];
+
+             if ($this->con->dados["estaprevistapralista"])
+                 $array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
+
+             $i++;
+        }
+
+
+			return $array;
+		}
+
+
+	function AcoesdoPosto($idposto)
+	{
+
+		$sql = "select *
+													from posto_acao pa
+																	inner join workflow_postos wp ON (wp.id = pa.goto)
+													where pa.idposto =  $idposto    ";
+
+		$this->con->executa( $sql);
+	//$this->con->navega();
+		$i=0;
+		while ($this->con->navega(0)){
+			$array["ACOES"]  [$this->con->dados["id"] ][acao]   = $this->con->dados["acao"];
+			$array["ACOES"]  [$this->con->dados["id"] ][ir]   = $this->con->dados["goto"];
+			$array["ACOES"]  [$this->con->dados["id"] ][lista]   = $this->con->dados["lista"];
+			$array["ACOES"]  [$this->con->dados["id"] ][idworkflow]   = $this->con->dados["id_workflow"];
+
+			$i++;
+		}
+								//$array["ACOES"]  [$this->con->dados["idprocesso"] ][idworkflowdado]   = $this->con->dados["idworkflowdado"]; // L ou F
+
+
+		switch ($array["DADOS_POSTO"][tipodesignacao])
+		{
+				case("AUTO-DIRECIONADO"):
+				case("Assumir"):
+					$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = "Assumir"; // Nome do Link
+					$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][ir]   = $idposto; // proximo posto
+					$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][lista]   = "L"; // L ou F
+					$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][idworkflow]   = $array["DADOS_POSTO"][idworkflow];//$this->con->dados["id_workflow"];
+					$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][assumir]   = 1;//$this->con->dados["id_workflow"];
+				break;
+
+				default:
+	//$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = $array["DADOS_POSTO"][tipodesignacao]; // Nome do Link
+		}
+
+
+			return $array;
+	}
+	function getListaAgrupada($app,   $idposto , $jsonRAW){
+
+
+			$debug= 0;
+			//$array = $this->BuscarDadosdoFilhoePai($idposto, null, $debug, "Lista"); // xxx
+
+			$array = $this->LoadCampos(  $idposto, null, null, $debug ,  "Agrupada" , $jsonRAW);
+							//  var_dump($array );
+
+			$novo = $this->AcoesdoPosto($idposto);
+			$array = $this->globais->ArrayMergeKeepKeys($array, $novo);
+
+
+
+			$array["resultado"] = "SUCESSO";
+
+			$data =  	$array;
+
+			$app->render ('default.php',$data,200);
+
+
+	}
 
 	function getLista($app,   $idposto , $jsonRAW){
 
 
-    	$debug= 0;
-		//$array = $this->BuscarDadosdoFilhoePai($idposto, null, $debug, "Lista"); // xxx
+			$debug= 0;
+			//$array = $this->BuscarDadosdoFilhoePai($idposto, null, $debug, "Lista"); // xxx
 
-	    $array = $this->LoadCampos(  $idposto, null, null, $debug ,  "Lista" , $jsonRAW);
-	                //  var_dump($array );
+			$array = $this->LoadCampos(  $idposto, null, null, $debug ,  "Lista" , $jsonRAW);
+			        //  var_dump($array );
 
-			$this->con->executa( "select *
-	                          from posto_acao pa
-	                                  inner join workflow_postos wp ON (wp.id = pa.goto)
-	                          where pa.idposto =  $idposto    ");
-		//$this->con->navega();
-			$i=0;
-			while ($this->con->navega(0)){
-				$array["ACOES"]  [$this->con->dados["id"] ][acao]   = $this->con->dados["acao"];
-				$array["ACOES"]  [$this->con->dados["id"] ][ir]   = $this->con->dados["goto"];
-				$array["ACOES"]  [$this->con->dados["id"] ][lista]   = $this->con->dados["lista"];
-				$array["ACOES"]  [$this->con->dados["id"] ][idworkflow]   = $this->con->dados["id_workflow"];
-
-				$i++;
-			}
-	                //$array["ACOES"]  [$this->con->dados["idprocesso"] ][idworkflowdado]   = $this->con->dados["idworkflowdado"]; // L ou F
-
-
-      switch ($array["DADOS_POSTO"][tipodesignacao])
-      {
-          case("AUTO-DIRECIONADO"):
-          case("Assumir"):
-	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = "Assumir"; // Nome do Link
-	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][ir]   = $idposto; // proximo posto
-	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][lista]   = "L"; // L ou F
-	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][idworkflow]   = $array["DADOS_POSTO"][idworkflow];//$this->con->dados["id_workflow"];
-	    			$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][assumir]   = 1;//$this->con->dados["id_workflow"];
-          break;
-
-          default:
-		//$array["ACOES"]  [$array["DADOS_POSTO"][tipodesignacao] ][acao]   = $array["DADOS_POSTO"][tipodesignacao]; // Nome do Link
-      }
+			$novo = $this->AcoesdoPosto($idposto);
+			$array = $this->globais->ArrayMergeKeepKeys($array, $novo);
 
 
 
-		$array["resultado"] = "SUCESSO";
+			$array["resultado"] = "SUCESSO";
 
-		$data =  	$array;
+			$data =  	$array;
 
-		$app->render ('default.php',$data,200);
+			$app->render ('default.php',$data,200);
 
 
 	}

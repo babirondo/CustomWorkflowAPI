@@ -16,6 +16,16 @@ class Processos{
 
 	}
 
+
+	function VincularProcessos ($idprocesso, $candidato)
+	{
+		$sql = "UPDATE processos SET relacionadoa = $candidato where id = $idprocesso";
+//		echo $sql;
+    $this->con->executa( $sql);
+
+		return true;
+	}
+
 	function CarregarDadosdoProcesso($idprocesso){
 		$sql = "select proprio, filho, avo, bisavo, neto
             from arvore_processo

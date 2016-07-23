@@ -28,6 +28,25 @@ $app = new \Slim\Slim( array(
 \Slim\Slim::registerAutoloader();
 
 
+
+$app->post('/:idworkflow/getPosto/ListaAgrupada/:idposto', function ( $idworkflow , $idposto) use ($app)  {
+	$Postos = new Postos(  );
+	$Postos->getListaAgrupada($app, $idposto , $app->request->getBody());
+}  );
+
+
+$app->post('/Candidatos/:idvaga/', function ( $idvaga ) use ($app)  {
+  $cVagas = new Vagas(  );
+	$cVagas->CandidatosAplicadosAVaga($app, $idvaga,  $app->request->getBody());
+}  );
+
+
+$app->post('/ConsiderarCandidatos/:idvaga/', function ( $idvaga ) use ($app)  {
+  $cVagas = new Vagas(  );
+	$cVagas->ConsiderarCandidatosAVaga($app, $idvaga,  $app->request->getBody());
+}  );
+
+
 $app->post('/ListarCandidatos/', function (  ) use ($app)  {
   $cVagas = new Vagas(  );
 	$cVagas->ListarCandidatosDaVaga($app,  $app->request->getBody());
