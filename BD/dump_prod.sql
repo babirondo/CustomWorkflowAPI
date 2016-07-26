@@ -5431,9 +5431,9 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 24	5	2	2016-07-13 19:16:12.585325	1	\N	\N
 25	24	3	2016-07-13 19:16:12.609163	1	Em Andamento	\N
 26	24	3	2016-07-13 19:16:12.733094	1	Em Andamento	\N
-27	5	2	2016-07-13 19:19:08.496188	1	\N	\N
 28	27	3	2016-07-13 19:19:08.513294	1	Em Andamento	\N
 29	27	3	2016-07-13 19:19:08.592406	1	Em Andamento	\N
+27	5	2	2016-07-13 19:19:08.496188	1	Em Andamento	\N
 \.
 
 
@@ -5934,6 +5934,8 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 6432	10	a prova dele esta funcionando bonitinha, rodou de boas aqui, ele separou a aplicacao em camadinhas, usou mvc de forma limpa, e o bacana foi que ele usou angular, ja mostra que ele se preocupa em estar atualizado. Usou h2 como banco e o hibernate que usamos aqui em algumas aplicacoes tbm, usou bastante spring, ele mandou bem, foi simples, mas esta de acordo.\r\n\r\n[3:44]  \r\nUma ressalva no teste dele seria que ele nao se preocupou em tratamento de excecoes, logs com possiveis erros, e nao fez nehum teste unitario\r\n\r\n[3:44]  \r\nisso eh ruim\r\n\r\n[3:44]  \r\nmostrei para o Vitor tbm ele ele achou simples, bem arroz com feijao mesmo\r\n\r\n[3:45]  \r\nmas pensando no tempo, e na correria que a pessoa tem para fazer o teste, eu nao tenho nada contra,\r\n\r\nBruno Siqueira [3:46 PM]  \r\nse tivesse que classificar este candidato, como o faria: jr, pl ou sr ?\r\n\r\nmaryfelvie [3:46 PM]  \r\ncom relacao ao que usamos aqui, acho que nao seria nenhum bixo de 7 cabecas ara ele\r\n\r\n[3:47]  \r\nhm dificil, junior com certeza ele nao eh, um pleno eu diria\r\n\r\n[3:48]  \r\na prova dele foi boa, mas nos achamos bem CRUD msm	25	2016-07-18 16:43:39.650853	274	2911
 6433	4	 - 	28	2016-07-18 16:44:28.311263	274	2913
 6434	10	cho que o nome dele eh William\r\n\r\n[3:49]  \r\nnao conseguimos rodar aqui\r\n\r\n[3:49]  \r\na aplicacao noa subiu :disappointed:\r\n\r\n[3:49]  \r\nnao *\r\n\r\n[3:49]  \r\ninstalei o docker aqui que eu nao tinha, mas a aplicacao nao subiu\r\n\r\n[3:49]  \r\nporem eu gostei bastante da prova dele\r\n\r\nBruno Siqueira [3:50 PM]  \r\ncomo o classificaria?\r\n\r\nmaryfelvie [3:57 PM]  \r\nOlha, ele mandou bem no codigo em geral, olhando o codigo ele atendeu os requisitos solicitados na prova,  se preocupou com tratamentos de erros, validacoes,  separou bem as responsabilidades do codigo,  criou chaves de configuracao dinamicas, usou recursos legais do ruby como o neo4j, comentou sobre o docker e a documentacao dele foi 100%\r\n\r\n[3:57]  \r\no unico ponto ruim foi que a aplicacao nao subiu	28	2016-07-18 16:44:28.316662	274	2913
+6435	180	pleno	29	2016-07-25 22:45:58.880949	288	2914
+6436	181	Prós\r\nDocumentação bem feita e detalhada\r\nUsou container com consciência dos benefícios\r\nUsou um banco de dados baseado em grafos\r\n\r\nContras\r\nUsou form para receber dados\r\nFez poucos commits\r\nManteve código de acesso a banco relacional no código\r\ncurl de exemplo para inclusão de rota não funciona e retorna erro com um HTML\r\nLog pobre\r\nMuito código comentado\r\nAchei trechos da query de busca de caminho de menor custo em buscas no google\r\n	29	2016-07-25 22:45:59.042459	288	2914
 \.
 
 
@@ -5941,7 +5943,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 6434, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 6436, true);
 
 
 --
@@ -6002,7 +6004,6 @@ SELECT pg_catalog.setval('workflow_postos_id_seq', 295, true);
 COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuario_associado) FROM stdin;
 2832	47699	1	2016-06-27 17:04:10.625617	2016-06-27 17:04:10.625617	\N
 2833	47699	2	2016-06-27 17:04:10.667499	\N	\N
-2914	29	287	2016-07-13 19:19:08.593155	\N	58
 2912	26	287	2016-07-13 19:16:12.733981	\N	58
 2836	47703	1	2016-06-27 17:08:06.227947	2016-06-27 17:08:06.227947	\N
 2837	47703	2	2016-06-27 17:08:06.271266	\N	\N
@@ -6013,6 +6014,8 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 2841	47705	2	2016-06-27 17:12:43.438093	2016-06-27 17:12:56.857892	\N
 2911	25	3	2016-07-13 19:16:12.609868	2016-07-18 16:43:39.651541	63
 2913	28	3	2016-07-13 19:19:08.513979	2016-07-18 16:44:28.317468	63
+2914	29	287	2016-07-13 19:19:08.593155	2016-07-25 22:45:59.070392	58
+2915	27	4	2016-07-25 22:45:59.203681	\N	\N
 2891	47706	6	2016-06-28 15:51:15.802712	\N	\N
 2869	47706	5	2016-06-27 20:08:14.85715	2016-06-28 15:51:15.840903	\N
 2843	47707	3	2016-06-27 17:14:31.064021	2016-06-27 18:40:16.733914	3
@@ -6083,7 +6086,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2914, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 2915, true);
 
 
 --
