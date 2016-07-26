@@ -2164,6 +2164,7 @@ COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_val
 128	311	221	\N	\N	\N
 129	311	223	\N	\N	\N
 130	311	225	\N	\N	\N
+131	305	223	\N	\N	\N
 \.
 
 
@@ -2171,7 +2172,7 @@ COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_val
 -- Name: postos_campo_lista_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('postos_campo_lista_id_seq', 130, true);
+SELECT pg_catalog.setval('postos_campo_lista_id_seq', 131, true);
 
 
 --

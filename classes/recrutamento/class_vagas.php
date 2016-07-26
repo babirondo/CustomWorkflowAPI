@@ -155,7 +155,9 @@ class Vagas{
 				from workflow_dados w
 					inner join processos p ON (p.id = w.idprocesso and p.idtipoprocesso =2 )
 					inner join workflow_campos wc ON (wc.id = w.idpostocampo and wc.administrativo = 'skills') ) massa
-			where candidato @> regexp_split_to_array('$skills_desejadas', ',')";
+			where candidato && regexp_split_to_array('$skills_desejadas', ',')";
+			//&& intersecao
+			//@> contains
 			//echo $sql;
 			$this->con->executa($sql);
 
@@ -187,6 +189,12 @@ class Vagas{
 				return false;
 			}
 
+			$dadosProcesso = $this->processo->CarregarDadosdoProcesso( $json[IDVAGA]);
+			//FIXME: Array de retorno hard coded, fazer ficar dinamico
+			$array["DADOS_PROCESSO"]["TECNOLOGIAS_MANDATORIAS"] = $dadosProcesso["FETCH"][$json[IDVAGA]][ $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] ];
+			$skills_desejadas = $dadosProcesso["FETCH"][$json[IDVAGA]][ $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] ];
+			$array = null;
+
 			//ECHO "<PRE>";var_dump($json);
 
 			$sql ="select * ,wc.id idcampo
@@ -201,6 +209,13 @@ class Vagas{
 
 				$array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["administrativo"]] = $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
 
+				if ( $this->con->dados["idpostocampo"] ==  $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]  )
+				{
+					// checa match de skills
+					$retorno_match = $this->match($skills_desejadas, $array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["administrativo"]]  );
+					$array["FETCH"][$this->con->dados["idprocesso"] ]["match"] = $retorno_match;
+				}
+
 			}
 
 
@@ -212,5 +227,26 @@ class Vagas{
 			$app->render ('default.php',$data,200);
 		}
 
+
+		function match ( $skills_vaga, $skills_candidato){
+
+			//echo $skills_vaga;
+
+				$skills_candidato = explode(",",  $skills_candidato) ;
+				$skills_vaga = explode(",",  $skills_vaga) ;
+				$tem = 0;
+
+
+				foreach ($skills_vaga as $skill)
+				{
+
+						//echo "\n $skill, $skills_candidato";
+					if ( in_array(   $skill, $skills_candidato) )
+						$tem++;
+				}
+
+				return (($tem*100)/COUNT($skills_vaga));
+
+		}
 
 }
