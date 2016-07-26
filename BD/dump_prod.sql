@@ -1367,6 +1367,8 @@ COPY tecnologias (id, tecnologia) FROM stdin;
 20	Magento
 21	Rabbit MQ
 22	Hazelcast
+23	Go Lang
+24	PLSQL
 \.
 
 
@@ -1374,7 +1376,7 @@ COPY tecnologias (id, tecnologia) FROM stdin;
 -- Name: tecnologias_id_seq; Type: SEQUENCE SET; Schema: configuracoes; Owner: postgres
 --
 
-SELECT pg_catalog.setval('tecnologias_id_seq', 22, true);
+SELECT pg_catalog.setval('tecnologias_id_seq', 24, true);
 
 
 SET search_path = public, pg_catalog;
@@ -1723,15 +1725,16 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idmenu) FROM
 557	48		101	2016-07-18 00:44:19.109366	13
 548	1	primeirao	101	2016-07-18 00:22:56.67643	8
 660	113	s	76	2016-07-18 00:50:01.2046	10
-661	112	s	76	2016-07-18 00:50:01.205228	10
-603	112	teste123	4	2016-07-18 00:45:19.707576	12
-663	113	bruno.siqueira	4	2016-07-18 00:51:05.505795	10
 604	2	bruno.siqueira@walmart.com	4	2016-07-18 00:45:19.709092	12
+661	112	s	76	2016-07-18 00:50:01.205228	10
+606	4	2	4	2016-07-18 00:48:02.478617	13
+663	113	bruno.siqueira	4	2016-07-18 00:51:05.505795	10
+603	112	teste123	4	2016-07-18 00:45:19.707576	12
 665	112	75	75	2016-07-18 00:56:27.787319	10
 666	113	novinho entao...	126	2016-07-18 00:57:00.748021	8
 669	1	nomee	126	2016-07-18 00:57:00.74957	8
-659	3		4	2016-07-18 00:48:02.501319	13
 668	2	email	126	2016-07-18 00:57:00.749154	8
+659	3		4	2016-07-18 00:48:02.501319	13
 658	99		4	2016-07-18 00:48:02.500946	13
 657	5		4	2016-07-18 00:48:02.50052	13
 656	6		4	2016-07-18 00:48:02.500131	13
@@ -1781,7 +1784,6 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idmenu) FROM
 609	53		4	2016-07-18 00:48:02.48122	13
 608	54		4	2016-07-18 00:48:02.480729	13
 607	55	4	4	2016-07-18 00:48:02.48005	13
-606	4	2	4	2016-07-18 00:48:02.478617	13
 667	112	teste123	126	2016-07-18 00:57:00.748729	8
 670	113	l	127	2016-07-18 23:39:24.95402	8
 671	112	l	127	2016-07-18 23:39:24.991525	8
@@ -1818,10 +1820,10 @@ COPY engine_dados (id, idfeaturecampo, valor, idprocesso, registro, idmenu) FROM
 702	2	comator	133	2016-07-18 23:55:22.661842	8
 703	1	comator	133	2016-07-18 23:55:22.662196	8
 704	114	2	133	2016-07-18 23:55:22.662568	8
-649	13		4	2016-07-18 00:48:02.496643	13
-634	28		4	2016-07-18 00:48:02.491049	13
+605	1	Bruno Siqueira	4	2016-07-18 00:45:19.709827	12
 619	43		4	2016-07-18 00:48:02.485371	13
-605	1	Bruno Rodrigues Siqueira	4	2016-07-18 00:45:19.709827	12
+634	28		4	2016-07-18 00:48:02.491049	13
+649	13		4	2016-07-18 00:48:02.496643	13
 \.
 
 
@@ -2179,6 +2181,69 @@ SELECT pg_catalog.setval('postos_campo_lista_id_seq', 130, true);
 --
 
 COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_finalizacao, relacionadoa) FROM stdin;
+343	\N	2	2016-07-25 23:53:59.702456	27	Em Andamento	\N	\N
+344	\N	2	2016-07-26 00:02:45.752177	27	Em Andamento	\N	\N
+345	\N	2	2016-07-26 00:05:53.546009	27	Em Andamento	\N	\N
+346	\N	2	2016-07-26 00:07:30.885431	27	Em Andamento	\N	\N
+347	\N	2	2016-07-26 00:10:05.808099	27	Em Andamento	\N	\N
+348	\N	2	2016-07-26 00:11:12.680329	27	Em Andamento	\N	\N
+349	\N	2	2016-07-26 00:12:39.908226	27	Em Andamento	\N	\N
+350	\N	2	2016-07-26 00:13:12.617195	27	Em Andamento	\N	\N
+351	\N	2	2016-07-26 00:13:48.333858	27	Em Andamento	\N	\N
+352	\N	2	2016-07-26 00:14:21.532097	27	Em Andamento	\N	\N
+353	\N	2	2016-07-26 00:15:01.368404	27	Em Andamento	\N	\N
+354	\N	2	2016-07-26 00:15:34.38871	27	Em Andamento	\N	\N
+355	\N	2	2016-07-26 00:16:12.970934	27	Em Andamento	\N	\N
+356	355	3	2016-07-26 00:16:58.822174	27	Em Andamento	\N	\N
+357	355	3	2016-07-26 00:16:58.863471	27	Em Andamento	\N	\N
+358	354	3	2016-07-26 00:17:01.607302	27	Em Andamento	\N	\N
+359	354	3	2016-07-26 00:17:01.647169	27	Em Andamento	\N	\N
+360	353	3	2016-07-26 00:17:04.567492	27	Em Andamento	\N	\N
+361	353	3	2016-07-26 00:17:04.607324	27	Em Andamento	\N	\N
+362	352	3	2016-07-26 00:17:08.10941	27	Em Andamento	\N	\N
+363	352	3	2016-07-26 00:17:08.149533	27	Em Andamento	\N	\N
+364	351	3	2016-07-26 00:17:10.726021	27	Em Andamento	\N	\N
+365	351	3	2016-07-26 00:17:10.766404	27	Em Andamento	\N	\N
+366	350	3	2016-07-26 00:17:14.017098	27	Em Andamento	\N	\N
+367	350	3	2016-07-26 00:17:14.058221	27	Em Andamento	\N	\N
+368	349	3	2016-07-26 00:17:17.196312	27	Em Andamento	\N	\N
+369	349	3	2016-07-26 00:17:17.408634	27	Em Andamento	\N	\N
+370	348	3	2016-07-26 00:17:21.505917	27	Em Andamento	\N	\N
+371	348	3	2016-07-26 00:17:21.548015	27	Em Andamento	\N	\N
+372	347	3	2016-07-26 00:17:25.277899	27	Em Andamento	\N	\N
+373	347	3	2016-07-26 00:17:25.320361	27	Em Andamento	\N	\N
+374	346	3	2016-07-26 00:17:28.464019	27	Em Andamento	\N	\N
+375	346	3	2016-07-26 00:17:28.505666	27	Em Andamento	\N	\N
+376	345	3	2016-07-26 00:17:31.807809	27	Em Andamento	\N	\N
+377	345	3	2016-07-26 00:17:31.84954	27	Em Andamento	\N	\N
+378	344	3	2016-07-26 00:17:35.198771	27	Em Andamento	\N	\N
+379	344	3	2016-07-26 00:17:35.240154	27	Em Andamento	\N	\N
+380	343	3	2016-07-26 00:17:39.341073	27	Em Andamento	\N	\N
+381	343	3	2016-07-26 00:17:39.382085	27	Em Andamento	\N	\N
+382	\N	1	2016-07-26 00:37:18.268042	28	Em Andamento	\N	\N
+383	\N	1	2016-07-26 00:38:02.576129	28	Em Andamento	\N	\N
+384	\N	1	2016-07-26 00:38:58.420219	28	Em Andamento	\N	\N
+385	\N	1	2016-07-26 00:40:38.633059	28	Em Andamento	\N	\N
+386	\N	1	2016-07-26 00:41:22.37184	28	Em Andamento	\N	\N
+387	\N	2	2016-07-26 00:44:14.367676	27	Em Andamento	\N	\N
+388	387	3	2016-07-26 00:44:20.70823	27	Em Andamento	\N	\N
+389	387	3	2016-07-26 00:44:20.74944	27	Em Andamento	\N	\N
+390	386	6	2016-07-26 00:54:32.418072	28	Em Andamento	\N	345
+391	\N	2	2016-07-26 00:58:47.150973	27	Em Andamento	\N	\N
+392	391	3	2016-07-26 00:58:54.167249	27	Em Andamento	\N	\N
+393	391	3	2016-07-26 00:58:54.212512	27	Em Andamento	\N	\N
+394	\N	2	2016-07-26 01:04:53.095665	27	Em Andamento	\N	\N
+395	394	3	2016-07-26 01:04:59.783884	27	Em Andamento	\N	\N
+396	394	3	2016-07-26 01:04:59.825283	27	Em Andamento	\N	\N
+397	\N	2	2016-07-26 01:08:35.013324	27	Em Andamento	\N	\N
+398	397	3	2016-07-26 01:08:41.6316	27	Em Andamento	\N	\N
+399	397	3	2016-07-26 01:08:41.672358	27	Em Andamento	\N	\N
+400	\N	2	2016-07-26 01:12:47.67928	27	Em Andamento	\N	\N
+401	400	3	2016-07-26 01:12:54.325633	27	Em Andamento	\N	\N
+402	400	3	2016-07-26 01:12:54.384315	27	Em Andamento	\N	\N
+403	\N	2	2016-07-26 01:26:22.916555	27	Em Andamento	\N	\N
+404	403	3	2016-07-26 01:26:29.716888	27	Em Andamento	\N	\N
+405	403	3	2016-07-26 01:26:29.768648	27	Em Andamento	\N	\N
 \.
 
 
@@ -2337,26 +2402,7 @@ SELECT pg_catalog.setval('usuario_atores_id_seq', 108, true);
 --
 
 COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
-14	\N	Bruno Silva	teste123	bruno.silva	\N	\N
-15	\N	Gabriel Prado	teste123	gabriel.prado	\N	\N
-16	\N	Luciano Neucamp	teste123	luciano.neucamp	\N	\N
-17	\N	Daniele Blanco	teste123	daniele.blanco	\N	\N
-21	\N	Danilo Trindade	teste123	danilo.trindade	\N	\N
-22	\N	Daniel Doro	teste123	daniel.doro	1	\N
-95	mm	nn	kkk	lll	\N	\N
-96	mm	nn	kkk	lll	\N	\N
-97	mm	nn	kkk	lll	\N	\N
-98	mm	nn	kkk	lll	\N	\N
-99	novo email	novo usuario	nova senha	novo login	\N	\N
-100	novo email	novo usuario	nova senha	novo login	\N	\N
-101	espirro	primeirao	s	l	\N	\N
-94	babirondo@gmail.com	siqueira	s3nha	babirondo	\N	\N
-126	email	nomee	teste123	novinho entao...	\N	\N
-127	l	l	l	l	\N	\N
-131	dsa	3	kn	m	\N	\N
-132	dsa	3	kn	m	\N	\N
-133	comator	comator	comator	comator	\N	\N
-4	bruno.siqueira@walmart.com	Bruno Rodrigues Siqueira	teste123	bruno.siqueira	1	\N
+4	bruno.siqueira@walmart.com	Bruno Siqueira	teste123	bruno.siqueira	1	\N
 \.
 
 
@@ -2364,7 +2410,7 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 342, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 405, true);
 
 
 --
@@ -2417,6 +2463,226 @@ COPY workflow_campos (id, campo, maxlenght, inputtype, txtarea_cols, txtarea_row
 --
 
 COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idworkflowtramitacao) FROM stdin;
+7284	202	Felipe Almeida	343	2016-07-25 23:53:59.779991	301	3173
+7285	215	https://github.com/frontfelipe/walmart-cart-teste	343	2016-07-25 23:53:59.802657	301	3173
+7286	216	mazza	343	2016-07-25 23:53:59.803239	301	3173
+7287	217	4,14	343	2016-07-25 23:53:59.803628	301	3173
+7288	223	3,4,11,14	343	2016-07-25 23:53:59.804039	301	3173
+7289	202	Romero Gonçalves Dias	344	2016-07-26 00:02:45.831235	301	3174
+7290	215	https://github.com/romerodias/walmart	344	2016-07-26 00:02:45.831883	301	3174
+7291	216	Mazza	344	2016-07-26 00:02:45.832304	301	3174
+7292	217	2	344	2016-07-26 00:02:45.832669	301	3174
+7293	223	2,15	344	2016-07-26 00:02:45.833102	301	3174
+7294	202	Wiliam Hiromitsu Kudaka	345	2016-07-26 00:05:53.612919	301	3175
+7295	215	https://github.com/wkudaka/some-ruby-test-repository/	345	2016-07-26 00:05:53.613618	301	3175
+7296	216	mazza	345	2016-07-26 00:05:53.614142	301	3175
+7297	217	7	345	2016-07-26 00:05:53.614642	301	3175
+7298	223	3,6,7,11	345	2016-07-26 00:05:53.615159	301	3175
+7299	202	Luiz Junqueira	346	2016-07-26 00:07:30.926423	301	3176
+7300	215	https://github.com/junqueira/shopapp e https://shopeng.herokuapp.com/	346	2016-07-26 00:07:30.92718	301	3176
+7301	216	mazza	346	2016-07-26 00:07:30.927621	301	3176
+7302	217	6	346	2016-07-26 00:07:30.928051	301	3176
+7303	223	2,4,6	346	2016-07-26 00:07:30.928447	301	3176
+7304	202	Gustavo Vieira	347	2016-07-26 00:10:05.865456	301	3177
+7305	215	https://drive.google.com/a/avenuecode.com/file/d/0B-dYXZ2cOfG1NnpRbXBfTUxVQWs/view?usp=sharing	347	2016-07-26 00:10:05.866129	301	3177
+7306	216	avenue code	347	2016-07-26 00:10:05.86655	301	3177
+7307	217	1	347	2016-07-26 00:10:05.866952	301	3177
+7308	223	1	347	2016-07-26 00:10:05.867389	301	3177
+7309	202	Juliano Versolato	348	2016-07-26 00:11:12.734814	301	3178
+7310	215	https://github.com/jversolato/Compromissos	348	2016-07-26 00:11:12.735557	301	3178
+7311	216	mazza	348	2016-07-26 00:11:12.735969	301	3178
+7312	217	1	348	2016-07-26 00:11:12.736409	301	3178
+7313	223	1	348	2016-07-26 00:11:12.736832	301	3178
+7314	202	Felipe Novaes	349	2016-07-26 00:12:39.944894	301	3179
+7315	215	https://bitbucket.org/kamikazebr/raabbit - Android app https://bitbucket.org/kamikazebr/raabbitserver - Nodejs server	349	2016-07-26 00:12:39.945605	301	3179
+7316	216	O2B	349	2016-07-26 00:12:39.946024	301	3179
+7317	217	1,5	349	2016-07-26 00:12:39.946364	301	3179
+7318	223	1,5	349	2016-07-26 00:12:39.946747	301	3179
+7319	202	Diego Cezimbra	350	2016-07-26 00:13:12.654918	301	3180
+7320	215	https://bitbucket.org/dicezimbra/projetodesafio-fcamara	350	2016-07-26 00:13:12.655741	301	3180
+7321	216	FCAMARA	350	2016-07-26 00:13:12.656155	301	3180
+7322	217	1	350	2016-07-26 00:13:12.656542	301	3180
+7323	223	1	350	2016-07-26 00:13:12.656944	301	3180
+7324	202	George Luiz de Souza Freire	351	2016-07-26 00:13:48.373993	301	3181
+7325	215	https://github.com/GeorgeSouzaFreire/AgendaCompromisso	351	2016-07-26 00:13:48.374628	301	3181
+7326	216	O2b	351	2016-07-26 00:13:48.374994	301	3181
+7327	217	1	351	2016-07-26 00:13:48.375431	301	3181
+7328	223	1	351	2016-07-26 00:13:48.375852	301	3181
+7329	202	Lucas Caramelo	352	2016-07-26 00:14:21.568431	301	3182
+7330	215	https://github.com/caramelool/SpiderMan	352	2016-07-26 00:14:21.569113	301	3182
+7331	216	Ginga	352	2016-07-26 00:14:21.569533	301	3182
+7332	217	1	352	2016-07-26 00:14:21.569949	301	3182
+7333	223	1	352	2016-07-26 00:14:21.570349	301	3182
+7334	202	Alex Zacarias Soares	353	2016-07-26 00:15:01.403961	301	3183
+7335	215	https://bitbucket.org/asoares99/agendacompromissowalmart	353	2016-07-26 00:15:01.404498	301	3183
+7336	216	mazza	353	2016-07-26 00:15:01.404912	301	3183
+7337	217	1	353	2016-07-26 00:15:01.405307	301	3183
+7338	223	1,2,3	353	2016-07-26 00:15:01.405705	301	3183
+7339	202	Jose Cavalcanti	354	2016-07-26 00:15:34.426416	301	3184
+7340	215	git@github.com:moraisholanda/heroes.git	354	2016-07-26 00:15:34.427151	301	3184
+7341	216	ginga	354	2016-07-26 00:15:34.427576	301	3184
+7342	217	1	354	2016-07-26 00:15:34.427979	301	3184
+7343	223	1	354	2016-07-26 00:15:34.428389	301	3184
+7344	202	Vitor Oliveira	355	2016-07-26 00:16:13.009279	301	3185
+7345	215	https://github.com/victor-machado/Agenda.git https://github.com/victor-machado/agenda-services.git	355	2016-07-26 00:16:13.010077	301	3185
+7346	216	Verotthi	355	2016-07-26 00:16:13.010558	301	3185
+7347	217	1	355	2016-07-26 00:16:13.010999	301	3185
+7348	223	1	355	2016-07-26 00:16:13.011398	301	3185
+7349	218	Favor analisar.	356	2016-07-26 00:16:58.862006	302	3186
+7350	218	Favor analisar.	357	2016-07-26 00:16:58.897161	302	3187
+7351	218	Favor analisar.	358	2016-07-26 00:17:01.645665	302	3188
+7352	218	Favor analisar.	359	2016-07-26 00:17:01.68206	302	3189
+7353	218	Favor analisar.	360	2016-07-26 00:17:04.605909	302	3190
+7354	218	Favor analisar.	361	2016-07-26 00:17:04.642083	302	3191
+7355	218	Favor analisar.	362	2016-07-26 00:17:08.148083	302	3192
+7356	218	Favor analisar.	363	2016-07-26 00:17:08.183874	302	3193
+7357	218	Favor analisar.	364	2016-07-26 00:17:10.764957	302	3194
+7358	218	Favor analisar.	365	2016-07-26 00:17:10.803445	302	3195
+7359	218	Favor analisar.	366	2016-07-26 00:17:14.056373	302	3196
+7360	218	Favor analisar.	367	2016-07-26 00:17:14.095331	302	3197
+7361	218	Favor analisar.	368	2016-07-26 00:17:17.406228	302	3198
+7362	218	Favor analisar.	369	2016-07-26 00:17:17.522934	302	3199
+7363	218	Favor analisar.	370	2016-07-26 00:17:21.546508	302	3200
+7364	218	Favor analisar.	371	2016-07-26 00:17:21.584924	302	3201
+7365	218	Favor analisar.	372	2016-07-26 00:17:25.319019	302	3202
+7366	218	Favor analisar.	373	2016-07-26 00:17:25.355415	302	3203
+7367	218	Favor analisar.	374	2016-07-26 00:17:28.504123	302	3204
+7368	218	Favor analisar.	375	2016-07-26 00:17:28.541014	302	3205
+7369	218	Favor analisar.	376	2016-07-26 00:17:31.848293	302	3206
+7370	218	Favor analisar.	377	2016-07-26 00:17:31.884519	302	3207
+7371	218	Favor analisar.	378	2016-07-26 00:17:35.238605	302	3208
+7372	218	Favor analisar.	379	2016-07-26 00:17:35.276898	302	3209
+7373	218	Favor analisar.	380	2016-07-26 00:17:39.380562	302	3210
+7374	218	Favor analisar.	381	2016-07-26 00:17:39.417021	302	3211
+7375	219	pleno	376	2016-07-26 00:27:11.699024	309	3206
+7376	220	cho que o nome dele eh William  [3:49]  nao conseguimos rodar aqui  [3:49]  a aplicacao noa subiu :disappointed:  [3:49]  nao *  [3:49]  instalei o docker aqui que eu nao tinha, mas a aplicacao nao subiu  [3:49]  porem eu gostei bastante da prova dele  Bruno Siqueira [3:50 PM]  como o classificaria?  maryfelvie [3:57 PM]  Olha, ele mandou bem no codigo em geral, olhando o codigo ele atendeu os requisitos solicitados na prova, se preocupou com tratamentos de erros, validacoes, separou bem as responsabilidades do codigo, criou chaves de configuracao dinamicas, usou recursos legais do ruby como o neo4j, comentou sobre o docker e a documentacao dele foi 100%  [3:57]  o unico ponto ruim foi que a aplicacao nao subiu	376	2016-07-26 00:27:11.699933	309	3206
+7377	221	-	377	2016-07-26 00:27:40.265503	310	3207
+7378	222	Prós Documentação bem feita e detalhada Usou container com consciência dos benefícios Usou um banco de dados baseado em grafos  Contras Usou form para receber dados Fez poucos commits Manteve código de acesso a banco relacional no código curl de exemplo para inclusão de rota não funciona e retorna erro com um HTML Log pobre Muito código comentado Achei trechos da query de busca de caminho de menor custo em buscas no google	377	2016-07-26 00:27:40.266407	310	3207
+7379	221	Junior	375	2016-07-26 00:28:47.084457	310	3205
+7380	222	Utilizou a linguagem Ruby On Rails para desenvolver o teste. Todas as telas e fluxos foram desenvolvidos, porém alguns fluxos um pouco complexos e com erros.  Critérios de avaliação:  Customização do front-end: utilizou o Twitter Bootstrap e não teve uma customização fina para as telas propostas. Dependência do framework: todos os controllers, models e views foram desenvolvidos utilizando o Scaffold do Rails. Alguns models não teriam a necessidade de serem utilizados, mas como foram auto-gerados para ter a tela referente ao fluxo, criou-se alguns models a mais. Padrões de projeto: nenhum padrão de projeto foi utilizado. Organização: Seguiu o modelo do RoR, o que já deixa o projeto bem organizado. Organização das camadas da App: as regras de negócio e consultar ao banco de dados foram inteiramente escritas no controller ou no model.  Avaliação:  O nível do candidato se aplicaria em um Full-stack Junior Ruby on Rails.	375	2016-07-26 00:28:47.085354	310	3205
+7381	219	pleno	374	2016-07-26 00:29:03.961282	309	3204
+7382	220	A Organização do projeto seguiu os padrão do Ruby On Rails, o candidato usou as rotas como API, mostrou conhecimentos como front-end com rails. O codigo que o candidato está bem enxuto e limpo, mostrou organização e soube seguir boas praticas, mas não teve nada que demostrasse que o candidato pudesse ser classificado como Senior. Também não demostrou nada que fizesse ser classificado como Junior, pois ele mostrou que tem conhecimento de boas praticas e soube usar on Ruby on Rails + Heroku para demostrar sua solução.  Então, o candidato está classificado como Pleno baseado nas informações na solução dele.	374	2016-07-26 00:29:03.962391	309	3204
+7383	219	Junior	372	2016-07-26 00:29:26.115748	309	3202
+7384	220	Código sem estrutura definida, falta de resposta ao usuário, uso de componentes antigos, camadas de layout desnecessárias. (Reprovado)	372	2016-07-26 00:29:26.116634	309	3202
+7385	221	Junior	373	2016-07-26 00:29:44.690118	310	3203
+7386	222	Código sem estrutura definida, falta de resposta ao usuário, uso de componentes antigos, camadas de layout desnecessárias. (Reprovado)	373	2016-07-26 00:29:44.691025	310	3203
+7387	221	junior	371	2016-07-26 00:30:06.177092	310	3201
+7388	222	Código sem estrutura definida, Async Task para conexões, código em português, layout sem usabilidade, CRUD incompleto. (Reprovado)	371	2016-07-26 00:30:06.178345	310	3201
+7389	219	junior	370	2016-07-26 00:30:13.9105	309	3200
+7390	220	Código sem estrutura definida, Async Task para conexões, código em português, layout sem usabilidade, CRUD incompleto. (Reprovado)	370	2016-07-26 00:30:13.911412	309	3200
+7391	219	Junior pra pleno	368	2016-07-26 00:30:36.575964	309	3198
+7392	220	Não consegui rodar o backend. Avaliando apenas o código: Código sem estrutura, métodos gigantes que tratam de tudo, de resto parece ok, porém conversei com um pessoal da ginga que já trabalhou com ele, ele foi demitido por alguma doidera, mas ninguém se lembra qual foi.	368	2016-07-26 00:30:36.576892	309	3198
+7393	221	Junior pra pleno	369	2016-07-26 00:30:54.07111	310	3199
+7394	222	Não consegui rodar o backend. Avaliando apenas o código: Código sem estrutura, métodos gigantes que tratam de tudo, de resto parece ok, porém conversei com um pessoal da ginga que já trabalhou com ele, ele foi demitido por alguma doidera, mas ninguém se lembra qual foi.	369	2016-07-26 00:30:54.072131	310	3199
+7395	221	jr	367	2016-07-26 00:31:19.102075	310	3197
+7396	222	Não consegui rodar o backend. Avaliando apenas o código: Classes criadas por outra pessoa, código sem estrutura definida, métodos com muitas funções, conexão feita com uma classe de terceiro cheia de código sem antigo e sem ser utilizado, Async Task. (reprovado)	367	2016-07-26 00:31:19.105475	310	3197
+7397	219	jr	366	2016-07-26 00:31:25.894439	309	3196
+7398	220	Não consegui rodar o backend. Avaliando apenas o código: Classes criadas por outra pessoa, código sem estrutura definida, métodos com muitas funções, conexão feita com uma classe de terceiro cheia de código sem antigo e sem ser utilizado, Async Task. (reprovado)	366	2016-07-26 00:31:25.895314	309	3196
+7399	219	jr	364	2016-07-26 00:31:47.68888	309	3194
+7400	220	Código sem estrutura definida, Async Task para conexões, código em português, código repetido, agenda do usuário pode ser acessado por qualquer usuário. (Reprovado)	364	2016-07-26 00:31:47.69877	309	3194
+7401	221	jr	365	2016-07-26 00:31:57.824241	310	3195
+7402	222	Código sem estrutura definida, Async Task para conexões, código em português, código repetido, agenda do usuário pode ser acessado por qualquer usuário. (Reprovado)	365	2016-07-26 00:31:57.840101	310	3195
+7403	221	pleno	363	2016-07-26 00:32:18.90918	310	3193
+7404	222	gostei	363	2016-07-26 00:32:18.910179	310	3193
+7405	219	pleno	362	2016-07-26 00:32:26.551127	309	3192
+7406	220	gostei	362	2016-07-26 00:32:26.552205	309	3192
+7407	219	pleno	360	2016-07-26 00:32:52.447674	309	3190
+7408	220	Código melhor organizado / Algumas coisas antigas que podem melhorar / Porém ainda não consegui rodar o serviço	360	2016-07-26 00:32:52.459165	309	3190
+7409	221	pleno	361	2016-07-26 00:33:10.780406	310	3191
+7410	222	Código melhor organizado / Algumas coisas antigas que podem melhorar / Porém ainda não consegui rodar o serviço	361	2016-07-26 00:33:10.781461	310	3191
+7411	221	pleno	359	2016-07-26 00:33:25.413382	310	3189
+7412	222	gostei	359	2016-07-26 00:33:25.414543	310	3189
+7413	219	pleno	358	2016-07-26 00:33:31.470633	309	3188
+7414	220	gostei	358	2016-07-26 00:33:31.471612	309	3188
+7415	219	jr	356	2016-07-26 00:33:53.478858	309	3186
+7416	220	Me parece um bom programador, mas sem muito conhecimento de específico de android.	356	2016-07-26 00:33:53.479784	309	3186
+7417	221	jr	357	2016-07-26 00:34:00.181084	310	3187
+7418	222	Me parece um bom programador, mas sem muito conhecimento de específico de android.	357	2016-07-26 00:34:00.182357	310	3187
+7419	221	pleno	379	2016-07-26 00:35:11.1619	310	3209
+7420	222	a prova dele esta funcionando bonitinha, rodou de boas aqui, ele separou a aplicacao em camadinhas, usou mvc de forma limpa, e o bacana foi que ele usou angular, ja mostra que ele se preocupa em estar atualizado. Usou h2 como banco e o hibernate que usamos aqui em algumas aplicacoes tbm, usou bastante spring, ele mandou bem, foi simples, mas esta de acordo.  [3:44]  Uma ressalva no teste dele seria que ele nao se preocupou em tratamento de excecoes, logs com possiveis erros, e nao fez nehum teste unitario  [3:44]  isso eh ruim  [3:44]  mostrei para o Vitor tbm ele ele achou simples, bem arroz com feijao mesmo  [3:45]  mas pensando no tempo, e na correria que a pessoa tem para fazer o teste, eu nao tenho nada contra,  Bruno Siqueira [3:46 PM]  se tivesse que classificar este candidato, como o faria: jr, pl ou sr ?  maryfelvie [3:46 PM]  com relacao ao que usamos aqui, acho que nao seria nenhum bixo de 7 cabecas ara ele  [3:47]  hm dificil, junior com certeza ele nao eh, um pleno eu diria  [3:48]  a prova dele foi boa, mas nos achamos bem CRUD msm	379	2016-07-26 00:35:11.178076	310	3209
+7421	204	Bruno Siqueira	382	2016-07-26 00:37:18.304335	304	3212
+7422	208	Backend Java	382	2016-07-26 00:37:18.305181	304	3212
+7423	209	--	382	2016-07-26 00:37:18.305593	304	3212
+7424	210	--	382	2016-07-26 00:37:18.305939	304	3212
+7425	211	todas	382	2016-07-26 00:37:18.306273	304	3212
+7426	213	krabs	382	2016-07-26 00:37:18.306585	304	3212
+7427	203	2,6	382	2016-07-26 00:37:18.306898	304	3212
+7428	204	Luciano	383	2016-07-26 00:38:02.61199	304	3213
+7429	208	Android	383	2016-07-26 00:38:02.612689	304	3213
+7430	209	-	383	2016-07-26 00:38:02.613127	304	3213
+7431	210	-	383	2016-07-26 00:38:02.613559	304	3213
+7432	211	todas	383	2016-07-26 00:38:02.613932	304	3213
+7433	213	Mobile	383	2016-07-26 00:38:02.6143	304	3213
+7434	203	1	383	2016-07-26 00:38:02.614698	304	3213
+7435	204	Luciano	384	2016-07-26 00:38:58.456625	304	3214
+7436	208	PHP Magento	384	2016-07-26 00:38:58.457236	304	3214
+7437	209	-	384	2016-07-26 00:38:58.457628	304	3214
+7438	210	-	384	2016-07-26 00:38:58.458082	304	3214
+7439	211	FCAMARA	384	2016-07-26 00:38:58.458483	304	3214
+7440	213	Outlet	384	2016-07-26 00:38:58.458883	304	3214
+7441	203	3,20	384	2016-07-26 00:38:58.459326	304	3214
+7442	204	Bauer	385	2016-07-26 00:40:38.669586	304	3215
+7443	208	Full Stack	385	2016-07-26 00:40:38.670193	304	3215
+7444	209	-	385	2016-07-26 00:40:38.670633	304	3215
+7445	210	-	385	2016-07-26 00:40:38.671033	304	3215
+7446	211	todas	385	2016-07-26 00:40:38.671464	304	3215
+7447	213	API Hub	385	2016-07-26 00:40:38.671823	304	3215
+7448	203	4,5,13,14	385	2016-07-26 00:40:38.672207	304	3215
+7449	204	Bauer	386	2016-07-26 00:41:22.409319	304	3216
+7450	208	Full Stack	386	2016-07-26 00:41:22.410153	304	3216
+7451	209	-	386	2016-07-26 00:41:22.410555	304	3216
+7452	210	-	386	2016-07-26 00:41:22.410937	304	3216
+7453	211	todas	386	2016-07-26 00:41:22.411341	304	3216
+7454	213	Capcom	386	2016-07-26 00:41:22.411721	304	3216
+7455	203	6,7	386	2016-07-26 00:41:22.412103	304	3216
+7456	202	Bruno Rossetto	387	2016-07-26 00:44:14.404611	301	3217
+7457	215	https://github.com/haptico/agenda.git	387	2016-07-26 00:44:14.405524	301	3217
+7458	216	indicado Bruno Siqueira	387	2016-07-26 00:44:14.40598	301	3217
+7459	217	1	387	2016-07-26 00:44:14.406362	301	3217
+7460	223	1,2,3,4,9,10,11,12,15	387	2016-07-26 00:44:14.406753	301	3217
+7461	218	Favor analisar.	388	2016-07-26 00:44:20.74793	302	3218
+7462	218	Favor analisar.	389	2016-07-26 00:44:20.78633	302	3219
+7463	221	bom Jr	389	2016-07-26 00:44:41.218699	310	3219
+7464	222	Classes geradas automaticamente / Código duplicado / Falta de estrutura definida / ListView / Design bem feito / Serviço rodando externo	389	2016-07-26 00:44:41.219669	310	3219
+7465	219	-	388	2016-07-26 00:45:05.675433	309	3218
+7466	220	O time entende que teria que dedicar mais tempo para equalizar o conhecimento técnico, uma vez que ele não tem muita vivência com linguagens orientada objeto e design patterns. Gostaríamos de avaliar outros candidatos, para ver se é melhor dedicar esse tempo com as questões técnicas ou com outros pontos de outros candidatos.	388	2016-07-26 00:45:05.676387	309	3218
+7467	206	345	390	2016-07-26 00:54:32.460475	305	3220
+7468	205	386	390	2016-07-26 00:54:32.461121	305	3220
+7469	202	Murilo Niéri	391	2016-07-26 00:58:47.365924	301	3221
+7470	215	https://github.com/nieri/checkout	391	2016-07-26 00:58:47.366809	301	3221
+7471	216	Mazza	391	2016-07-26 00:58:47.367418	301	3221
+7472	217	2	391	2016-07-26 00:58:47.367847	301	3221
+7473	223	2,9,10,11,12,13	391	2016-07-26 00:58:47.368341	301	3221
+7474	218	Favor analisar.	392	2016-07-26 00:58:54.210811	302	3222
+7475	218	Favor analisar.	393	2016-07-26 00:58:54.253342	302	3223
+7476	202	Rafael Nojiri	394	2016-07-26 01:04:53.136309	301	3224
+7477	215	 https://github.com/rnojiri/walmart	394	2016-07-26 01:04:53.136938	301	3224
+7478	216	Indicado Doro	394	2016-07-26 01:04:53.137295	301	3224
+7479	217	2	394	2016-07-26 01:04:53.137628	301	3224
+7480	223	1,2,3,5,9,10,11,12	394	2016-07-26 01:04:53.13803	301	3224
+7481	218	Favor analisar.	395	2016-07-26 01:04:59.823755	302	3225
+7482	218	Favor analisar.	396	2016-07-26 01:04:59.860869	302	3226
+7483	202	Juliano Eutacio	397	2016-07-26 01:08:35.054419	301	3227
+7484	215	git clone https://bitbucket.org/walmartjuliano/walmartclient.git  e git clone https://bitbucket.org/walmartjuliano/walmartserver.git	397	2016-07-26 01:08:35.055191	301	3227
+7485	216	Prospecção direta	397	2016-07-26 01:08:35.055616	301	3227
+7486	217	2	397	2016-07-26 01:08:35.056006	301	3227
+7487	223	2,9	397	2016-07-26 01:08:35.056408	301	3227
+7488	218	Favor analisar.	398	2016-07-26 01:08:41.670926	302	3228
+7489	218	Favor analisar.	399	2016-07-26 01:08:41.707405	302	3229
+7490	202	Vitor Hugo Salgado	400	2016-07-26 01:12:47.715967	301	3230
+7491	215	https://github.com/vitorsalgado/express-delivery	400	2016-07-26 01:12:47.716642	301	3230
+7492	216	indicação Mary - Krabs	400	2016-07-26 01:12:47.717044	301	3230
+7493	217	2,5	400	2016-07-26 01:12:47.71747	301	3230
+7494	223	2,5,11,23	400	2016-07-26 01:12:47.718682	301	3230
+7495	218	Favor analisar.	401	2016-07-26 01:12:54.382637	302	3231
+7496	218	Favor analisar.	402	2016-07-26 01:12:54.443104	302	3232
+7497	202	Alcides Queiroz	403	2016-07-26 01:26:22.967416	301	3233
+7498	215	mandou o projeto zipado	403	2016-07-26 01:26:22.968289	301	3233
+7499	216	Prospecção direta	403	2016-07-26 01:26:22.968803	301	3233
+7500	217	5,13	403	2016-07-26 01:26:22.969437	301	3233
+7501	223	5,9,10,11,13	403	2016-07-26 01:26:22.969925	301	3233
+7502	218	Favor analisar.	404	2016-07-26 01:26:29.767047	302	3234
+7503	218	Favor analisar.	405	2016-07-26 01:26:29.817488	302	3235
 \.
 
 
@@ -2424,7 +2690,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 7283, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 7503, true);
 
 
 --
@@ -2542,6 +2808,69 @@ SELECT pg_catalog.setval('workflow_postos_id_seq', 315, true);
 --
 
 COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuario_associado) FROM stdin;
+3173	343	298	2016-07-25 23:53:59.74043	\N	\N
+3174	344	298	2016-07-26 00:02:45.770533	\N	\N
+3175	345	298	2016-07-26 00:05:53.562601	\N	\N
+3176	346	298	2016-07-26 00:07:30.886684	\N	\N
+3177	347	298	2016-07-26 00:10:05.809561	\N	\N
+3178	348	298	2016-07-26 00:11:12.696566	\N	\N
+3179	349	298	2016-07-26 00:12:39.909631	\N	\N
+3180	350	298	2016-07-26 00:13:12.618466	\N	\N
+3181	351	298	2016-07-26 00:13:48.335149	\N	\N
+3182	352	298	2016-07-26 00:14:21.533375	\N	\N
+3183	353	298	2016-07-26 00:15:01.369473	\N	\N
+3184	354	298	2016-07-26 00:15:34.389925	\N	\N
+3185	355	298	2016-07-26 00:16:12.972192	\N	\N
+3208	378	300	2016-07-26 00:17:35.19975	\N	\N
+3210	380	300	2016-07-26 00:17:39.342104	\N	\N
+3211	381	299	2016-07-26 00:17:39.382787	\N	\N
+3206	376	300	2016-07-26 00:17:31.809023	2016-07-26 00:27:11.700352	\N
+3207	377	299	2016-07-26 00:17:31.850206	2016-07-26 00:27:40.267234	\N
+3205	375	299	2016-07-26 00:17:28.506475	2016-07-26 00:28:47.085818	\N
+3204	374	300	2016-07-26 00:17:28.465047	2016-07-26 00:29:03.962912	\N
+3202	372	300	2016-07-26 00:17:25.278942	2016-07-26 00:29:26.117503	\N
+3203	373	299	2016-07-26 00:17:25.321047	2016-07-26 00:29:44.691468	\N
+3201	371	299	2016-07-26 00:17:21.54867	2016-07-26 00:30:06.178956	\N
+3200	370	300	2016-07-26 00:17:21.507013	2016-07-26 00:30:13.912217	\N
+3198	368	300	2016-07-26 00:17:17.197432	2016-07-26 00:30:36.577353	\N
+3199	369	299	2016-07-26 00:17:17.485935	2016-07-26 00:30:54.072808	\N
+3197	367	299	2016-07-26 00:17:14.059813	2016-07-26 00:31:19.115814	\N
+3196	366	300	2016-07-26 00:17:14.018161	2016-07-26 00:31:25.89623	\N
+3194	364	300	2016-07-26 00:17:10.72707	2016-07-26 00:31:47.699457	\N
+3195	365	299	2016-07-26 00:17:10.767043	2016-07-26 00:31:57.840803	\N
+3193	363	299	2016-07-26 00:17:08.150221	2016-07-26 00:32:18.910648	\N
+3192	362	300	2016-07-26 00:17:08.110405	2016-07-26 00:32:26.552838	\N
+3190	360	300	2016-07-26 00:17:04.568453	2016-07-26 00:32:52.462699	\N
+3191	361	299	2016-07-26 00:17:04.608006	2016-07-26 00:33:10.782236	\N
+3189	359	299	2016-07-26 00:17:01.647811	2016-07-26 00:33:25.415326	\N
+3188	358	300	2016-07-26 00:17:01.608403	2016-07-26 00:33:31.472023	\N
+3186	356	300	2016-07-26 00:16:58.823239	2016-07-26 00:33:53.480651	\N
+3187	357	299	2016-07-26 00:16:58.864106	2016-07-26 00:34:00.183002	\N
+3209	379	299	2016-07-26 00:17:35.240853	2016-07-26 00:35:11.178667	\N
+3212	382	303	2016-07-26 00:37:18.26918	\N	\N
+3213	383	303	2016-07-26 00:38:02.577292	\N	\N
+3214	384	303	2016-07-26 00:38:58.42144	\N	\N
+3215	385	303	2016-07-26 00:40:38.63426	\N	\N
+3216	386	303	2016-07-26 00:41:22.373033	\N	\N
+3217	387	298	2016-07-26 00:44:14.368809	\N	\N
+3219	389	299	2016-07-26 00:44:20.750116	2016-07-26 00:44:41.220075	\N
+3218	388	300	2016-07-26 00:44:20.709531	2016-07-26 00:45:05.676803	\N
+3220	390	306	2016-07-26 00:54:32.419674	\N	\N
+3221	391	298	2016-07-26 00:58:47.305669	\N	\N
+3222	392	300	2016-07-26 00:58:54.168303	\N	\N
+3223	393	299	2016-07-26 00:58:54.21327	\N	\N
+3224	394	298	2016-07-26 01:04:53.096775	\N	\N
+3225	395	300	2016-07-26 01:04:59.785002	\N	\N
+3226	396	299	2016-07-26 01:04:59.825979	\N	\N
+3227	397	298	2016-07-26 01:08:35.014638	\N	\N
+3228	398	300	2016-07-26 01:08:41.632833	\N	\N
+3229	399	299	2016-07-26 01:08:41.672992	\N	\N
+3230	400	298	2016-07-26 01:12:47.680515	\N	\N
+3231	401	300	2016-07-26 01:12:54.326692	\N	\N
+3232	402	299	2016-07-26 01:12:54.385036	\N	\N
+3233	403	298	2016-07-26 01:26:22.917869	\N	\N
+3234	404	300	2016-07-26 01:26:29.718623	\N	\N
+3235	405	299	2016-07-26 01:26:29.769358	\N	\N
 \.
 
 
@@ -2549,7 +2878,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3172, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3235, true);
 
 
 --
