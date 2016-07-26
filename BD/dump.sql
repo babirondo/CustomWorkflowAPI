@@ -2218,6 +2218,14 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 379	344	3	2016-07-26 00:17:35.240154	27	Em Andamento	\N	\N
 380	343	3	2016-07-26 00:17:39.341073	27	Em Andamento	\N	\N
 381	343	3	2016-07-26 00:17:39.382085	27	Em Andamento	\N	\N
+382	\N	1	2016-07-26 00:37:18.268042	28	Em Andamento	\N	\N
+383	\N	1	2016-07-26 00:38:02.576129	28	Em Andamento	\N	\N
+384	\N	1	2016-07-26 00:38:58.420219	28	Em Andamento	\N	\N
+385	\N	1	2016-07-26 00:40:38.633059	28	Em Andamento	\N	\N
+386	\N	1	2016-07-26 00:41:22.37184	28	Em Andamento	\N	\N
+387	\N	2	2016-07-26 00:44:14.367676	27	Em Andamento	\N	\N
+388	387	3	2016-07-26 00:44:20.70823	27	Em Andamento	\N	\N
+389	387	3	2016-07-26 00:44:20.74944	27	Em Andamento	\N	\N
 \.
 
 
@@ -2384,7 +2392,7 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 381, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 389, true);
 
 
 --
@@ -2574,6 +2582,52 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7418	222	Me parece um bom programador, mas sem muito conhecimento de específico de android.	357	2016-07-26 00:34:00.182357	310	3187
 7419	221	pleno	379	2016-07-26 00:35:11.1619	310	3209
 7420	222	a prova dele esta funcionando bonitinha, rodou de boas aqui, ele separou a aplicacao em camadinhas, usou mvc de forma limpa, e o bacana foi que ele usou angular, ja mostra que ele se preocupa em estar atualizado. Usou h2 como banco e o hibernate que usamos aqui em algumas aplicacoes tbm, usou bastante spring, ele mandou bem, foi simples, mas esta de acordo.  [3:44]  Uma ressalva no teste dele seria que ele nao se preocupou em tratamento de excecoes, logs com possiveis erros, e nao fez nehum teste unitario  [3:44]  isso eh ruim  [3:44]  mostrei para o Vitor tbm ele ele achou simples, bem arroz com feijao mesmo  [3:45]  mas pensando no tempo, e na correria que a pessoa tem para fazer o teste, eu nao tenho nada contra,  Bruno Siqueira [3:46 PM]  se tivesse que classificar este candidato, como o faria: jr, pl ou sr ?  maryfelvie [3:46 PM]  com relacao ao que usamos aqui, acho que nao seria nenhum bixo de 7 cabecas ara ele  [3:47]  hm dificil, junior com certeza ele nao eh, um pleno eu diria  [3:48]  a prova dele foi boa, mas nos achamos bem CRUD msm	379	2016-07-26 00:35:11.178076	310	3209
+7421	204	Bruno Siqueira	382	2016-07-26 00:37:18.304335	304	3212
+7422	208	Backend Java	382	2016-07-26 00:37:18.305181	304	3212
+7423	209	--	382	2016-07-26 00:37:18.305593	304	3212
+7424	210	--	382	2016-07-26 00:37:18.305939	304	3212
+7425	211	todas	382	2016-07-26 00:37:18.306273	304	3212
+7426	213	krabs	382	2016-07-26 00:37:18.306585	304	3212
+7427	203	2,6	382	2016-07-26 00:37:18.306898	304	3212
+7428	204	Luciano	383	2016-07-26 00:38:02.61199	304	3213
+7429	208	Android	383	2016-07-26 00:38:02.612689	304	3213
+7430	209	-	383	2016-07-26 00:38:02.613127	304	3213
+7431	210	-	383	2016-07-26 00:38:02.613559	304	3213
+7432	211	todas	383	2016-07-26 00:38:02.613932	304	3213
+7433	213	Mobile	383	2016-07-26 00:38:02.6143	304	3213
+7434	203	1	383	2016-07-26 00:38:02.614698	304	3213
+7435	204	Luciano	384	2016-07-26 00:38:58.456625	304	3214
+7436	208	PHP Magento	384	2016-07-26 00:38:58.457236	304	3214
+7437	209	-	384	2016-07-26 00:38:58.457628	304	3214
+7438	210	-	384	2016-07-26 00:38:58.458082	304	3214
+7439	211	FCAMARA	384	2016-07-26 00:38:58.458483	304	3214
+7440	213	Outlet	384	2016-07-26 00:38:58.458883	304	3214
+7441	203	3,20	384	2016-07-26 00:38:58.459326	304	3214
+7442	204	Bauer	385	2016-07-26 00:40:38.669586	304	3215
+7443	208	Full Stack	385	2016-07-26 00:40:38.670193	304	3215
+7444	209	-	385	2016-07-26 00:40:38.670633	304	3215
+7445	210	-	385	2016-07-26 00:40:38.671033	304	3215
+7446	211	todas	385	2016-07-26 00:40:38.671464	304	3215
+7447	213	API Hub	385	2016-07-26 00:40:38.671823	304	3215
+7448	203	4,5,13,14	385	2016-07-26 00:40:38.672207	304	3215
+7449	204	Bauer	386	2016-07-26 00:41:22.409319	304	3216
+7450	208	Full Stack	386	2016-07-26 00:41:22.410153	304	3216
+7451	209	-	386	2016-07-26 00:41:22.410555	304	3216
+7452	210	-	386	2016-07-26 00:41:22.410937	304	3216
+7453	211	todas	386	2016-07-26 00:41:22.411341	304	3216
+7454	213	Capcom	386	2016-07-26 00:41:22.411721	304	3216
+7455	203	6,7	386	2016-07-26 00:41:22.412103	304	3216
+7456	202	Bruno Rossetto	387	2016-07-26 00:44:14.404611	301	3217
+7457	215	https://github.com/haptico/agenda.git	387	2016-07-26 00:44:14.405524	301	3217
+7458	216	indicado Bruno Siqueira	387	2016-07-26 00:44:14.40598	301	3217
+7459	217	1	387	2016-07-26 00:44:14.406362	301	3217
+7460	223	1,2,3,4,9,10,11,12,15	387	2016-07-26 00:44:14.406753	301	3217
+7461	218	Favor analisar.	388	2016-07-26 00:44:20.74793	302	3218
+7462	218	Favor analisar.	389	2016-07-26 00:44:20.78633	302	3219
+7463	221	bom Jr	389	2016-07-26 00:44:41.218699	310	3219
+7464	222	Classes geradas automaticamente / Código duplicado / Falta de estrutura definida / ListView / Design bem feito / Serviço rodando externo	389	2016-07-26 00:44:41.219669	310	3219
+7465	219	-	388	2016-07-26 00:45:05.675433	309	3218
+7466	220	O time entende que teria que dedicar mais tempo para equalizar o conhecimento técnico, uma vez que ele não tem muita vivência com linguagens orientada objeto e design patterns. Gostaríamos de avaliar outros candidatos, para ver se é melhor dedicar esse tempo com as questões técnicas ou com outros pontos de outros candidatos.	388	2016-07-26 00:45:05.676387	309	3218
 \.
 
 
@@ -2581,7 +2635,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 7420, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 7466, true);
 
 
 --
@@ -2738,6 +2792,14 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3186	356	300	2016-07-26 00:16:58.823239	2016-07-26 00:33:53.480651	\N
 3187	357	299	2016-07-26 00:16:58.864106	2016-07-26 00:34:00.183002	\N
 3209	379	299	2016-07-26 00:17:35.240853	2016-07-26 00:35:11.178667	\N
+3212	382	303	2016-07-26 00:37:18.26918	\N	\N
+3213	383	303	2016-07-26 00:38:02.577292	\N	\N
+3214	384	303	2016-07-26 00:38:58.42144	\N	\N
+3215	385	303	2016-07-26 00:40:38.63426	\N	\N
+3216	386	303	2016-07-26 00:41:22.373033	\N	\N
+3217	387	298	2016-07-26 00:44:14.368809	\N	\N
+3219	389	299	2016-07-26 00:44:20.750116	2016-07-26 00:44:41.220075	\N
+3218	388	300	2016-07-26 00:44:20.709531	2016-07-26 00:45:05.676803	\N
 \.
 
 
@@ -2745,7 +2807,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3211, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3219, true);
 
 
 --
