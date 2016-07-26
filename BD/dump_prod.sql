@@ -1354,7 +1354,6 @@ COPY tecnologias (id, tecnologia) FROM stdin;
 4	python
 5	NodeJs
 6	Ruby
-7	Rails
 8	Sidekiq
 9	HTML5
 10	CSS
@@ -1369,6 +1368,16 @@ COPY tecnologias (id, tecnologia) FROM stdin;
 22	Hazelcast
 23	Go Lang
 24	PLSQL
+25	SQL Server
+26	Oracle
+27	GIT
+28	Redis
+30	Chef
+29	Jenkins
+31	Docker
+7	Ruby on Rails
+33	React
+34	Express.js
 \.
 
 
@@ -1376,7 +1385,7 @@ COPY tecnologias (id, tecnologia) FROM stdin;
 -- Name: tecnologias_id_seq; Type: SEQUENCE SET; Schema: configuracoes; Owner: postgres
 --
 
-SELECT pg_catalog.setval('tecnologias_id_seq', 24, true);
+SELECT pg_catalog.setval('tecnologias_id_seq', 35, true);
 
 
 SET search_path = public, pg_catalog;
@@ -2247,6 +2256,7 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 403	\N	2	2016-07-26 01:26:22.916555	27	Em Andamento	\N	\N
 404	403	3	2016-07-26 01:26:29.716888	27	Em Andamento	\N	\N
 405	403	3	2016-07-26 01:26:29.768648	27	Em Andamento	\N	\N
+406	\N	1	2016-07-26 20:03:51.838884	28	Em Andamento	\N	\N
 \.
 
 
@@ -2413,7 +2423,7 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 405, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 406, true);
 
 
 --
@@ -2686,6 +2696,14 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7501	223	5,9,10,11,13	403	2016-07-26 01:26:22.969925	301	3233
 7502	218	Favor analisar.	404	2016-07-26 01:26:29.767047	302	3234
 7503	218	Favor analisar.	405	2016-07-26 01:26:29.817488	302	3235
+7504	204	Marilene	406	2016-07-26 20:03:51.875521	304	3236
+7505	208	Full Stack	406	2016-07-26 20:03:51.898763	304	3236
+7506	209	-	406	2016-07-26 20:03:51.899438	304	3236
+7507	210	-	406	2016-07-26 20:03:51.899954	304	3236
+7508	211	todas	406	2016-07-26 20:03:51.900448	304	3236
+7509	213	stargate	406	2016-07-26 20:03:51.90094	304	3236
+7510	212	28,30,29,31,33,34	406	2016-07-26 20:03:51.90143	304	3236
+7511	203	2,5,10,11,13,25,26,27,7	406	2016-07-26 20:03:51.901891	304	3236
 \.
 
 
@@ -2693,7 +2711,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 7503, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 7511, true);
 
 
 --
@@ -2874,6 +2892,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3233	403	298	2016-07-26 01:26:22.917869	\N	\N
 3234	404	300	2016-07-26 01:26:29.718623	\N	\N
 3235	405	299	2016-07-26 01:26:29.769358	\N	\N
+3236	406	303	2016-07-26 20:03:51.840198	\N	\N
 \.
 
 
@@ -2881,7 +2900,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3235, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3236, true);
 
 
 --
