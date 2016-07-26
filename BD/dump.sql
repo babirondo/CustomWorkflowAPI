@@ -2165,6 +2165,8 @@ COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_val
 129	311	223	\N	\N	\N
 130	311	225	\N	\N	\N
 131	305	223	\N	\N	\N
+132	305	219	\N	\N	\N
+133	305	221	\N	\N	\N
 \.
 
 
@@ -2172,7 +2174,7 @@ COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_val
 -- Name: postos_campo_lista_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('postos_campo_lista_id_seq', 131, true);
+SELECT pg_catalog.setval('postos_campo_lista_id_seq', 133, true);
 
 
 --
@@ -2227,6 +2229,8 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 387	\N	2	2016-07-26 00:44:14.367676	27	Em Andamento	\N	\N
 388	387	3	2016-07-26 00:44:20.70823	27	Em Andamento	\N	\N
 389	387	3	2016-07-26 00:44:20.74944	27	Em Andamento	\N	\N
+390	387	3	2016-07-26 15:01:48.037116	27	Em Andamento	\N	\N
+391	387	3	2016-07-26 15:01:48.132958	27	Em Andamento	\N	\N
 \.
 
 
@@ -2393,7 +2397,7 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 389, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 391, true);
 
 
 --
@@ -2426,9 +2430,7 @@ COPY workflow_campos (id, campo, maxlenght, inputtype, txtarea_cols, txtarea_row
 215	link do Github	\N	text	\N	\N	\N	\N	\N
 216	Consultoria	\N	\N	\N	\N	\N	\N	\N
 218	Comentários para solicitação de análise do teste técnico	\N	text	\N	\N	\N	\N	\N
-219	Nível de experiência avaliada	\N	text	\N	\N	Junior / PLeno / Senior	\N	\N
 220	Parecer Técnico	\N	text	\N	\N	\N	\N	\N
-221	Nivel de experiencia avaliada	\N	text	\N	\N	\N	\N	\N
 222	Parecer técnico	\N	text	\N	\N	\N	\N	\N
 212	Tecnologias Secundárias	\N	list	\N	\N	\N	{configuracoes.tecnologias}	skills
 217	Tecnologias que utilizou no teste	\N	list	\N	\N	\N	{configuracoes.tecnologias}	skills
@@ -2438,6 +2440,8 @@ COPY workflow_campos (id, campo, maxlenght, inputtype, txtarea_cols, txtarea_row
 225	Motivo de interesse no candidato	\N	textarea	30	7	\N	\N	\N
 226	Valor/Hora	\N	text	\N	\N	\N	\N	\N
 227	Data de Inicio	\N	text	\N	\N	\N	\N	\N
+219	Nível de experiência avaliada	\N	text	\N	\N	Junior / PLeno / Senior	\N	senioridade2
+221	Nivel de experiencia avaliada	\N	text	\N	\N	\N	\N	senioridade1
 \.
 
 
@@ -2629,6 +2633,10 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7464	222	Classes geradas automaticamente / Código duplicado / Falta de estrutura definida / ListView / Design bem feito / Serviço rodando externo	389	2016-07-26 00:44:41.219669	310	3219
 7465	219	-	388	2016-07-26 00:45:05.675433	309	3218
 7466	220	O time entende que teria que dedicar mais tempo para equalizar o conhecimento técnico, uma vez que ele não tem muita vivência com linguagens orientada objeto e design patterns. Gostaríamos de avaliar outros candidatos, para ver se é melhor dedicar esse tempo com as questões técnicas ou com outros pontos de outros candidatos.	388	2016-07-26 00:45:05.676387	309	3218
+7467	218	dsa	390	2016-07-26 15:01:48.112998	302	3220
+7468	218	dsa	391	2016-07-26 15:01:48.180154	302	3221
+7469	222	bom jr 	391	2016-07-26 15:01:55.654293	310	3221
+7470	221	avaliacao do dev 1	391	2016-07-26 15:01:55.655338	310	3221
 \.
 
 
@@ -2636,7 +2644,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 7466, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 7470, true);
 
 
 --
@@ -2801,6 +2809,8 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3217	387	298	2016-07-26 00:44:14.368809	\N	\N
 3219	389	299	2016-07-26 00:44:20.750116	2016-07-26 00:44:41.220075	\N
 3218	388	300	2016-07-26 00:44:20.709531	2016-07-26 00:45:05.676803	\N
+3220	390	300	2016-07-26 15:01:48.072646	\N	\N
+3221	391	299	2016-07-26 15:01:48.133727	2016-07-26 15:01:55.655852	\N
 \.
 
 
@@ -2808,7 +2818,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3219, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3221, true);
 
 
 --

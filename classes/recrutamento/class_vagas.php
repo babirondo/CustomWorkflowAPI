@@ -196,12 +196,16 @@ class Vagas{
 			$array = null;
 
 			//ECHO "<PRE>";var_dump($json);
+			//ECHO "<PRE>";var_dump($array["FETCH"]);
 
-			$sql ="select * ,wc.id idcampo
-						from postos_campo_lista pcl
-							inner join workflow_campos wc ON (wc.id = pcl.idpostocampo)
-							left join workflow_dados w ON (w.idpostocampo = wc.id)
-						where pcl.idposto = ".$json[IDPOSTO]." and w.idprocesso IN (".implode("," ,$json[ "CANDIDATOS"] ).");";
+
+			$sql ="select *,wc.id idcampo, ap.proprio idprocesso
+						from arvore_processo ap
+							inner join workflow_dados w ON ( w.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo , ap.neto) )
+							INNER JOIN workflow_campos wc ON ( wc.id = w.idpostocampo)
+							INNER JOIN postos_campo_lista pcl ON (pcl.idpostocampo = wc.id)
+
+						where pcl.idposto = ".$json[IDPOSTO]." and ap.proprio IN (".implode("," ,$json[ "CANDIDATOS"] ).");";
 			//echo $sql;
 			$this->con->executa($sql);
 
@@ -218,6 +222,7 @@ class Vagas{
 
 			}
 
+			//ECHO "<PRE>";var_dump($array["FETCH"]);
 
 
 			$array["resultado"] = "SUCESSO";

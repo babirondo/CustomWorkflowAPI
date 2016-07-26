@@ -2166,6 +2166,9 @@ COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_val
 128	311	221	\N	\N	\N
 129	311	223	\N	\N	\N
 130	311	225	\N	\N	\N
+131	305	219	\N	\N	\N
+132	305	221	\N	\N	\N
+133	305	223	\N	\N	\N
 \.
 
 
@@ -2173,7 +2176,7 @@ COPY postos_campo_lista (id, idposto, idpostocampo, atributo_campo, atributo_val
 -- Name: postos_campo_lista_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('postos_campo_lista_id_seq', 130, true);
+SELECT pg_catalog.setval('postos_campo_lista_id_seq', 136, true);
 
 
 --
@@ -2443,9 +2446,7 @@ COPY workflow_campos (id, campo, maxlenght, inputtype, txtarea_cols, txtarea_row
 215	link do Github	\N	text	\N	\N	\N	\N	\N
 216	Consultoria	\N	\N	\N	\N	\N	\N	\N
 218	Comentários para solicitação de análise do teste técnico	\N	text	\N	\N	\N	\N	\N
-219	Nível de experiência avaliada	\N	text	\N	\N	Junior / PLeno / Senior	\N	\N
 220	Parecer Técnico	\N	text	\N	\N	\N	\N	\N
-221	Nivel de experiencia avaliada	\N	text	\N	\N	\N	\N	\N
 222	Parecer técnico	\N	text	\N	\N	\N	\N	\N
 212	Tecnologias Secundárias	\N	list	\N	\N	\N	{configuracoes.tecnologias}	skills
 217	Tecnologias que utilizou no teste	\N	list	\N	\N	\N	{configuracoes.tecnologias}	skills
@@ -2455,6 +2456,8 @@ COPY workflow_campos (id, campo, maxlenght, inputtype, txtarea_cols, txtarea_row
 225	Motivo de interesse no candidato	\N	textarea	30	7	\N	\N	\N
 226	Valor/Hora	\N	text	\N	\N	\N	\N	\N
 227	Data de Inicio	\N	text	\N	\N	\N	\N	\N
+219	Nível de experiência avaliada	\N	text	\N	\N	Junior / PLeno / Senior	\N	senioridade2
+221	Nivel de experiencia avaliada	\N	text	\N	\N	\N	\N	senioridade1
 \.
 
 
