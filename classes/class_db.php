@@ -2,7 +2,7 @@
 namespace raiz;
 use PDO;
 
-set_time_limit( 2 );
+set_time_limit( 15 );
 error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 class db
 {
@@ -11,7 +11,7 @@ class db
 		require_once("classes/globais.php");
 		$this->globais = new Globais();
 
- 
+
 
 		try {
 			$this->pdo = new PDO("pgsql:host=".$this->globais->localhost."

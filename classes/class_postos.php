@@ -53,8 +53,8 @@ class Postos{
             $sql = "select *
 										from usuarios_avaliadores_tecnologias
 										where lower(trim(campo)) like lower(trim('$tecnologia'))
-										 and idusuario NOT IN ( select id_usuario_associado from workflow_tramitacao where idprocesso = (select id from processos where idpai = (select idpai from processos where id = $idprocesso) and id != $idprocesso) and idworkflowposto IN (3,287) )    ";
-
+										 and idusuario NOT IN ( select id_usuario_associado from workflow_tramitacao where idprocesso IN /*shit*/ (select id from processos where idpai = (select idpai from processos where id = $idprocesso) and id != $idprocesso) and idworkflowposto IN (".$this->globais->SYS_DEPARA_CAMPOS["postos_de_avaliacao"]." ) )    ";
+//						echo "\n SQL=".$sql;
             $this->con->executa( $sql);
 						//FIXME: postos de avaliacao tecnica chumbados na query, favor tipos_processo_para_preencher
 
@@ -197,7 +197,7 @@ class Postos{
                     $p++;
                 }
 
-								$sql = "Select *
+								$sql = "Select *, wc.id id
 												from workflow_posto_campos wpc
 													inner join workflow_campos wc ON (wc.id = wpc.idcampo)
 												WHere wpc.idposto = $idposto  ";
@@ -294,6 +294,7 @@ class Postos{
 
         }
         if ($idposto>0){
+					//$idposto=298;
             $comp_ini = "wp.id=$idposto and wt.idworkflowposto =$idposto and ";
         }
 				//FIXME: criar recorrencia na arvore_processo via banco.... hoje ta estatico
@@ -303,6 +304,7 @@ class Postos{
                      u.nome tramitacao_usuario, u.nome usuarioassociado,
                      wp.tipodesignacao  $camp
                      , wt.idworkflowposto, wt.fim, w.idposto,
+										 pc.inputtype, w.id idworkflowdado,
 										 wt.inicio wt_inicio, wt.fim wt_fim, fp.tipofiltro, fp.id idfiltro
              FROM  arvore_processo ap
 					  		 INNER JOIN processos p ON (p.id = ap.proprio)
@@ -319,7 +321,9 @@ class Postos{
 						 $orderby ";
 
         $this->con->executa( $sql, 0, __LINE__  );
-    		//echo "<PRE>".$sql."</pre>"; //exit;
+    		//echo "<PRE>".$sql."</pre>"; exit;
+
+
 
 				switch ($listar){
 						case("Agrupada"):
@@ -327,7 +331,7 @@ class Postos{
 						break;
 
 						default:
-							$array = $this->montar_lista();
+							$array = $this->montar_lista($listar);
 				}
 
 
@@ -335,16 +339,14 @@ class Postos{
             $comp_ini = " and wp.id =$idposto ";
                 // BUSCANDO ATRIBUTOS DO PROCESSO
 		$sql = "select *, p.status p_status, p.id idprocesso, to_char(wt.inicio, 'dd/mm/yyyy') wt_inicio ,
-                                    to_char(p.inicio, 'dd/mm/yyyy') p_inicio ,wt.idworkflowposto, p.inicio entradanoposto,
-                                    u.nome usuarioassociado
-                    from workflow_tramitacao wt
-                            inner join postos_campo_lista pcl ON (pcl.idposto = wt.idworkflowposto)
-                            INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
-                            inner join processos p ON (p.id = wt.idprocesso)
-                            left join usuarios u ON (u.id  = wt.id_usuario_associado)
-
-
-                    where wt.fim is null $comp_ini and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
+                  to_char(p.inicio, 'dd/mm/yyyy') p_inicio ,wt.idworkflowposto, p.inicio entradanoposto,
+                  u.nome usuarioassociado
+					  from workflow_tramitacao wt
+					          inner join postos_campo_lista pcl ON (pcl.idposto = wt.idworkflowposto)
+					          INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
+					          inner join processos p ON (p.id = wt.idprocesso)
+					          left join usuarios u ON (u.id  = wt.id_usuario_associado)
+  					where wt.fim is null $comp_ini and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
 
 		$this->con->executa( $sql,0, __LINE__);
 		//echo $sql;
@@ -362,15 +364,37 @@ class Postos{
 	}
 
 
-	function montar_lista()
+	function montar_lista($listar)
 	{
 			$i=0;
+
 		        while ($this->con->navega($i) ){
 		               $idworkflowdado_assumir = null;
 
+					         switch ($listar)
+					         {
+					 						case ("VidaProcesso"):
+ 				             	break;
 
-									$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
-									$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
+										 	default:
+										 		if ( $this->con->dados["inputtype"] == "file") continue;
+					         }
+
+
+									 //echo $this->con->dados["inputtype"]."\n";
+
+
+
+										$array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+										$array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ][valor]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
+										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ][workflowdado]   = $this->con->dados["idworkflowdado"]  ;
+
+
+
+									if (  $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ] != $this->con->dados["valor"]){
+												$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]."-original" ]   = $this->con->dados["valor"];
+									}
 
 									// seta a info para o filtro
 									if ($this->con->dados["idfiltro"] > 0)

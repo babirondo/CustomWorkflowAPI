@@ -36,7 +36,9 @@ class Globais{
 		}
 
 
-						//$this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 12;
+						$this->SYS_DEPARA_CAMPOS["postos_de_avaliacao"] = "309,310";
+						$this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 217;
+						$this->SYS_DEPARA_CAMPOS["CV"] = "214";
 						//$this->SYS_DEPARA_CAMPOS["Skills_mandatorias_vaga"] = 187;
 
 						$this->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] = 223; // 223
@@ -78,10 +80,8 @@ class Globais{
 		$texto_original = preg_replace_callback( '%{.*?}%i',
 
 			    function($match) use ($valor) {
-			                    //echo "<BR> trafuziu ".str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
-			                    return str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
-
-
+            //echo "<BR> trafuziu ".str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
+            return str_replace(array('{', '}'), '', strtolower(  $match[0] ) );
 			    },
 		$texto_original);
 

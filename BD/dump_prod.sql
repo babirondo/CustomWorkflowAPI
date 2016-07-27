@@ -2257,6 +2257,9 @@ COPY processos (id, idpai, idtipoprocesso, inicio, idworkflow, status, regra_fin
 404	403	3	2016-07-26 01:26:29.716888	27	Em Andamento	\N	\N
 405	403	3	2016-07-26 01:26:29.768648	27	Em Andamento	\N	\N
 406	\N	1	2016-07-26 20:03:51.838884	28	Em Andamento	\N	\N
+407	\N	1	2016-07-26 20:14:35.788662	28	Em Andamento	\N	\N
+408	386	6	2016-07-27 14:57:05.429564	28	Em Andamento	\N	345
+409	386	6	2016-07-27 14:57:05.936753	28	Em Andamento	\N	346
 \.
 
 
@@ -2423,7 +2426,7 @@ COPY usuarios (id, email, nome, senha, login, admin, criacao) FROM stdin;
 -- Name: usuarios_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('usuarios_id_seq', 406, true);
+SELECT pg_catalog.setval('usuarios_id_seq', 409, true);
 
 
 --
@@ -2570,6 +2573,8 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7375	219	pleno	376	2016-07-26 00:27:11.699024	309	3206
 7376	220	cho que o nome dele eh William  [3:49]  nao conseguimos rodar aqui  [3:49]  a aplicacao noa subiu :disappointed:  [3:49]  nao *  [3:49]  instalei o docker aqui que eu nao tinha, mas a aplicacao nao subiu  [3:49]  porem eu gostei bastante da prova dele  Bruno Siqueira [3:50 PM]  como o classificaria?  maryfelvie [3:57 PM]  Olha, ele mandou bem no codigo em geral, olhando o codigo ele atendeu os requisitos solicitados na prova, se preocupou com tratamentos de erros, validacoes, separou bem as responsabilidades do codigo, criou chaves de configuracao dinamicas, usou recursos legais do ruby como o neo4j, comentou sobre o docker e a documentacao dele foi 100%  [3:57]  o unico ponto ruim foi que a aplicacao nao subiu	376	2016-07-26 00:27:11.699933	309	3206
 7377	221	-	377	2016-07-26 00:27:40.265503	310	3207
+7512	204	Marilene	407	2016-07-26 20:14:35.827671	304	3237
+7513	208	Backend 	407	2016-07-26 20:14:35.828383	304	3237
 7378	222	Prós Documentação bem feita e detalhada Usou container com consciência dos benefícios Usou um banco de dados baseado em grafos  Contras Usou form para receber dados Fez poucos commits Manteve código de acesso a banco relacional no código curl de exemplo para inclusão de rota não funciona e retorna erro com um HTML Log pobre Muito código comentado Achei trechos da query de busca de caminho de menor custo em buscas no google	377	2016-07-26 00:27:40.266407	310	3207
 7379	221	Junior	375	2016-07-26 00:28:47.084457	310	3205
 7380	222	Utilizou a linguagem Ruby On Rails para desenvolver o teste. Todas as telas e fluxos foram desenvolvidos, porém alguns fluxos um pouco complexos e com erros.  Critérios de avaliação:  Customização do front-end: utilizou o Twitter Bootstrap e não teve uma customização fina para as telas propostas. Dependência do framework: todos os controllers, models e views foram desenvolvidos utilizando o Scaffold do Rails. Alguns models não teriam a necessidade de serem utilizados, mas como foram auto-gerados para ter a tela referente ao fluxo, criou-se alguns models a mais. Padrões de projeto: nenhum padrão de projeto foi utilizado. Organização: Seguiu o modelo do RoR, o que já deixa o projeto bem organizado. Organização das camadas da App: as regras de negócio e consultar ao banco de dados foram inteiramente escritas no controller ou no model.  Avaliação:  O nível do candidato se aplicaria em um Full-stack Junior Ruby on Rails.	375	2016-07-26 00:28:47.085354	310	3205
@@ -2612,6 +2617,16 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7417	221	jr	357	2016-07-26 00:34:00.181084	310	3187
 7418	222	Me parece um bom programador, mas sem muito conhecimento de específico de android.	357	2016-07-26 00:34:00.182357	310	3187
 7419	221	pleno	379	2016-07-26 00:35:11.1619	310	3209
+7514	209	-	407	2016-07-26 20:14:35.828777	304	3237
+7515	210	-	407	2016-07-26 20:14:35.829189	304	3237
+7516	211	todas	407	2016-07-26 20:14:35.829569	304	3237
+7517	213	stargate	407	2016-07-26 20:14:35.829937	304	3237
+7518	212	5,6,28,30,29,31	407	2016-07-26 20:14:35.830323	304	3237
+7519	203	2,25,26,27	407	2016-07-26 20:14:35.830714	304	3237
+7520	206	345	408	2016-07-27 14:57:05.87543	305	3238
+7521	205	386	408	2016-07-27 14:57:05.891935	305	3238
+7522	206	346	409	2016-07-27 14:57:05.989663	305	3239
+7523	205	386	409	2016-07-27 14:57:05.990065	305	3239
 7420	222	a prova dele esta funcionando bonitinha, rodou de boas aqui, ele separou a aplicacao em camadinhas, usou mvc de forma limpa, e o bacana foi que ele usou angular, ja mostra que ele se preocupa em estar atualizado. Usou h2 como banco e o hibernate que usamos aqui em algumas aplicacoes tbm, usou bastante spring, ele mandou bem, foi simples, mas esta de acordo.  [3:44]  Uma ressalva no teste dele seria que ele nao se preocupou em tratamento de excecoes, logs com possiveis erros, e nao fez nehum teste unitario  [3:44]  isso eh ruim  [3:44]  mostrei para o Vitor tbm ele ele achou simples, bem arroz com feijao mesmo  [3:45]  mas pensando no tempo, e na correria que a pessoa tem para fazer o teste, eu nao tenho nada contra,  Bruno Siqueira [3:46 PM]  se tivesse que classificar este candidato, como o faria: jr, pl ou sr ?  maryfelvie [3:46 PM]  com relacao ao que usamos aqui, acho que nao seria nenhum bixo de 7 cabecas ara ele  [3:47]  hm dificil, junior com certeza ele nao eh, um pleno eu diria  [3:48]  a prova dele foi boa, mas nos achamos bem CRUD msm	379	2016-07-26 00:35:11.178076	310	3209
 7421	204	Bruno Siqueira	382	2016-07-26 00:37:18.304335	304	3212
 7422	208	Backend Java	382	2016-07-26 00:37:18.305181	304	3212
@@ -2711,7 +2726,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 7511, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 7523, true);
 
 
 --
@@ -2893,6 +2908,9 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3234	404	300	2016-07-26 01:26:29.718623	\N	\N
 3235	405	299	2016-07-26 01:26:29.769358	\N	\N
 3236	406	303	2016-07-26 20:03:51.840198	\N	\N
+3237	407	303	2016-07-26 20:14:35.789837	\N	\N
+3238	408	306	2016-07-27 14:57:05.517485	\N	\N
+3239	409	306	2016-07-27 14:57:05.952304	\N	\N
 \.
 
 
@@ -2900,7 +2918,7 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 -- Name: workflow_tramitacao_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3236, true);
+SELECT pg_catalog.setval('workflow_tramitacao_id_seq', 3239, true);
 
 
 --
