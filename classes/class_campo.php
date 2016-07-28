@@ -17,8 +17,7 @@ class Campos{
 	function BuscarValoresCampo ($valor_default_campo, $idcampo=""){
 				if ($idcampo)
 				{
-
-            switch ($idcampo){
+    				switch ($idcampo){
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] ):
@@ -33,8 +32,6 @@ class Campos{
 
 								default:
 										return $valor_default_campo;
-
-
             }
 					}
 

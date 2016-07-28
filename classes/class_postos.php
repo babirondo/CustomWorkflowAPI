@@ -368,16 +368,22 @@ class Postos{
 	{
 			$i=0;
 
+
+//echo $listar;
+
 		        while ($this->con->navega($i) ){
 		               $idworkflowdado_assumir = null;
 
+								//	 echo $listar ." = ". $this->con->dados["idcampo"]." - ".$this->globais->SYS_DEPARA_CAMPOS["CV"]."\n";
 					         switch ($listar)
 					         {
 					 						case ("VidaProcesso"):
  				             	break;
 
 										 	default:
-										 		if ( $this->con->dados["inputtype"] == "file") continue;
+												if ($this->con->dados["idcampo"] == $this->globais->SYS_DEPARA_CAMPOS["CV"])
+													$array["FETCH"] [$this->con->dados["idprocesso"]]["CV"]   =  1;
+												if ( $this->con->dados["inputtype"] == "file") continue;
 					         }
 
 
@@ -386,7 +392,7 @@ class Postos{
 
 
 										$array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
-										$array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+
 										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ][valor]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
 										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ][workflowdado]   = $this->con->dados["idworkflowdado"]  ;
 

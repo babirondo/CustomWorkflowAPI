@@ -193,7 +193,7 @@ class Vagas{
 			//FIXME: Array de retorno hard coded, fazer ficar dinamico
 			$array["DADOS_PROCESSO"]["TECNOLOGIAS_MANDATORIAS"] = $dadosProcesso["FETCH"][$json[IDVAGA]][ $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] ];
 			$skills_desejadas = $dadosProcesso["FETCH"][$json[IDVAGA]][ $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] ];
-			$array = null;
+			//$array = null;
 
 			//ECHO "<PRE>";var_dump($json);
 			//ECHO "<PRE>";var_dump($array["FETCH"]);
@@ -211,12 +211,13 @@ class Vagas{
 
 			while ($this->con->navega(0)){
 
-				$array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["administrativo"]] = $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+				$array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["idcampo"]] = $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+				$array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
 
 				if ( $this->con->dados["idpostocampo"] ==  $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]  )
 				{
 					// checa match de skills
-					$retorno_match = $this->match($skills_desejadas, $array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["administrativo"]]  );
+					$retorno_match = $this->match($skills_desejadas, $array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["idcampo"]]  );
 					$array["FETCH"][$this->con->dados["idprocesso"] ]["match"] = $retorno_match;
 				}
 
