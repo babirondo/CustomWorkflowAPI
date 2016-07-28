@@ -222,7 +222,7 @@ class Vagas{
 				}
 
 			}
-
+			$array["CONFIGURACOES"] [CV]   = $this->globais->SYS_DEPARA_CAMPOS["CV"];
 			//ECHO "<PRE>";var_dump($array["FETCH"]);
 
 

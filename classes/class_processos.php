@@ -15,7 +15,7 @@ class Processos{
     $this->postos = new Postos();
 
 		include_once("classes/globais.php");
-		$this->globais = new Globais();	
+		$this->globais = new Globais();
 
 	}
 
@@ -75,7 +75,7 @@ class Processos{
 
 
     $array = $this->CarregarDadosdoProcesso($idprocesso);
-		$array["CV"] = $this->globais->SYS_DEPARA_CAMPOS["CV"];
+		$array["CONFIGURACOES"]["CV"] = $this->globais->SYS_DEPARA_CAMPOS["CV"];
 
     $array["resultado"] = "SUCESSO";
 

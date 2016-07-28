@@ -357,6 +357,8 @@ class Postos{
 
       $i++;
 		}
+		$array["CONFIGURACOES"] [CV]   = $this->globais->SYS_DEPARA_CAMPOS["CV"];
+		$array["CONFIGURACOES"] ["ENTIDADE_FILHA_APONTA_PARA_CANDIDATO"]   = $this->globais->SYS_DEPARA_CAMPOS["ENTIDADE_FILHA_APONTA_PARA_CANDIDATO"];
 
 		//var_dump($array);
 
@@ -381,8 +383,9 @@ class Postos{
  				             	break;
 
 										 	default:
+
 												if ($this->con->dados["idcampo"] == $this->globais->SYS_DEPARA_CAMPOS["CV"])
-													$array["FETCH"] [$this->con->dados["idprocesso"]]["CV"]   =  1;
+													$array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"]]   =  1;
 												if ( $this->con->dados["inputtype"] == "file") continue;
 					         }
 
