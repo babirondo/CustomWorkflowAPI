@@ -26,7 +26,7 @@ class Campos{
                     while ($this->con->navega(0)){
                         $retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
                     }
-                    return implode(",",$retorno);
+                    return implode(", ",$retorno);
                 break;
 
 

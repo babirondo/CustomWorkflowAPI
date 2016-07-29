@@ -238,8 +238,8 @@ class Vagas{
 
 			//echo $skills_vaga;
 
-				$skills_candidato = explode(",",  $skills_candidato) ;
-				$skills_vaga = explode(",",  $skills_vaga) ;
+				$skills_candidato = explode(", ",  $skills_candidato) ;
+				$skills_vaga = explode(", ",  $skills_vaga) ;
 				$tem = 0;
 
 
