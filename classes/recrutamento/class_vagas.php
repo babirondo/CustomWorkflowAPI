@@ -223,6 +223,7 @@ class Vagas{
 
 			}
 			$array["CONFIGURACOES"] [CV]   = $this->globais->SYS_DEPARA_CAMPOS["CV"];
+			$array["CONFIGURACOES"] [github]   = $this->globais->SYS_DEPARA_CAMPOS["github"];
 			//ECHO "<PRE>";var_dump($array["FETCH"]);
 
 
