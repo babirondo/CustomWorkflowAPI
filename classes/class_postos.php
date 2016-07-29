@@ -358,6 +358,7 @@ class Postos{
       $i++;
 		}
 		$array["CONFIGURACOES"] [CV]   = $this->globais->SYS_DEPARA_CAMPOS["CV"];
+		$array["CONFIGURACOES"] [github]   = $this->globais->SYS_DEPARA_CAMPOS["github"];
 		$array["CONFIGURACOES"] ["ENTIDADE_FILHA_APONTA_PARA_CANDIDATO"]   = $this->globais->SYS_DEPARA_CAMPOS["ENTIDADE_FILHA_APONTA_PARA_CANDIDATO"];
 
 		//var_dump($array);
