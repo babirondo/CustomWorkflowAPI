@@ -88,9 +88,8 @@ class Notificacoes{
              *  -  ADICIONAR NA CLASS_POSTOS->BuscarDadosdoFilhoePai no FETCH
              *  -  ADICIONAR NO GLOBAIS
              */
-  //  echo "<pre>"; var_dump($data);exit;
-
     $de = $this->campos->getCampos(); // 11 = nome do campo
+		//echo "<pre>"; var_dump($data);exit;
     //echo "<pre>"; var_dump($de);exit;
    // echo "<pre>"; var_dump($data);exit;
     if (is_array($data["FETCH"][$this->idprocesso]))
@@ -149,7 +148,7 @@ corpo: ".$corpo."
 header: $headers</PRE> ";
 
 
-              // echo "\n\n\n\n".$this->debug;
+               echo "\n\n\n\n".$this->debug;
 
 		mail("bruno.siqueira@walmart.com", $titulo, "De:$de_bkp - Para:$para - " . $corpo, $headers);
 
@@ -233,6 +232,9 @@ header: $headers</PRE> ";
 
             return $array;
         }
+
+
+
         function notifica_sla_vencido($idsla,   $idnotificacao, $chave)
 	{
 
@@ -268,6 +270,41 @@ header: $headers</PRE> ";
 						}
 			return false;
 	}
+
+
+	function notifica_designacao_manual($idsla,   $idnotificacao, $chave)
+{
+
+			// puxa dados da notificacao
+			 $dados_notificacao = $this->LoadCampos($idnotificacao);
+		// echo "<Pre>"; var_dump($dados_notificacao);   echo "</Pre>";
+
+
+
+
+			//echo "<Pre>"; var_dump($data_atual);   echo "</Pre>";
+		 //exit;
+
+			$titulo = $this->TraduzirEmail($dados_notificacao  [titulo], $dados_notificacao);
+			$corpo = $this->TraduzirEmail($dados_notificacao [corpo], $dados_notificacao);
+			$de = $this->TraduzirEmail($dados_notificacao  [de], $dados_notificacao);
+			$para = $this->TraduzirEmail($dados_notificacao  [para], $dados_notificacao);
+
+
+			$corpo = $corpo ;
+
+			if ($this->globais->ambiente == "dev")
+				$titulo = "[".$this->globais->ambiente."] " .$titulo;
+
+			//if (  $this->registranotificacao($idsla,   $idnotificacao, $chave) )
+			{
+				$this->EnviaEmail($de, $para, $titulo, $corpo);
+				return true;
+			}
+return false;
+}
+
+
 
   function registranotificacao( $idsla,   $idnotificacao, $chave)
 	{

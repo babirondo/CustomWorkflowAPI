@@ -1,6 +1,6 @@
 <?php
 namespace raiz;
-error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
+//error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Vagas{
 
@@ -32,7 +32,59 @@ class Vagas{
 	}
 
 
+  function PreparaParaComparacao($txt){
+		$txt = strtolower($txt);
+		return $txt;
+	}
 
+	function DescobrirTecnologias($tecnologia_txt){
+
+		$sql ="SELECT * FROM configuracoes.tecnologias" ;
+		$this->con->executa($sql);
+
+		while ($this->con->navega(0)){
+			$temp = null;
+			if ($this->con->dados["tecnologia"])
+				$temp[] = $this->PreparaParaComparacao($this->con->dados["tecnologia"]);
+			if ($this->con->dados["possiveis_outros_nomes"]){
+				$temp[] =  $this->PreparaParaComparacao($this->con->dados["possiveis_outros_nomes"]) ;
+
+
+			}
+			//$str_temp = implode(",",$temp);
+
+			$array["TECNOLOGIAS"][$this->con->dados["id"] ][nome] = $this->PreparaParaComparacao($this->con->dados["tecnologia"]);
+			$array["TECNOLOGIAS"][$this->con->dados["id"] ][possiveis_nomes] = implode(",", $temp);//$str_temp;
+		}
+		 //var_dump($array["TECNOLOGIAS"]);exit;
+
+
+	 $txt = $this->PreparaParaComparacao($tecnologia_txt);
+		//$txt = str_replace(","," ",$txt);
+		$txt = str_replace("\r\n"," ",$txt);
+		$txt = str_replace("\n"," ",$txt);
+		$txt = str_replace(","," ",$txt);
+		$achado_txt = explode(" ",$txt);
+		//echo "\n".$txt ;
+
+
+		foreach ( $array["TECNOLOGIAS"]  as $id => $dados){
+
+			foreach (explode(",",$dados[possiveis_nomes])  as $tentativa){
+
+
+				//echo "\n $tentativa = ". ($achado_txt);
+				if (in_array( trim($tentativa) , $achado_txt)){
+					//echo " {ACHOU}";
+					$encontrado[$id] = $id;//$tentativa;
+				}
+			}
+
+		}
+		//var_dump($array["TECNOLOGIAS"]);
+		//var_dump($encontrado);
+		return $encontrado;
+	}
 
 	function CandidatosAplicadosAVaga ( $app, $idvaga, $jsonRAW  ){
 		$json = json_decode( $jsonRAW, true );
@@ -47,6 +99,10 @@ class Vagas{
 			$app->render ('default.php',$data,500);
 			return false;
 		}
+
+
+
+
 /*
 		//ECHO "<PRE>";var_dump($json);
 

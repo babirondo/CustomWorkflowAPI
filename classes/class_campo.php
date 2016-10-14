@@ -10,7 +10,7 @@ class Campos{
 		$this->con = new db();
 		$this->con->conecta();
 
-                $this->globais = new Globais();
+		$this->globais = new Globais();
 
 	}
 
@@ -39,6 +39,18 @@ class Campos{
 
 
             switch ($valor_default_campo){
+
+							case("{usuarios_avaliadores_tecnologias}"):
+
+									$this->con->executa( "select u.id, u.nome
+																				from usuarios_avaliadores_tecnologias uat
+																					inner join usuarios u ON (u.id = uat.idusuario)");
+									while ($this->con->navega(0)){
+											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["nome"] ;
+									}
+									return  $retorno;
+							break;
+
 							case("{configuracoes.tecnologias}"):
 
 									$this->con->executa( "select * from configuracoes.tecnologias");
@@ -56,26 +68,48 @@ class Campos{
 									}
 									return  $retorno;
 							break;
+
+							default:
+								$retorno[0] = "Não Implementado ($valor_default_campo)";
+							return $retorno;
             }
 
 
 	}
 
+	function PosSavenoCampo($campo, $valor, $json, $idposto)
+	{
+		$this->workflow = new Workflow();
+
+			switch ($campo){
+				case( $this->globais->SYS_DEPARA_CAMPOS["SalvarAvaliadordoTeste"] ):
+ 					//echo "\n Pós save especifico do $campo";
+					//echo "\n idworkflowtramitacao: ". $json[processo][idworkflowtramitacao_original];
+
+					$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor] = $valor;
+					$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][idtramitacao] = $json[processo][idworkflowtramitacao_original];
+
+					$this->workflow->AssociarRegistronoPosto($json,$idposto);
+				break;
+			}
+	}
+
 
 	function getCampos(){
 
-		$this->con->executa( "select id, campo from postos_campo");
-		//$this->con->navega();
+//		$this->con->executa( "select id, campo from postos_campo");
+		$this->con->executa( "select id, campo from workflow_campos");
+			//$this->con->navega();
 
-		$i=0;
-		while ($this->con->navega(0)){
-			$campos[ strtolower(trim($this->con->dados["id"])) ] = strtolower(trim($this->con->dados["campo"]));
+			$i=0;
+			while ($this->con->navega(0)){
+				$campos[ strtolower(trim($this->con->dados["id"])) ] = strtolower(trim($this->con->dados["campo"]));
 
-			$i++;
-		}
-                $campos = $this->globais->ArrayMergeKeepKeys( $this->globais->SYS_ADD_CAMPOS, $campos);
-                //$campos[ "entradanoposto" ] = "entradanoposto";
-                    //$array["FETCH"] [$this->con->dados["idprocesso"]]["entradanoposto" ]   =  $this->con->dados["wt_inicio"] ;
+				$i++;
+			}
+      $campos = $this->globais->ArrayMergeKeepKeys( $this->globais->SYS_ADD_CAMPOS, $campos);
+      //$campos[ "entradanoposto" ] = "entradanoposto";
+          //$array["FETCH"] [$this->con->dados["idprocesso"]]["entradanoposto" ]   =  $this->con->dados["wt_inicio"] ;
 
 		return $campos;
 

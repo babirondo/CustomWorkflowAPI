@@ -193,7 +193,8 @@ class Postos{
                     $array["DADOS_POSTO"] [notif_entrandoposto]  = $this->con->dados["notif_entrandoposto"];
                     $array["DADOS_POSTO"] [notif_saindoposto]  = $this->con->dados["notif_saindoposto"];
                     $array["DADOS_POSTO"] [tipodesignacao]  = $this->con->dados["tipodesignacao"];
-                    $array["DADOS_POSTO"] [avanca_processo][$p]  = $this->con->dados["avanca_processo"];
+										$array["DADOS_POSTO"] [avanca_processo][$p]  = $this->con->dados["avanca_processo"];
+										$array["DADOS_POSTO"] [exibir_handover]  = $this->con->dados["exibir_handover"];
                     $p++;
                 }
 

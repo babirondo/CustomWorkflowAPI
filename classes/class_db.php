@@ -12,7 +12,7 @@ class db
 		$this->globais = new Globais();
 
 
-
+//		echo "\n Conectando no banco";
 		try {
 			$this->pdo = new PDO("pgsql:host=".$this->globais->localhost."
 														dbname=".  $this->globais->db ,
