@@ -202,7 +202,7 @@ class Postos{
 												from workflow_posto_campos wpc
 													inner join workflow_campos wc ON (wc.id = wpc.idcampo)
 												WHere wpc.idposto = $idposto  ";
-//												echo $sql;
+												//echo $sql;
 								$this->con->executa( $sql);
 
                 while ($this->con->navega(0)){
@@ -214,8 +214,8 @@ class Postos{
                         if ($this->globais->Traduzir( $this->con->dados["valor_default"] ) == false )
                                 $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->con->dados["valor_default"];
                         else {
-                                $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->campo->BuscarValoresCampo($this->con->dados["valor_default"]);
-                        }
+                                $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->campo->BuscarValoresCampo(array( "valor_default" => $this->con->dados["valor_default"], "idprocesso" => $idprocesso) );
+                       }
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_cols"]  = $this->con->dados["txtarea_cols"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_rows"]  = $this->con->dados["txtarea_rows"];
                         $array["FETCH_CAMPO"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
@@ -302,7 +302,7 @@ class Postos{
         $sql = "SELECT pc.campo, w.valor, p.id idprocesso, p.idpai, wt.id idworkflowtramitacao,
 											w.idworkflowtramitacao idworkflowtramicao_dados,
                      p.status, w.idpostocampo idcampo, wt.id_usuario_associado tramitacao_idusuario,
-                     u.nome tramitacao_usuario, u.nome usuarioassociado,
+                     u.nome tramitacao_usuario, u.nome usuarioassociado, u.email  email_usuarioassociado,
                      wp.tipodesignacao  $camp
                      , wt.idworkflowposto, wt.fim, w.idposto,
 										 pc.inputtype, w.id idworkflowdado,
@@ -396,7 +396,7 @@ class Postos{
 
 
 
-										$array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+										$array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ]   =  $this->campo->BuscarValoresCampo ( array( "valor_default" => $this->con->dados["valor"]) ,  $this->con->dados["idcampo"] );
 
 										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ][valor]   = $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ];
 										$array["FETCH_POSTO"] [$this->con->dados["idworkflowtramitacao"]] [$this->con->dados["idprocesso"]][$this->con->dados["idcampo"] ][workflowdado]   = $this->con->dados["idworkflowdado"]  ;

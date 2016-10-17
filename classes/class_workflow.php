@@ -70,8 +70,8 @@ class Workflow{
 					//var_dump($json); exit;
 						if ($json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor] > 0)
 						{
-							 
-								$this->notificacoes->notifica_designacao_manual(null, 2, $json["processo"]["valor"] ); //, $proximo_posto = null
+								$this->notificacoes->idprocesso=$json["processo"]["valor"];
+								$this->notificacoes->notifica_designacao_manual(2, $json["processo"]["valor"] ); //, $proximo_posto = null
 							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro
 							$sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][idtramitacao]."'";
 							echo "\n SQL: ".$sql;
@@ -443,7 +443,9 @@ class Workflow{
                                         //excepcional porque se pode criar processos intermediarios quando ha salto de mais de 1 nivel de tipo processo
                                         // Registra os dados que foram submetidos no form
                                         $valor=null;
-																				$json = $this->IdentificaTecnologias($json);
+
+																				//TODO: reabilitar isso aqui
+																				//$json = $this->IdentificaTecnologias($json);
 
                                         //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                         foreach ($json as $campo => $valor){
@@ -514,7 +516,8 @@ class Workflow{
                               //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
 
 															//
-															$json = $this->IdentificaTecnologias($json);
+															//TODO: reabilitar isso aqui
+															//$json = $this->IdentificaTecnologias($json);
 
 															//var_dump( $cola);
 															//var_dump($json[$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]][valor]);
@@ -707,6 +710,7 @@ class Workflow{
 
 				function IdentificaTecnologias($json){
 					if (!empty($json[228])){
+						//TODO: Usar variaveis globais para esses hard coded
 						// campo de descobrir tecnologias automatico
 						$this->vagas = new Vagas();
 						$cola=null;

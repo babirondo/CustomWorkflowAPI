@@ -14,7 +14,10 @@ class Campos{
 
 	}
 
-	function BuscarValoresCampo ($valor_default_campo, $idcampo=""){
+	function BuscarValoresCampo ($array, $idcampo=""){
+				$valor_default_campo = $array["valor_default"];
+				$idprocesso = $array["idprocesso"];
+
 				if ($idcampo)
 				{
     				switch ($idcampo){
@@ -24,11 +27,19 @@ class Campos{
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["Skills_mandatorias_vaga"] ):
-                    $this->con->executa( "select * from configuracoes.tecnologias WHERE id IN ( $valor_default_campo ) ");
-                    while ($this->con->navega(0)){
+
+										$sql = "select * from configuracoes.tecnologias WHERE id IN ( $valor_default_campo ) ";
+                    $this->con->executa($sql );
+//echo $sql;
+										while ($this->con->navega(0)){
                         $retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
                     }
-                    return implode(", ",$retorno);
+										if (is_array($retorno)){
+													return implode(", ",$retorno);
+										}
+										else {
+												return false;
+										}
                 break;
 
 
@@ -42,11 +53,29 @@ class Campos{
 
 							case("{usuarios_avaliadores_tecnologias}"):
 
-									$this->con->executa( "select u.id, u.nome
+
+								$sql = "select wd.valor
+												from arvore_processo ap
+													inner join workflow_dados wd ON ( wd.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo ))
+												where  proprio = $idprocesso and wd.idpostocampo = ". $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"];
+									$this->con->executa( $sql );
+									$this->con->navega(0);
+
+									$tecnologias_do_teste =   $this->con->dados["valor"]  ;
+									$sql = "select u.id, u.nome, (SELECT COUNT(*) FROM workflow_tramitacao WHERE id_usuario_associado = u.id and fim is null) as avaliando
 																				from usuarios_avaliadores_tecnologias uat
-																					inner join usuarios u ON (u.id = uat.idusuario)");
-									while ($this->con->navega(0)){
-											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["nome"] ;
+																					inner join usuarios u ON (u.id = uat.idusuario)
+																				where uat.idtecnologia IN (". $this->con->dados["valor"].") and u.email is not null
+																				group by u.id, u.nome, avaliando ;";
+									$this->con->executa( $sql );
+									if ($this->con->nrw >0){
+										while ($this->con->navega(0)){
+												$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["nome"] . " (Avaliando ".$this->con->dados["avaliando"]." testes)"  ;
+										}
+
+									}
+									else{
+											$retorno ["-1"] = "Nenhum avaliador disponível para esta tecnologia ($tecnologias_do_teste)";
 									}
 									return  $retorno;
 							break;
@@ -55,7 +84,7 @@ class Campos{
 
 									$this->con->executa( "select * from configuracoes.tecnologias");
 									while ($this->con->navega(0)){
-											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
+											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["id"]."-".$this->con->dados["tecnologia"] ;
 									}
 									return  $retorno;
 							break;

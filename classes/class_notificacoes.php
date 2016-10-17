@@ -88,10 +88,13 @@ class Notificacoes{
              *  -  ADICIONAR NA CLASS_POSTOS->BuscarDadosdoFilhoePai no FETCH
              *  -  ADICIONAR NO GLOBAIS
              */
+
+
+
     $de = $this->campos->getCampos(); // 11 = nome do campo
-		//echo "<pre>"; var_dump($data);exit;
-    //echo "<pre>"; var_dump($de);exit;
-   // echo "<pre>"; var_dump($data);exit;
+		//echo "<pre>"; var_dump($de);exit;
+    //echo "<pre>"; var_dump($data);
+   // echo "<pre>"; var_dump($data["FETCH"][$this->idprocesso]);exit;
     if (is_array($data["FETCH"][$this->idprocesso]))
 		{
 			foreach ($data["FETCH"][$this->idprocesso] as $campo => $val){
@@ -100,29 +103,33 @@ class Notificacoes{
                             $valor [ $campo] = $val;
                             $valor [ $de[$campo] ] = $val;
 			}
-			foreach ($data["DADOS_POSTO"]  as $campo => $val){
-                            /// campo = ATOR
-                            // val = EMAILS@EMAIL, EAMIL@EMAIL
-                            $valor [ $campo] = $val;
-                            //$valor [ $de[$campo] ] = $val;
+			if (is_array($data["DADOS_POSTO"])){
+				foreach ($data["DADOS_POSTO"]  as $campo => $val){
+	                            /// campo = ATOR
+	                            // val = EMAILS@EMAIL, EAMIL@EMAIL
+	                            $valor [ $campo] = $val;
+	                            //$valor [ $de[$campo] ] = $val;
+				}
 			}
 		}
-                //echo "<PRE>"; var_dump($valor); echo "</pre>";// exit;
+    //echo "<PRE>"; var_dump($valor); echo "</pre>";// exit;
 		// TODO: REsolver a adicao de campos especiais para resolver no email de notificacao
       $valor = $this->globais->ArrayMergeKeepKeys ( $this->globais->SYS_CAMPOS_ESPECIAIS, $valor);
+		//	echo "<pre>"; var_dump($valor);
 
     	$texto_original = str_replace("{idprocesso}", $this->idprocesso ,$texto_original);
 
 		foreach ($de as $idcampo => $campo){
-
+//echo "\n idcampo $idcampo = campo $campo ";
                     $texto_original = preg_replace_callback( '%{.*?}%i',
 
                         function($match) use ($valor) {
                             return    (($valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )])
                                        ? $valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )]
-                                       : "<font color=#ff0000>$match[0]</font>")       ; // nome
+                                       : "")       ; // nome
                         },
                     $texto_original);
+	//									echo " => $texto_original ";
 		}
 
 		return $texto_original;
@@ -148,12 +155,9 @@ corpo: ".$corpo."
 header: $headers</PRE> ";
 
 
-               echo "\n\n\n\n".$this->debug;
-
-		mail("bruno.siqueira@walmart.com", $titulo, "De:$de_bkp - Para:$para - " . $corpo, $headers);
-
-
-                return $this->debug;
+			echo "\n\n\n\n".$this->debug;
+			mail($para, $titulo, "De:$de_bkp - Para:$para - " . $corpo, $headers);
+			return $this->debug;
 	}
 
 	function notif_entrandoposto($idprocesso, $idposto, $proximo_posto = null)
@@ -272,23 +276,23 @@ header: $headers</PRE> ";
 	}
 
 
-	function notifica_designacao_manual($idsla,   $idnotificacao, $chave)
+	function notifica_designacao_manual( $idnotificacao, $chave)
 {
 
 			// puxa dados da notificacao
 			 $dados_notificacao = $this->LoadCampos($idnotificacao);
 		// echo "<Pre>"; var_dump($dados_notificacao);   echo "</Pre>";
-
+      $data_fetch = $this->posto->LoadCamposbyProcesso(   $chave );
 
 
 
 			//echo "<Pre>"; var_dump($data_atual);   echo "</Pre>";
 		 //exit;
 
-			$titulo = $this->TraduzirEmail($dados_notificacao  [titulo], $dados_notificacao);
-			$corpo = $this->TraduzirEmail($dados_notificacao [corpo], $dados_notificacao);
-			$de = $this->TraduzirEmail($dados_notificacao  [de], $dados_notificacao);
-			$para = $this->TraduzirEmail($dados_notificacao  [para], $dados_notificacao);
+			$titulo = $this->TraduzirEmail($dados_notificacao  [titulo], $data_fetch);
+			$corpo = $this->TraduzirEmail($dados_notificacao [corpo], $data_fetch);
+			$de = $this->TraduzirEmail($dados_notificacao  [de], $data_fetch);
+			$para = $this->TraduzirEmail($dados_notificacao  [para], $data_fetch);
 
 
 			$corpo = $corpo ;
