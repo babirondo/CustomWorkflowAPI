@@ -2242,25 +2242,25 @@ SELECT pg_catalog.setval('menus_id_seq', 17, true);
 
 COPY notificacoes_email (id, de, para, titulo, corpo) FROM stdin;
 5	{5}	{166}	[Processo de Contratacão] Negociacao com candidato {11}	Ola {166},\n\nPor favor, poderia iniciar o processo de negociacao com o candidato {11}, referente ao processo seletivo {idprocesso}\n\nAtenciosamente,\n{5}
-14	devcontrat@walmart.com	{gestorselecao}	[Processo de Contratação] SLA do processo de seleção vencido	\nOlá {gestorselecao},\nGostaríamos de informar que o candidato {11} encontra-se no processo de seleção além do máximo considerado.\n\nGentileza, verificar. \n\nAbs,\nBruno
-9	devcontrat@walmart.com	{5}	[Processo de Contratação] SLA Vencido, Negociação com Consultoria	\nOlá {5},\nGostaríamos de informar que o SLA de Negociação com a COnusltoria do candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nFavor agilizar.\n\nAbs,\nBruno\n
-10	devcontrat@walmart.com	{5}	[Processo de Contratação] SLA Vencido, Negociação com Consultoria	\nOlá {5},\nGostaríamos de informar que o SLA de revisão dos candidatos entrevistados, especificamento o candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nFavor agilizar.\n\nAbs,\nBruno\n
-15	devcontrat@walmart.com	{usuarioassociado}	[Processo de Contratação] SLA Vencido da Avalição do candidato {11}	Olá {usuarioassociado},\nGostaríamos de solicitar que você avaliasse o candidato {11} o mais rapido possível. O SLA padrão desta atividade já foi rompido.
-7	devcontrat@walmart.com	{177}	{11}, {177} Bem Vindo ao Walmart.com	Olá {11},\nEste é seu primeiro email e que seja de boas vindas!\n\nEm tempo, gostaríamos de saber como foi seu processo de onboarding.\nPoderia nos responder as perguntas abaixo:\n1. Você recebeu instrucões sobre a visão de negocios, roadmap atual e futuro do produto que você vai trabalhar ? Como foi a experiência ?\n2. Você recebeu instrucões sobre a arquitetura, dependências e quais sistemas dependem do seu produto ? Como foi a experiência ?\n3. Você recebeu instrucões sobre o processo de trabalho do Walmart.com ? Como foi a experiência ?\n\nEsta faltando alguma coisa ? Em que mais podemos lhe ajudar ?\n\nVocê tem 7 dias para responder este email! Seu feedback e importante para continuarmos melhorando.\n\nAtenciosamente,\nEquipe de Contratacão de Desenvolvedores
-17	devcontrar@walmart.com	gerente@walmart	[Processo de Contratação] Escalonamento, candidato {11} atingiu tempo máximo no processo	Olá {gestorselecao}, O candidato {11} do processo {idprocesso} atingiu o tempo máximo no processo.
-11	devcontrat@walmart.com	{5}	[Processo de Contratação] SLA Vencido, Negociação com Consultoria	\nOlá {5},\nGostaríamos de informar que o SLA de Entrevista, especificamente do candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nFavor agilizar.\n\nAbs,\nBruno
-13	devcontrat@walmart.com	{5}	[Processo de Contratação] SLA de Onboarding vencido	\nOlá {5},\nGostaríamos de informar que o SLA de Onboarding do novo membro {11} encontra-se vencido.\n\nGentileza, agilizar. \n\nAbs,\nBruno
 6	{5}	{166}	[Processo de Contratação] Contratar:{11} - Processo Seletivo: {idprocesso}	Olá {166},\n\nGostaria de comunicar a aprovação do candidato {11}, referente ao processo seletivo {idprocesso}.\n\nData de Inicio esperada: {data de inicio}\nValor/Hora negociada: {Valor/Hora}\n\nAtenciosamente, \n{5}\n
-4	devcontrat@walmart.com	{5}	[Processo de Contratacão] Entrevista Candidato: {11}	{5},\n\nFavor entrevista o candidato {11} o mais rapido possivel, caso ele nao se encaixe no perfil que voce deseja outro gestor poderia considera-lo\n\n\nAtenciosamente,\nEquipe de Contratacão de Desenvolvedores
-16	devcontrat@walmart.com	diretor@walmart	[Processo de Contratação] Escalonamento: Posto de Primeira avaliação	Olá,\nGostaríamos de pedir sua ajuda, o teste do candidato {11} continua no mesmo posto desde {entradanoposto} e já foi escalado para {usuarioassociado}.
-12	devcontrat@walmart.com	{usuarioassociado}	[Processo de Contratação] Avaliação do Teste	\nOlá {usuarioassociado},\nGostaríamos de informar que o SLA de Avaliação do Teste Técnico, especificamente do candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nGentileza, verificar ASAP.\n\nAbs,\nBruno
-18	devcontrat@walmart.com	diretor@walmart	[Processo de Contratação] Escalonamento, nível 2, candidato {11} a muito tmepo no processo.	Olá,\nGostaríamos de pedir sua ajuda, o candidato {11} está no processo desde {inicioprocesso} e já foi escalado para {gestorselecao}. Precisamos encerrar sua vida no processo.
-3	devcontrat@walmart.com	{atoresdoposto}	[Processo de Contratação] Candidato pronto para Roteamento - {12}:{4}	Gestores, \nExiste um novo candidato pronto para ser entrevistado.\n\nProcesso Seletivo: {idprocesso}\nNome do Candidato: {11}\n\nAtenciosamente, \nEquipe de Contratação de Desenvolvedores\ndevcontrat@walmart.com\n
 1	rodrigues@simonsen.br	{186}	[Walmart.com] Abertura de Vaga - Processo Seletivo #{idprocesso}	Olá,\nComunicamos de abertura de nova vaga, Processo Seletivo #{idprocesso}.\n\nJob Description: {1}\nTipo de Vaga: {13}\n\t\t\nLembramos que: \n1 - Os candidatos que atenderem as exigências da vaga deverão executar o teste abaixo, em caráter eliminatório.\nhttp://www. github.com. aihua/ teste blabla\n\t\t\n2 - Toda a comunicação a respeito de um candidato deve preservar o número do Processo Seletivo.\n\n3 - Somente serão considerados os candidatos com teste concluído e data de resposta de no máximo um mês a partir deste email.\n\t\t\nAtenciosamente, \nEquipe de Contratação de Desenvolvedores\ndevcontrat@walmart.com
 19	{usuario_logado.email}	{184}	[Walmart.com] Processo Seletivo #{idprocesso}	Olá, (Este é um re-envio desta vaga)\nComunicamos de abertura de nova vaga, Processo Seletivo #{idprocesso}.\n\nJob Description: {1}\nTipo de Vaga: {13}\n\t\t\nLembramos que: \n1 - Os candidatos que atenderem as exigências da vaga deverão executar o teste abaixo, em caráter eliminatório.\nhttp://www. github.com. aihua/ teste blabla\n\t\t\n2 - Toda a comunicação a respeito de um candidato deve preservar o número do Processo Seletivo.\n\n3 - Somente serão considerados os candidatos com teste concluído e data de resposta de no máximo um mês a partir deste email.\n\t\t\nAtenciosamente, \nEquipe de Contratação de Desenvolvedores\ndevcontrat@walmart.com
-20	devcontrat@walmart.com	{184},{186}	[Walmart.com] Encerramento do Processo Seletivo : {idprocesso}	Olá,\rGostaríamos de comunicar o encerramento deste processo seletivo. \rMais detalhes: {183}
-8	devcontrat@walmart.com	devcontrat@walmart.com	[Processo de Contratação] SLA Vencido, Posto Roteamento	Olá,\n\nO SLA do posto foi vencido e solicitamos que o roteamento dos candidatos aprovados seja logo realizado.
-2	devcontrat@walmart.com	{email_usuarioassociado}	[Processo de Contratacão] Novo candidato para ser Classificado - {202}	Olá {usuarioassociado},\nUm novo candidato do nosso processo de selecão enviou submeteu seu teste e gostariamos da sua ajuda para avaliá-lo.\nVocê ira encontrar todos os dados necessarios no sistema mas adiantamos:\nProcesso Seletivo: {idprocesso}\nCandidato: {202}\nTecnologia Utilizada no Teste: {217}\nGithub: {215}\n\n\nLembramos que:\n1 - O objetivo desta classificacao e enquadra-lo de acordo com as metricas de avaliacão do Walmart.\nConfira em: https://confluence.wmxp.com.br/pages/viewpage.action?pageId=61099109\n\nAtenciosamente,\nEquipe de Contratação de Desenvolvedores\ndevcontrat@walmart.com
+14	devcontrat@wal-mart.com	{gestorselecao}	[Processo de Contratação] SLA do processo de seleção vencido	\nOlá {gestorselecao},\nGostaríamos de informar que o candidato {11} encontra-se no processo de seleção além do máximo considerado.\n\nGentileza, verificar. \n\nAbs,\nBruno
+9	devcontrat@wal-mart.com	{5}	[Processo de Contratação] SLA Vencido, Negociação com Consultoria	\nOlá {5},\nGostaríamos de informar que o SLA de Negociação com a COnusltoria do candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nFavor agilizar.\n\nAbs,\nBruno\n
+10	devcontrat@wal-mart.com	{5}	[Processo de Contratação] SLA Vencido, Negociação com Consultoria	\nOlá {5},\nGostaríamos de informar que o SLA de revisão dos candidatos entrevistados, especificamento o candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nFavor agilizar.\n\nAbs,\nBruno\n
+15	devcontrat@wal-mart.com	{usuarioassociado}	[Processo de Contratação] SLA Vencido da Avalição do candidato {11}	Olá {usuarioassociado},\nGostaríamos de solicitar que você avaliasse o candidato {11} o mais rapido possível. O SLA padrão desta atividade já foi rompido.
+7	devcontrat@wal-mart.com	{177}	{11}, {177} Bem Vindo ao Walmart.com	Olá {11},\nEste é seu primeiro email e que seja de boas vindas!\n\nEm tempo, gostaríamos de saber como foi seu processo de onboarding.\nPoderia nos responder as perguntas abaixo:\n1. Você recebeu instrucões sobre a visão de negocios, roadmap atual e futuro do produto que você vai trabalhar ? Como foi a experiência ?\n2. Você recebeu instrucões sobre a arquitetura, dependências e quais sistemas dependem do seu produto ? Como foi a experiência ?\n3. Você recebeu instrucões sobre o processo de trabalho do Walmart.com ? Como foi a experiência ?\n\nEsta faltando alguma coisa ? Em que mais podemos lhe ajudar ?\n\nVocê tem 7 dias para responder este email! Seu feedback e importante para continuarmos melhorando.\n\nAtenciosamente,\nEquipe de Contratacão de Desenvolvedores
+17	devcontrat@wal-mart.com	gerente@walmart	[Processo de Contratação] Escalonamento, candidato {11} atingiu tempo máximo no processo	Olá {gestorselecao}, O candidato {11} do processo {idprocesso} atingiu o tempo máximo no processo.
+11	devcontrat@wal-mart.com	{5}	[Processo de Contratação] SLA Vencido, Negociação com Consultoria	\nOlá {5},\nGostaríamos de informar que o SLA de Entrevista, especificamente do candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nFavor agilizar.\n\nAbs,\nBruno
+13	devcontrat@wal-mart.com	{5}	[Processo de Contratação] SLA de Onboarding vencido	\nOlá {5},\nGostaríamos de informar que o SLA de Onboarding do novo membro {11} encontra-se vencido.\n\nGentileza, agilizar. \n\nAbs,\nBruno
+4	devcontrat@wal-mart.com	{5}	[Processo de Contratacão] Entrevista Candidato: {11}	{5},\n\nFavor entrevista o candidato {11} o mais rapido possivel, caso ele nao se encaixe no perfil que voce deseja outro gestor poderia considera-lo\n\n\nAtenciosamente,\nEquipe de Contratacão de Desenvolvedores
+16	devcontrat@wal-mart.com	diretor@walmart	[Processo de Contratação] Escalonamento: Posto de Primeira avaliação	Olá,\nGostaríamos de pedir sua ajuda, o teste do candidato {11} continua no mesmo posto desde {entradanoposto} e já foi escalado para {usuarioassociado}.
+12	devcontrat@wal-mart.com	{usuarioassociado}	[Processo de Contratação] Avaliação do Teste	\nOlá {usuarioassociado},\nGostaríamos de informar que o SLA de Avaliação do Teste Técnico, especificamente do candidato {11} referente ao processo seletivo {idprocesso} encontra-se vencido.\n\nGentileza, verificar ASAP.\n\nAbs,\nBruno
+18	devcontrat@wal-mart.com	diretor@walmart	[Processo de Contratação] Escalonamento, nível 2, candidato {11} a muito tmepo no processo.	Olá,\nGostaríamos de pedir sua ajuda, o candidato {11} está no processo desde {inicioprocesso} e já foi escalado para {gestorselecao}. Precisamos encerrar sua vida no processo.
+3	devcontrat@wal-mart.com	{atoresdoposto}	[Processo de Contratação] Candidato pronto para Roteamento - {12}:{4}	Gestores, \nExiste um novo candidato pronto para ser entrevistado.\n\nProcesso Seletivo: {idprocesso}\nNome do Candidato: {11}\n\nAtenciosamente, \nEquipe de Contratação de Desenvolvedores\ndevcontrat@walmart.com\n
+20	devcontrat@wal-mart.com	{184},{186}	[Walmart.com] Encerramento do Processo Seletivo : {idprocesso}	Olá,\rGostaríamos de comunicar o encerramento deste processo seletivo. \rMais detalhes: {183}
+8	devcontrat@wal-mart.com	devcontrat@walmart.com	[Processo de Contratação] SLA Vencido, Posto Roteamento	Olá,\n\nO SLA do posto foi vencido e solicitamos que o roteamento dos candidatos aprovados seja logo realizado.
+2	devcontrat@wal-mart.com	{email_usuarioassociado}	[Processo de Contratação] {idprocesso} - Novo candidato para ser Classificado - {202}	Olá {usuarioassociado},\n\nUm novo candidato do nosso processo de selecão submeteu seu teste e gostaríamos da sua ajuda para avaliá-lo.\n\nCandidato:          {202}\nProcesso Seletivo:  {idprocesso}\nTecnologia Utilizada no Teste: {217}\nGithub: {215}\n \nOBS:\n1 - A avaliação do candidato pode ser retornada neste próprio email.\n2 - Favor considerar as métricas de avaliação no link https://confluence.wmxp.com.br/pages/viewpage.action?pageId=61099109\n\nMuito Obrigado,\nEquipe de Contratação de Desenvolvedores\n
 \.
 
 
@@ -3428,7 +3428,6 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7929	219	nnnn rrrr alcidez	404	2016-10-13 17:11:06.531873	309	3234
 7931	229	510	402	2016-10-13 17:13:23.780391	316	3232
 7932	229	4	405	2016-10-13 17:13:36.694398	316	3235
-7933	229	4	398	2016-10-13 18:41:27.589807	316	3228
 7934	202	novo cnadidato com migracaok	520	2016-10-17 16:25:45.394037	301	3391
 7935	215	s	520	2016-10-17 16:25:45.394771	301	3391
 7938	216		520	2016-10-17 16:25:45.395958	301	3391
@@ -3460,6 +3459,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7900	223	18,37,48,47,124,4,115,55	506	2016-07-30 17:44:25.357989	301	3346
 7906	223	18,37,48,47,124,4,21,55,116	509	2016-07-30 17:45:56.541989	301	3349
 7945	223	4	523	2016-10-17 16:27:27.181278	301	3394
+7933	229	528	398	2016-10-13 18:41:27.589807	316	3228
 7622	217	115	429	2016-07-30 16:18:04.684571	301	3269
 7654	217	115	435	2016-07-30 16:45:19.610906	301	3275
 7711	217	115	445	2016-07-30 16:58:50.72608	301	3285
@@ -3488,8 +3488,27 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 7962	229	528	526	2016-10-17 19:05:12.847129	316	3397
 7963	229	528	526	2016-10-17 19:07:15.742022	316	3397
 7964	229	528	526	2016-10-17 19:07:51.924336	316	3397
-7966	229	4	521	2016-10-17 19:09:50.562191	316	3392
 7965	229	528	526	2016-10-17 19:08:28.200798	316	3397
+7967	229	528	393	2016-10-18 15:04:17.587807	316	3223
+7968	229	528	526	2016-10-18 15:11:19.254454	316	3397
+7969	229	528	526	2016-10-18 15:13:09.891006	316	3397
+7971	229	528	526	2016-10-18 15:34:57.066745	316	3397
+7972	229	528	526	2016-10-18 15:35:29.698818	316	3397
+7973	229	528	526	2016-10-18 15:36:49.692273	316	3397
+7974	229	528	526	2016-10-18 15:40:40.295301	316	3397
+7975	229	528	526	2016-10-18 16:07:03.584964	316	3397
+7976	229	528	526	2016-10-18 16:17:54.966784	316	3397
+7977	229	528	526	2016-10-18 16:27:37.331384	316	3397
+7978	229	528	526	2016-10-18 16:27:52.352595	316	3397
+7979	229	528	526	2016-10-18 16:28:49.263526	316	3397
+7980	229	528	526	2016-10-18 16:30:07.63527	316	3397
+7981	229	528	526	2016-10-18 16:30:51.883986	316	3397
+7982	229	4	524	2016-10-18 16:33:13.946573	316	3395
+7983	229	4	524	2016-10-18 16:33:23.435907	316	3395
+7985	229	528	526	2016-10-18 16:35:37.053953	316	3397
+7984	229	4	524	2016-10-18 16:33:57.942276	316	3395
+7966	229	4	521	2016-10-17 19:09:50.562191	316	3392
+7970	229	4	511	2016-10-18 15:15:12.674165	316	3382
 \.
 
 
@@ -3497,7 +3516,7 @@ COPY workflow_dados (id, idpostocampo, valor, idprocesso, registro, idposto, idw
 -- Name: workflow_dados_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('workflow_dados_id_seq', 7966, true);
+SELECT pg_catalog.setval('workflow_dados_id_seq', 7985, true);
 
 
 --
@@ -3661,7 +3680,6 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3219	389	299	2016-07-26 00:44:20.750116	2016-07-26 00:44:41.220075	\N
 3218	388	300	2016-07-26 00:44:20.709531	2016-07-26 00:45:05.676803	\N
 3221	391	298	2016-07-26 00:58:47.305669	\N	\N
-3223	393	299	2016-07-26 00:58:54.21327	\N	\N
 3224	394	298	2016-07-26 01:04:53.096775	\N	\N
 3226	396	299	2016-07-26 01:04:59.825979	\N	\N
 3227	397	298	2016-07-26 01:08:35.014638	\N	\N
@@ -3759,12 +3777,13 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3321	481	298	2016-07-30 17:30:13.714631	\N	\N
 3322	482	298	2016-07-30 17:30:45.377133	\N	\N
 3323	483	298	2016-07-30 17:31:37.07983	\N	\N
-3228	398	300	2016-07-26 01:08:41.632833	\N	4
+3223	393	299	2016-07-26 00:58:54.21327	\N	528
 3208	378	300	2016-07-26 00:17:35.19975	2016-10-13 16:53:34.521029	4
 3225	395	300	2016-07-26 01:04:59.785002	\N	510
 3234	404	300	2016-07-26 01:26:29.718623	2016-10-13 17:11:06.722738	4
 3232	402	299	2016-07-26 01:12:54.385036	\N	510
 3235	405	299	2016-07-26 01:26:29.769358	\N	4
+3228	398	300	2016-07-26 01:08:41.632833	\N	528
 3324	484	298	2016-07-30 17:33:22.785998	\N	\N
 3325	485	298	2016-07-30 17:34:07.699516	\N	\N
 3326	486	298	2016-07-30 17:34:19.470277	\N	\N
@@ -3801,16 +3820,17 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3358	509	298	2016-07-30 17:54:31.152113	\N	\N
 3359	509	298	2016-07-30 17:55:49.60142	\N	\N
 3360	509	298	2016-07-30 17:56:11.664407	\N	\N
+3395	524	300	2016-10-17 16:27:32.638426	\N	4
 3361	509	298	2016-07-30 17:58:27.704381	\N	\N
+3392	521	300	2016-10-17 16:26:31.888797	\N	4
 3362	509	298	2016-07-30 17:59:36.300606	\N	\N
 3363	509	298	2016-07-30 18:00:02.407207	\N	\N
 3364	509	298	2016-07-30 19:30:30.457444	\N	\N
 3365	509	298	2016-07-30 19:31:38.437562	\N	\N
+3382	511	300	2016-10-17 15:12:38.674475	\N	4
 3366	509	298	2016-07-30 19:31:49.765671	\N	\N
 3367	509	298	2016-07-30 19:32:42.881152	\N	\N
 3368	509	298	2016-07-30 19:32:59.388939	\N	\N
-3392	521	300	2016-10-17 16:26:31.888797	\N	4
-3397	526	300	2016-10-17 16:59:38.817075	\N	528
 3372	509	298	2016-07-30 19:34:56.49464	\N	\N
 3373	509	298	2016-07-30 19:36:25.276215	\N	\N
 3350	509	298	2016-07-30 17:47:39.341433	2016-07-30 19:36:25.375821	\N
@@ -3829,7 +3849,6 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3210	380	300	2016-07-26 00:17:39.342104	2016-10-13 16:50:46.061958	4
 3222	392	300	2016-07-26 00:58:54.168303	2016-10-13 16:54:55.917921	4
 3211	381	299	2016-07-26 00:17:39.382787	\N	4
-3382	511	300	2016-10-17 15:12:38.674475	\N	\N
 3383	512	299	2016-10-17 15:12:38.715469	\N	\N
 3384	513	300	2016-10-17 15:23:51.161435	\N	\N
 3385	514	299	2016-10-17 15:23:51.202369	\N	\N
@@ -3841,9 +3860,9 @@ COPY workflow_tramitacao (id, idprocesso, idworkflowposto, inicio, fim, id_usuar
 3391	520	298	2016-10-17 16:25:45.360194	\N	\N
 3393	522	299	2016-10-17 16:26:31.941265	\N	\N
 3394	523	298	2016-10-17 16:27:27.145664	\N	\N
-3395	524	300	2016-10-17 16:27:32.638426	\N	\N
 3396	525	299	2016-10-17 16:27:32.683224	\N	\N
 3398	527	299	2016-10-17 16:59:38.858327	\N	\N
+3397	526	300	2016-10-17 16:59:38.817075	\N	528
 \.
 
 

@@ -9,12 +9,14 @@ class Notificacoes{
 		require_once("classes/class_campo.php");
     include_once("classes/globais.php");
 		require_once("classes/class_db.php");
+		require_once("classes/PHPMailer/PHPMailerAutoload.php");
 
 		$this->con = new db();
 		$this->con->conecta();
     $this->globais = new Globais();
     $this->posto = new Postos();
 		$this->campos = new Campos();
+		$this->mail = new \PHPMailer;
 
 		$this->debug = null;
 
@@ -89,8 +91,6 @@ class Notificacoes{
              *  -  ADICIONAR NO GLOBAIS
              */
 
-
-
     $de = $this->campos->getCampos(); // 11 = nome do campo
 		//echo "<pre>"; var_dump($de);exit;
     //echo "<pre>"; var_dump($data);
@@ -115,7 +115,7 @@ class Notificacoes{
     //echo "<PRE>"; var_dump($valor); echo "</pre>";// exit;
 		// TODO: REsolver a adicao de campos especiais para resolver no email de notificacao
       $valor = $this->globais->ArrayMergeKeepKeys ( $this->globais->SYS_CAMPOS_ESPECIAIS, $valor);
-		//	echo "<pre>"; var_dump($valor);
+			//echo "<pre>"; var_dump($valor);
 
     	$texto_original = str_replace("{idprocesso}", $this->idprocesso ,$texto_original);
 
@@ -137,27 +137,33 @@ class Notificacoes{
 
 	function EnviaEmail($de, $para, $titulo, $corpo)
 	{
-		$de_bkp =$de;
-		$de = "bruno.siqueira@walmart.com";
-		$headers = "MIME-Version: 1.1
-		    Content-type: text/plain; charset=iso-8859-1
-			From: ".$de."
-			Return-Path: ".$de."
-		    Reply-To: ".$de."  ";
 
-		$this->debug .= "<PRE>
-de: $de
-para: $para
-titulo: ".$titulo."
-corpo: ".$corpo."
+		$this->mail->CharSet = 'UTF-8';
+		$this->mail->ContentType = 'text/plain';
+		$this->mail->Host = 'localhost';  // Specify main and backup SMTP servers
+
+		$this->mail->setFrom($de );
+		$this->mail->addAddress($para );     // Add a recipient
+
+		$this->mail->addReplyTo($de );
+
+		$this->mail->Subject = $titulo;
+		$this->mail->Body    = $corpo;
+
+		if(!$this->mail->send()) {
+		    $this->debug .=  '\n Message could not be sent.';
+		    $this->debug .= 'Mailer Error: ' . $this->mail->ErrorInfo;
+
+		} else {
+		    $this->debug .=  '\n Message has been sent';
+
+		}
 
 
-header: $headers</PRE> ";
+		echo $this->debug;
+		return $this->debug;
 
 
-			echo "\n\n\n\n".$this->debug;
-			mail($para, $titulo, "De:$de_bkp - Para:$para - " . $corpo, $headers);
-			return $this->debug;
 	}
 
 	function notif_entrandoposto($idprocesso, $idposto, $proximo_posto = null)

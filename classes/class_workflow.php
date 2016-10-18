@@ -64,22 +64,37 @@ class Workflow{
                     return false;
             }
 						*/
+/*
+Olá {usuarioassociado},
+
+Um novo candidato do nosso processo de selecão submeteu seu teste e gostaríamos da sua ajuda para avaliá-lo.
+
+Candidato:          {202}
+Processo Seletivo:  {idprocesso}
+Tecnologia Utilizada no Teste: {217}
+Github: {215}
+
+OBS:
+1 - A avaliação do candidato pode ser retornada neste próprio email.
+2 - Favor considerar as métricas de avaliação no link https://confluence.wmxp.com.br/pages/viewpage.action?pageId=61099109
+
+Muito Obrigado,
+Equipe de Contratação de Desenvolvedores
+devcontrat@walmart.com
+*/
             $erro = 0;
             //var_dump($json);
 					//	echo "\n -- ".$this->globais->SYS_DEPARA_CAMPOS["Responsavel"];
 					//var_dump($json); exit;
 						if ($json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor] > 0)
 						{
-								$this->notificacoes->idprocesso=$json["processo"]["valor"];
-								$this->notificacoes->notifica_designacao_manual(2, $json["processo"]["valor"] ); //, $proximo_posto = null
+							$this->notificacoes->idprocesso=$json["processo"]["valor"];
 							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro
 							$sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][idtramitacao]."'";
 							echo "\n SQL: ".$sql;
 	            $this->con->executa(    $sql, null, __LINE__);
 
-
-
-
+							$this->notificacoes->notifica_designacao_manual(2, $json["processo"]["valor"] ); //, $proximo_posto = null
 						}
 
         }
