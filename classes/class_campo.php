@@ -24,22 +24,27 @@ class Campos{
 
 								case( $this->globais->SYS_DEPARA_CAMPOS["ParecerTecnico1"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["ParecerTecnico2"] ):
-										$idtramitacao = $array["idtramitacao"];
+										if ($array["idtramitacao"]>0){
+											$idtramitacao = $array["idtramitacao"];
 
-										$sql = "select wt.id_usuario_associado usuario_associado , u.nome usuario
-														from workflow_tramitacao  wt
-															LEFT JOIN usuarios u ON (u.id = wt.id_usuario_associado)
-														WHERE wt.id = $idtramitacao";
-										$this->con->executa($sql );
-								//echo $sql;
-										$this->con->navega(0);
+											$sql = "select wt.id_usuario_associado usuario_associado , u.nome usuario
+															from workflow_tramitacao  wt
+																LEFT JOIN usuarios u ON (u.id = wt.id_usuario_associado)
+															WHERE wt.id = $idtramitacao";
+											$this->con->executa($sql );
+									//echo $sql;
+											$this->con->navega(0);
 
-										if ($this->con->dados["usuario"]){
-											return  "Avaliador por: ".$this->con->dados["usuario"]."\n\n".$valor_default_campo ;
-										}
-										else{
-											return  $valor_default_campo;
-										}
+											if ($this->con->dados["usuario"]){
+												return  "Avaliador por: ".$this->con->dados["usuario"]."\n\n".$valor_default_campo ;
+											}
+											else{
+												return  $valor_default_campo;
+											}
+									}
+									else {
+										return  $valor_default_campo; /// salvar pra commit 
+									}
 
 
 
