@@ -1,8 +1,8 @@
 <?php
-
+namespace raiz;
 set_time_limit( 2 );
 class Auth{
-	function Auth( ){
+	function __construct( ){
 
 
 		require("classes/class_db.php");
@@ -43,7 +43,7 @@ class Auth{
 		}
 
 		$sql = "SELECT * FROM usuarios WHERE login = '".$json["login"]."' and senha = '".$json[ "senha"]."'";
- 
+
 	 	$this->con->executa($sql);
  	 	if ( $this->con->nrw == 1 ){
  	 		$this->con->navega(null);

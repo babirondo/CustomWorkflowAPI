@@ -1,9 +1,10 @@
 <?php
+namespace raiz;
 set_time_limit(2);
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Workflow{
-	function Workflow( ){
+	function __construct( ){
 
             require_once("classes/globais.php");
 
@@ -26,7 +27,7 @@ class Workflow{
             $this->idprocesso = null;
             $this->debug = null;
 
-
+						require_once("classes/recrutamento/class_vagas.php");
 
 	}
 
@@ -49,7 +50,9 @@ class Workflow{
         }
 
         function AssociarRegistronoPosto($jsonRAW, $idposto){
-            $json = json_decode( $jsonRAW, true );
+						$json = $jsonRAW;
+						/*
+						$json = json_decode( $jsonRAW, true );
             IF ($json == NULL) {
                     $data = array("data"=>
                                 array(	"resultado" =>  "ERRO",
@@ -60,15 +63,40 @@ class Workflow{
                     $app->render ('default.php',$data,500);
                     return false;
             }
+						*/
+/*
+Olá {usuarioassociado},
+
+Um novo candidato do nosso processo de selecão submeteu seu teste e gostaríamos da sua ajuda para avaliá-lo.
+
+Candidato:          {202}
+Processo Seletivo:  {idprocesso}
+Tecnologia Utilizada no Teste: {217}
+Github: {215}
+
+OBS:
+1 - A avaliação do candidato pode ser retornada neste próprio email.
+2 - Favor considerar as métricas de avaliação no link https://confluence.wmxp.com.br/pages/viewpage.action?pageId=61099109
+
+Muito Obrigado,
+Equipe de Contratação de Desenvolvedores
+devcontrat@walmart.com
+*/
             $erro = 0;
             //var_dump($json);
+					//	echo "\n -- ".$this->globais->SYS_DEPARA_CAMPOS["Responsavel"];
+					//var_dump($json); exit;
 						if ($json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor] > 0)
 						{
-							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro	
+							$this->notificacoes->idprocesso=$json["processo"]["valor"];
+							// caso não haja avaliador, continua o processo.. caso contrario estava causando erro
 							$sql = "update  workflow_tramitacao set id_usuario_associado = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][valor]."' where id = '".$json[$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]][idtramitacao]."'";
+							echo "\n SQL: ".$sql;
 	            $this->con->executa(    $sql, null, __LINE__);
 
+							$this->notificacoes->notifica_designacao_manual(2, $json["processo"]["valor"] ); //, $proximo_posto = null
 						}
+
         }
 
 
@@ -205,7 +233,10 @@ class Workflow{
                     return false;
             }
 
-            $array = $this->SalvarnoBanco(  $json , $idposto, "Salvando", $app); // indo array ?
+             $this->SalvarnoBanco(  $json , $idposto, "Salvando", $app); // indo array ?
+
+
+
 
             $array["resultado"] = "SUCESSO";
             $array["DEBUG"] = $this->notificacoes->debug;
@@ -237,15 +268,16 @@ class Workflow{
                 CASE("AUTO-DIRECIONADO"):
                     $vida_processo = $this->posto->LoadCampos( null, $idprocesso, null, null, null );
 
-                    $idtec = $vida_processo["FETCH"][$idprocesso][$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"]."-original"];
-                    $usuarios = $this->posto->getUsuariosbyTecnologia($idtec);
-                    $usuario_aleatorio = rand(0, (COUNT( $usuarios["USUARIO_TECNOLOGIA"] [$idtec])-1) );
+                    $tecnologias = $vida_processo["FETCH"][$idprocesso][$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] ];
+                    $usuarios = $this->posto->getUsuariosbyTecnologia($tecnologias, $idprocesso, $avanca_processo);
+										//echo "\n vardump"; var_dump($usuarios);
+                    $usuario_aleatorio = rand(0, (COUNT( $usuarios["USUARIO_TECNOLOGIA"] [$tecnologias])-1) );
 
-                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$idtec][$usuario_aleatorio]   ;
+                    $associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor]  =   $usuarios["USUARIO_TECNOLOGIA"] [$tecnologias][$usuario_aleatorio]   ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]]["idtramitacao"]  = $idtramitacao ;
                     $associarRegistro [$this->globais->SYS_DEPARA_CAMPOS["Responsavel"]]["idworkflowdado"]  = null ;
                     $associarRegistro [processo][valor]  = $idprocesso;
-                    //echo "\n associado: $idprocesso Posto: $avanca_processo usuario:  ".$associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor];
+                    //echo "\n AUTO-DIRECIONADO: associado: $idprocesso Posto: $avanca_processo usuario:  ".$associarRegistro [ $this->globais->SYS_DEPARA_CAMPOS["Responsavel"] ][valor];
 
                     $this->Posto_Usuario->AssociarProcessonoPosto($app, json_encode($associarRegistro) , $avanca_processo );
                 BREAK;
@@ -268,6 +300,7 @@ class Workflow{
             $sql = "select avanca_processo
                     from RELACIONAMENTO_POSTOS
                     where idposto_atual= $idposto";
+						//echo "\n $sql";
             $this->con->executa($sql , null, __LINE__);
 //echo $sql;
             while ($this->con->navega(0)) {
@@ -284,22 +317,23 @@ class Workflow{
 
                 foreach ($proximos_postos as $proximo_posto)
                 {
+						//			echo "\n proximo posto: $proximo_posto";
                      // 8***** INcluido rotina de criacao de processo e historico
 										 	$rodar_preenchedor_processos = null;
 
                       $erro = 0;
 
                         // echo "\n Id Processo do JSON vazio  ";
-                        $sql = "select wp2.id idtipoprocesso, wp.id_workflow, rp.avanca_processo,
-                                                                                        wp.idtipoprocesso idtipoprocesso_atual,
-                                                                                        wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
-                                                        from workflow_postos wp
-                                                                        inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
-                                                                        inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-                                                                        inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
-                                                                        inner join workflow w ON (w.id = wp.id_workflow)
-                                                        where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
-                // echo $sql;
+                      $sql = "select wp2.id idtipoprocesso, wp.id_workflow, rp.avanca_processo,
+                                    wp.idtipoprocesso idtipoprocesso_atual,
+                                    wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
+                              from workflow_postos wp
+                                  inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
+                                  inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                                  inner join workflow_postos wp2 ON (wp2.id = rp.avanca_processo)
+                                  inner join workflow w ON (w.id = wp.id_workflow)
+                              where wp.id = $idposto and rp.avanca_processo = $proximo_posto";
+  //     echo "\n".$sql;
                         $this->con->executa( $sql , null, __LINE__);
           //   echo "\n IDados do Posto:    ";
                         $this->con->navega(0);
@@ -313,11 +347,11 @@ class Workflow{
 
                         // dentro de um posto com pai já existente...
                         $sql = "select tp.id, rp.avanca_processo, wp.tipodesignacao, wp.idtipoprocesso posto_idpai , tp.id_pai
-                                                        from workflow_postos wp
-                                                                        inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
-                                                                        left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
-                                                        where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
-                 //echo $sql;
+                                from workflow_postos wp
+                                                inner join relacionamento_postos rp ON (rp.idposto_atual = wp.id)
+                                                left  join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+                                where wp.id  = $idposto and rp.avanca_processo = $proximo_posto ";
+        //         echo "\n\n ".$sql;
                 //  echo "\n tem idposto e idprocesso do json    ";
          //echo $sql;
                         $this->con->executa($sql, null, __LINE__ );
@@ -331,6 +365,7 @@ class Workflow{
                       //$id_pai = "null";
                      // echo "\n )))))))))))))))))) iniciando rotina de controle de criacao de processo ";
 
+				//						 	echo "\n idposto e idprocesso: $idposto - ".$json[processo][valor];
                       if ($idposto && $json[processo][valor] )
                       {
 
@@ -348,6 +383,7 @@ class Workflow{
 
 
 													//echo "\n aqui";
+					//								echo "\n idtipoprocess_posto != idtipoprocess_processo | $idtipoprocess_posto != $idtipoprocess_processo";
                           if ( $idtipoprocess_posto != $idtipoprocess_processo){
                               // se o próximo posto tem tipo de processo diferente do atual, entra aqui
                               $id_pai = $json[processo][valor];
@@ -383,7 +419,7 @@ class Workflow{
                       }
 						if (!$json[processo][valor])
 						{
-
+					//			echo "\n   Rodar Preenchedor -> $rodar_preenchedor_processos";
                     if ( $rodar_preenchedor_processos ==1  )
                     {
                         // se precisa criar um processo, quando a tramitacao é de um posto para outro de mesmo tipo
@@ -397,7 +433,7 @@ class Workflow{
 												$this->con->navega(0);
 
 												$tipos_processo_para_preencher=null;
-												//echo "\n\n processos faltantes ? $idtpproc, $id_pai";
+						//						echo "\n\n processos faltantes ? $idtpproc, $id_pai";
 												$tipos_processo_para_preencher = $this->Tipos_Processo_Faltantes($idtpproc, $id_pai);
 
 													//$tipos_processo_para_preencher[] = 2;
@@ -422,6 +458,10 @@ class Workflow{
                                         //excepcional porque se pode criar processos intermediarios quando ha salto de mais de 1 nivel de tipo processo
                                         // Registra os dados que foram submetidos no form
                                         $valor=null;
+
+																				//TODO: reabilitar isso aqui
+																				//$json = $this->IdentificaTecnologias($json);
+
                                         //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                         foreach ($json as $campo => $valor){
                                             if ($campo == "processo") continue;
@@ -461,17 +501,25 @@ class Workflow{
                          }  // fim loop
                     }
 
+
+
+
+						//			echo "\n   PostoInicial == Idposto ($idposto_inicial == $idposto)";
                    if ($idposto_inicial == $idposto ) {
   									//		echo " \n Processo Starter  :    $id_pai  ";
                         // starter
                         $id_pai = $this->CriarProcesso($idtpproc, $id_pai, $idwok, $json, $idposto,  $proximo_posto);
+					//							echo "\n   (starter) idPai criado:  $id_pai";
 
 												if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] )
 												{
+					//								echo "\n   (starter) json processo acao = gloabis | ".  $json[processo][acao]."  == ". $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] ." ";
 												//    echo "\n criar tramitacao \n ";
 														// cria proximo posto em branco ja que o inicial ja nasce fechado
-														$idtramitacaogerada_pai = $this->SalvarHistorico($id_pai, $idposto, null, $proximo_posto);
-														$idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+														$idtramitacaogerada_pai = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+					//									echo "\n   (starter) tramitacao pai = $idtramitacaogerada_pai  ";
+														//$idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+														//echo "\n   (starter) tramitacao  = $idtramitacaogerada  ";
 													//  $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);
 
 												}
@@ -481,17 +529,30 @@ class Workflow{
                               $valor=null;
                               //var_dump($json);
                               //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
+
+															//
+															//TODO: reabilitar isso aqui
+															//$json = $this->IdentificaTecnologias($json);
+
+															//var_dump( $cola);
+															//var_dump($json[$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]][valor]);
+															//exit;
+
                               foreach ($json as $campo => $valor){
                                   if ($campo == "processo") continue;
                                   /// ".";
+																	//if ($campo == 228) ;
 
                                   $this->registraDadosdoPosto($valor, $idposto, $id_pai, $campo, $idtramitacaogerada_pai);
+																	//echo "\n   (starter) dados salvos  =   ".var_export($valor[valor]);
+
                               }
                         }
 
 //                                  $cria_processo=1;
                     }
 
+									//	echo "\n   cria_processo -> $cria_processo  ";
                               if ($cria_processo == 1 )
                               {
 
@@ -510,6 +571,8 @@ class Workflow{
                                   {
                                         // Registra os dados que foram submetidos no form
                                         $valor=null;
+																				$json = $this->IdentificaTecnologias($json);
+
                                         //var_dump($json);
                                         //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                         foreach ($json as $campo => $valor){
@@ -525,8 +588,10 @@ class Workflow{
                               else {
                                   $idprocesso = $id_pai;
                               }
+												//			echo "\n   idprocesso :  $idprocesso  ";
                       }
                       else{
+													// BLOCO FORA DO POSTO INICIAL
 														if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"])
 														{
 																// se mesma entidade e handover, so tramita
@@ -538,6 +603,8 @@ class Workflow{
                              {
                                    // Registra os dados que foram submetidos no form
                                    $valor=null;
+																	 $json = $this->IdentificaTecnologias($json);
+
                                    //var_dump($json);
                                    //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                                    foreach ($json as $campo => $valor){
@@ -560,23 +627,88 @@ class Workflow{
 
             }
             else{
-                $idprocesso = $json[processo][valor];
+					//			echo "\n sem relacionamento_postos";
+								if (!$json[processo][valor]){
+										// caso workflow de MyProfile - workflows simples, sem conexao
+
+									$sql = "select   wp.id_workflow,
+													wp.idtipoprocesso idtipoprocesso_atual,
+													wp.tipodesignacao, wp.regra_finalizacao, w.posto_inicial
+												from workflow_postos wp
+																inner join tipos_processo tp ON (tp.id = wp.idtipoprocesso)
+																inner join workflow w ON (w.id = wp.id_workflow)
+												where wp.id = $idposto  ";
+		 //echo $sql;exit;
+										$this->con->executa( $sql , null, __LINE__);
+			//   echo "\n IDados do Posto:    ";
+										$this->con->navega(0);
+
+										$idtpproc = $this->con->dados["idtipoprocesso_atual"];
+										$idwok = $this->con->dados["id_workflow"];
+
+										$idprocesso = $this->CriarProcesso($idtpproc, "null", $idwok, $json, null, null);
+								//		echo "\n idprocesso criado : $idprocesso";
+
+								}
+								else
+                	$idprocesso = $json[processo][valor];
+
+/*
+									$sql = "SELECT posto_inicial
+													FROM workflow w
+														INNER JOIN workflow_postos wp ON (wp.id_workflow = w.id)
+													WHERE wp.id = $idposto		";
+							//   echo " \n $sql \n";
+									$this->con->executa( $sql, null, __LINE__);
+									$this->con->navega(0);
+
+
+									echo "\n idpostoinicial == idposto   : ".$this->con->dados["posto_inicial"]." == $idposto";
+
+									//grava tramitacao de primeiro posto
+									if ($this->con->dados["posto_inicial"] == $idposto ) {
+
+											 if ($json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] )
+											 {
+												 echo "\n    json processo acao = gloabis | ".  $json[processo][acao]."  == ". $this->globais->SYS_DEPARA_CAMPOS["bt_handover"] ." ";
+											 //    echo "\n criar tramitacao \n ";
+													 // cria proximo posto em branco ja que o inicial ja nasce fechado
+													 $idtramitacaogerada = $this->SalvarHistorico($idprocesso, $idposto, null, $idposto);
+													 echo "\n     tramitacao   = $idtramitacaogerada  ";
+													 //$idtramitacaogerada = $this->SalvarHistorico($id_pai, $proximo_posto, null, $proximo_posto);
+													 //echo "\n     tramitacao  = $idtramitacaogerada  ";
+												 //  $this->AutoAssociarProcessonoPosto($id_pai, $proximo_posto, $app, $idtramitacaogerada);
+
+											 }
+									}
+*/
+
 								$salvar_dados_form = 1;
                 if (is_array($json))
                 {
                       // Registra os dados que foram submetidos no form
                       $valor=null;
+											//$this->IdentificaTecnologias();
                       //var_dump($json);
                       //echo "Iniciando gravacao dos dados do form ~ ".count($json)." \n  [";
                       foreach ($json as $campo => $valor){
                           if ($campo == "processo") continue;
-                         // echo "\n $campo = ".$valor[valor];
+                        //   echo "\n $campo = ".$valor[valor]." => salvando dados  : $valor[valor]";
 
-                          $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo, $json[processo][idworkflowtramitacao_original]);
+
+												 if ( $json[processo][idworkflowtramitacao_original] > 0 ){
+													 $this->campos->PosSavenoCampo($campo, $valor[valor],  $json, $idposto);
+
+													 $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo , $json[processo][idworkflowtramitacao_original]  );
+												 }
+												 else
+                         	 $this->registraDadosdoPosto($valor, $idposto, $idprocesso, $campo  );
                       }
                 }
 
-                if ($json[processo][idworkflowtramitacao_original]){
+					//			echo "\n grava handover sem destino ? :  ".$json[processo][idworkflowtramitacao_original];
+
+                if ($json[processo][idworkflowtramitacao_original] && $json[processo][acao] == $this->globais->SYS_DEPARA_CAMPOS["bt_handover"]){
                     // caso o handover seja em posto sem destino ou posto finalizador
                    // echo "\n handover sem destino";
                     $this->HandoverSemDestino( $json[processo][idworkflowtramitacao_original] );
@@ -589,6 +721,31 @@ class Workflow{
 
             return $idprocesso;
         }
+
+
+				function IdentificaTecnologias($json){
+					if (!empty($json[228])){
+						//TODO: Usar variaveis globais para esses hard coded
+						// campo de descobrir tecnologias automatico
+						$this->vagas = new Vagas();
+						$cola=null;
+						$cola[] = implode(",",$this->vagas->DescobrirTecnologias($json[228][valor]));
+						//var_dump($cola);
+
+						if (!empty($json[$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]][valor]) )
+							$cola[] =   $json[$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]][valor] ;
+
+						foreach (explode(",",implode(",",$cola)) as $elemento){
+							$sem_repetido[$elemento] = $elemento;
+						}
+//var_dump($sem_repetido);
+						$json[$this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]][valor] = implode(",",$sem_repetido);
+					}
+
+					return $json;
+
+				}
+
 
         function CriarProcesso($idtpproc, $id_pai, $idwok, $json, $idposto, $proximo_posto )
         {
@@ -631,8 +788,9 @@ class Workflow{
 
         function HandoverSemDestino( $idtramitacao )
         {
+
          //  $idtramitacao
-            //echo "\n Dentro do handover sem destino";
+            echo "\n Dentro do handover sem destino";
 
             $sql =  " UPDATE workflow_tramitacao SET   fim = NOW() WHERE id  = $idtramitacao returning idworkflowposto ";
             $this->con->executa(   $sql, 1, __LINE__);
@@ -756,7 +914,7 @@ class Workflow{
                   return $RETORNO_function;
             }
 
-
+					 return $idprocesso;
 
         }
 }

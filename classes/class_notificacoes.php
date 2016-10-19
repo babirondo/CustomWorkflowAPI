@@ -1,19 +1,22 @@
 <?php
+namespace raiz;
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 
 class Notificacoes{
-	function Notificacoes( ){
+	function __construct( ){
 
 		require_once("classes/class_postos.php");
 		require_once("classes/class_campo.php");
-                include_once("classes/globais.php");
+    include_once("classes/globais.php");
 		require_once("classes/class_db.php");
+		require_once("classes/PHPMailer/PHPMailerAutoload.php");
 
 		$this->con = new db();
 		$this->con->conecta();
-                $this->globais = new Globais();
-                $this->posto = new Postos();
+    $this->globais = new Globais();
+    $this->posto = new Postos();
 		$this->campos = new Campos();
+		$this->mail = new \PHPMailer;
 
 		$this->debug = null;
 
@@ -87,11 +90,11 @@ class Notificacoes{
              *  -  ADICIONAR NA CLASS_POSTOS->BuscarDadosdoFilhoePai no FETCH
              *  -  ADICIONAR NO GLOBAIS
              */
-  //  echo "<pre>"; var_dump($data);exit;
 
     $de = $this->campos->getCampos(); // 11 = nome do campo
-    //echo "<pre>"; var_dump($de);exit;
-   // echo "<pre>"; var_dump($data);exit;
+		//echo "<pre>"; var_dump($de);exit;
+    //echo "<pre>"; var_dump($data);
+   // echo "<pre>"; var_dump($data["FETCH"][$this->idprocesso]);exit;
     if (is_array($data["FETCH"][$this->idprocesso]))
 		{
 			foreach ($data["FETCH"][$this->idprocesso] as $campo => $val){
@@ -100,29 +103,33 @@ class Notificacoes{
                             $valor [ $campo] = $val;
                             $valor [ $de[$campo] ] = $val;
 			}
-			foreach ($data["DADOS_POSTO"]  as $campo => $val){
-                            /// campo = ATOR
-                            // val = EMAILS@EMAIL, EAMIL@EMAIL
-                            $valor [ $campo] = $val;
-                            //$valor [ $de[$campo] ] = $val;
+			if (is_array($data["DADOS_POSTO"])){
+				foreach ($data["DADOS_POSTO"]  as $campo => $val){
+	                            /// campo = ATOR
+	                            // val = EMAILS@EMAIL, EAMIL@EMAIL
+	                            $valor [ $campo] = $val;
+	                            //$valor [ $de[$campo] ] = $val;
+				}
 			}
 		}
-                //echo "<PRE>"; var_dump($valor); echo "</pre>";// exit;
+    //echo "<PRE>"; var_dump($valor); echo "</pre>";// exit;
 		// TODO: REsolver a adicao de campos especiais para resolver no email de notificacao
       $valor = $this->globais->ArrayMergeKeepKeys ( $this->globais->SYS_CAMPOS_ESPECIAIS, $valor);
+			//echo "<pre>"; var_dump($valor);
 
     	$texto_original = str_replace("{idprocesso}", $this->idprocesso ,$texto_original);
 
 		foreach ($de as $idcampo => $campo){
-
+//echo "\n idcampo $idcampo = campo $campo ";
                     $texto_original = preg_replace_callback( '%{.*?}%i',
 
                         function($match) use ($valor) {
                             return    (($valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )])
                                        ? $valor[str_replace(array('{', '}'), '', strtolower(  $match[0] ) )]
-                                       : "<font color=#ff0000>$match[0]</font>")       ; // nome
+                                       : "")       ; // nome
                         },
                     $texto_original);
+	//									echo " => $texto_original ";
 		}
 
 		return $texto_original;
@@ -131,28 +138,32 @@ class Notificacoes{
 	function EnviaEmail($de, $para, $titulo, $corpo)
 	{
 
-		$headers = "MIME-Version: 1.1
-		    Content-type: text/plain; charset=iso-8859-1
-			From: ".$de."
-			Return-Path: ".$de."
-		    Reply-To: ".$de."  ";
+		$this->mail->CharSet = 'UTF-8';
+		$this->mail->ContentType = 'text/plain';
+		$this->mail->Host = 'localhost';  // Specify main and backup SMTP servers
 
-		$this->debug .= "<PRE>
-de: $de
-para: $para
-titulo: ".$titulo."
-corpo: ".$corpo."
+		$this->mail->setFrom($de );
+		$this->mail->addAddress($para );     // Add a recipient
+
+		$this->mail->addReplyTo($de );
+
+		$this->mail->Subject = $titulo;
+		$this->mail->Body    = $corpo;
+
+		if(!$this->mail->send()) {
+		    $this->debug .=  '\n Message could not be sent.';
+		    $this->debug .= 'Mailer Error: ' . $this->mail->ErrorInfo;
+
+		} else {
+		    $this->debug .=  '\n Message has been sent';
+
+		}
 
 
-header: $headers</PRE> ";
+		echo $this->debug;
+		return $this->debug;
 
 
-              // echo "\n\n\n\n".$this->debug;
-
-		//mail($para, $titulo, $corpo, $headers);
-
-
-                return $this->debug;
 	}
 
 	function notif_entrandoposto($idprocesso, $idposto, $proximo_posto = null)
@@ -231,6 +242,9 @@ header: $headers</PRE> ";
 
             return $array;
         }
+
+
+
         function notifica_sla_vencido($idsla,   $idnotificacao, $chave)
 	{
 
@@ -254,28 +268,75 @@ header: $headers</PRE> ";
             $para = $this->TraduzirEmail($dados_notificacao  [para], $data_atual);
 
 
-            $this->registranotificacao($idsla,   $idnotificacao, $chave);
-            return $this->EnviaEmail($de, $para, $titulo, $corpo);
+						$corpo = $corpo . " \n<BR> SLA reportado: $idsla";
 
+						if ($this->globais->ambiente == "dev")
+							$titulo = "[".$this->globais->ambiente."] " .$titulo;
 
+            if (  $this->registranotificacao($idsla,   $idnotificacao, $chave) )
+						{
+							$this->EnviaEmail($de, $para, $titulo, $corpo);
+							return true;
+						}
+			return false;
 	}
 
-        function registranotificacao( $idsla,   $idnotificacao, $chave)
+
+	function notifica_designacao_manual( $idnotificacao, $chave)
+{
+
+			// puxa dados da notificacao
+			 $dados_notificacao = $this->LoadCampos($idnotificacao);
+		// echo "<Pre>"; var_dump($dados_notificacao);   echo "</Pre>";
+      $data_fetch = $this->posto->LoadCamposbyProcesso(   $chave );
+
+
+
+			//echo "<Pre>"; var_dump($data_atual);   echo "</Pre>";
+		 //exit;
+
+			$titulo = $this->TraduzirEmail($dados_notificacao  [titulo], $data_fetch);
+			$corpo = $this->TraduzirEmail($dados_notificacao [corpo], $data_fetch);
+			$de = $this->TraduzirEmail($dados_notificacao  [de], $data_fetch);
+			$para = $this->TraduzirEmail($dados_notificacao  [para], $data_fetch);
+
+
+			$corpo = $corpo ;
+
+			if ($this->globais->ambiente == "dev")
+				$titulo = "[".$this->globais->ambiente."] " .$titulo;
+
+			//if (  $this->registranotificacao($idsla,   $idnotificacao, $chave) )
+			{
+				$this->EnviaEmail($de, $para, $titulo, $corpo);
+				return true;
+			}
+return false;
+}
+
+
+
+  function registranotificacao( $idsla,   $idnotificacao, $chave)
 	{
 
-                $sql = "select  *
-                        from sla s
-                               left join sla_notificacoes sn ON (sn.idsla = s.id)
-                        where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' minutes' AS INTERVAL))   " ;
+        $sql = "select  *
+                from sla s
+                       left join sla_notificacoes sn ON (sn.idsla = s.id)
+                where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' hours' AS INTERVAL))   " ;
+       $this->con->executa( $sql);
+			 //echo "<BR> ( ".$this->con->nrw.") -------------$sql";
 
-               $this->con->executa( $sql);
+       if ($this->con->nrw==0)
+       {
+        //    echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
+            $sql ="insert into sla_notificacoes ( idsla, datanotificacao, chave) values ($idsla,  NOW(), $chave) ";
+            $this->con->executa($sql);
 
-               if ($this->con->nrw==0)
-               {
-                    // echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
-                    $sql ="insert into sla_notificacoes ( idsla, datanotificacao, chave) values ($idsla,  NOW(), $chave) ";
-                    $this->con->executa($sql);
-               }
+						return true;
+       }
+			 else {
+				 	return false;
+			 }
 
 	}
 

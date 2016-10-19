@@ -1,9 +1,10 @@
 <?php
+namespace raiz;
 error_reporting(E_ALL ^ E_DEPRECATED);
 
 class Processos{
 
-	function Processos( ){
+	function __construct( ){
 
     require_once("classes/class_db.php");
     require_once("classes/class_postos.php");
@@ -13,13 +14,23 @@ class Processos{
 
     $this->postos = new Postos();
 
+		include_once("classes/globais.php");
+		$this->globais = new Globais();
+
 	}
 
 
-  function Vida_Processo($app, $idprocesso)
-  {
+	function VincularProcessos ($idprocesso, $candidato)
+	{
+		$sql = "UPDATE processos SET relacionadoa = $candidato where id = $idprocesso";
+//		echo $sql;
+    $this->con->executa( $sql);
 
-    $sql = "select proprio, filho, avo, bisavo, neto
+		return true;
+	}
+
+	function CarregarDadosdoProcesso($idprocesso){
+		$sql = "select proprio, filho, avo, bisavo, neto
             from arvore_processo
             where proprio =  $idprocesso  ";
     $this->con->executa( $sql);
@@ -55,8 +66,16 @@ class Processos{
     }
     $array = null;
 		*/
-    $array = $dados_processo;
+		return $dados_processo;
+	}
 
+
+  function Vida_Processo($app, $idprocesso)
+  {
+
+
+    $array = $this->CarregarDadosdoProcesso($idprocesso);
+		$array["CONFIGURACOES"]["CV"] = $this->globais->SYS_DEPARA_CAMPOS["CV"];
 
     $array["resultado"] = "SUCESSO";
 
