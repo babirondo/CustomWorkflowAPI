@@ -262,12 +262,12 @@ class Vagas{
 							INNER JOIN postos_campo_lista pcl ON (pcl.idpostocampo = wc.id)
 
 						where pcl.idposto = ".$json[IDPOSTO]." and ap.proprio IN (".implode("," ,$json[ "CANDIDATOS"] ).");";
-			//echo $sql;
+			//echo $sql;exit;
 			$this->con->executa($sql);
 
 			while ($this->con->navega(0)){
 
-				$array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["idcampo"]] = $this->campo->BuscarValoresCampo (  $this->con->dados["valor"] ,  $this->con->dados["idcampo"] );
+				$array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["idcampo"]] = $this->campo->BuscarValoresCampo ( array( "valor_default" => $this->con->dados["valor"] ) ,  $this->con->dados["idcampo"] );
 				$array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
 
 				if ( $this->con->dados["idpostocampo"] ==  $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]  )
