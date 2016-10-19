@@ -255,19 +255,20 @@ class Vagas{
 			//ECHO "<PRE>";var_dump($array["FETCH"]);
 
 
-			$sql ="select *,wc.id idcampo, ap.proprio idprocesso
+			$sql ="select *,wc.id idcampo, ap.proprio idprocesso, pcl.ordem ordemexibicao, w.idworkflowtramitacao idtramitacao
 						from arvore_processo ap
 							inner join workflow_dados w ON ( w.idprocesso IN (ap.proprio, ap.avo, ap.filho, ap.bisavo , ap.neto) )
 							INNER JOIN workflow_campos wc ON ( wc.id = w.idpostocampo)
 							INNER JOIN postos_campo_lista pcl ON (pcl.idpostocampo = wc.id)
 
-						where pcl.idposto = ".$json[IDPOSTO]." and ap.proprio IN (".implode("," ,$json[ "CANDIDATOS"] ).");";
+						where pcl.idposto = ".$json[IDPOSTO]." and ap.proprio IN (".implode("," ,$json[ "CANDIDATOS"] ).")
+						ORDER BY pcl.ordem ASC";
 			//echo $sql;exit;
 			$this->con->executa($sql);
 
 			while ($this->con->navega(0)){
 
-				$array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["idcampo"]] = $this->campo->BuscarValoresCampo ( array( "valor_default" => $this->con->dados["valor"] ) ,  $this->con->dados["idcampo"] );
+				$array["FETCH"][$this->con->dados["idprocesso"] ][$this->con->dados["idcampo"]] = $this->campo->BuscarValoresCampo ( array( "valor_default" => $this->con->dados["valor"], "idtramitacao" => $this->con->dados["idtramitacao"] ) ,  $this->con->dados["idcampo"] );
 				$array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
 
 				if ( $this->con->dados["idpostocampo"] ==  $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"]  )

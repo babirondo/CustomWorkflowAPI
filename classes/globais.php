@@ -38,6 +38,10 @@ class Globais{
 		$this->SYS_DEPARA_CAMPOS["SalvarAvaliadordoTeste"] = 229;
 
 		$this->SYS_DEPARA_CAMPOS["postos_de_avaliacao"] = "309,310";
+
+		$this->SYS_DEPARA_CAMPOS["ParecerTecnico1"] = "219";
+		$this->SYS_DEPARA_CAMPOS["ParecerTecnico2"] = "221";
+
 		$this->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] = 217;
 		$this->SYS_DEPARA_CAMPOS["CV"] = "214";
 		$this->SYS_DEPARA_CAMPOS["github"] = "215";

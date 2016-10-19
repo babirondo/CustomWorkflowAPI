@@ -341,20 +341,23 @@ class Postos{
                 // BUSCANDO ATRIBUTOS DO PROCESSO
 		$sql = "select *, p.status p_status, p.id idprocesso, to_char(wt.inicio, 'dd/mm/yyyy') wt_inicio ,
                   to_char(p.inicio, 'dd/mm/yyyy') p_inicio ,wt.idworkflowposto, p.inicio entradanoposto,
-                  u.nome usuarioassociado
+                  u.nome usuarioassociado, pcl.ordem ordemexibicao
 					  from workflow_tramitacao wt
 					          inner join postos_campo_lista pcl ON (pcl.idposto = wt.idworkflowposto)
 					          INNER JOIN workflow_postos wp ON (wp.id = pcl.idposto)
 					          inner join processos p ON (p.id = wt.idprocesso)
 					          left join usuarios u ON (u.id  = wt.id_usuario_associado)
-  					where wt.fim is null $comp_ini and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"");
+  					where wt.fim is null $comp_ini and pcl.idpostocampo is null   ".(($idprocesso>0)?" and p.id = $idprocesso":"")."
+						ORDER BY pcl.ordem ASC";
 
 		$this->con->executa( $sql,0, __LINE__);
 		//echo $sql;
 		$i=0;
 		while ($this->con->navega(0)){
       $array["FETCH"] [$this->con->dados["idprocesso"]][$this->con->dados["atributo_campo"] ]   = $this->con->dados [ $this->con->dados["atributo_valor"] ];
-      $array["TITULO"] [$this->con->dados["atributo_campo"]]   = $this->con->dados["atributo_campo"];
+      $array["TITULO"] [ $this->con->dados["atributo_campo"]]   = $this->con->dados["atributo_campo"];
+
+			//$array["TITULO"] [$this->con->dados["ordemexibicao"]]   = $this->con->dados["atributo_campo"];
 
       $i++;
 		}
@@ -430,7 +433,7 @@ class Postos{
 		                $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"];
 
 		               if ($this->con->dados["estaprevistapralista"])
-		                   $array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
+		                   $array["TITULO"] [ $this->con->dados["idcampo"]]   = $this->con->dados["campo"];
 		               else if ($idworkflowdado_assumir == "teve")
 		                   $array["TITULO"] [-1]   = array_search(-1, $this->globais->SYS_DEPARA_CAMPOS);
 
@@ -453,7 +456,7 @@ class Postos{
             $array["FETCH"] [$this->con->dados["idprocesso"]][idworkflowtramitacao ]   = $this->con->dados["idworkflowtramitacao"];
 
              if ($this->con->dados["estaprevistapralista"])
-                 $array["TITULO"] [$this->con->dados["idcampo"]]   = $this->con->dados["campo"];
+                 $array["TITULO"] [ $this->con->dados["idcampo"]]   = $this->con->dados["campo"];
 
              $i++;
         }
