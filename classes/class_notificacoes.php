@@ -150,18 +150,29 @@ class Notificacoes{
 		$this->mail->Subject = $titulo;
 		$this->mail->Body    = $corpo;
 
-		if(!$this->mail->send()) {
+
+		if (  $this->globais->ambiente == "dev" && $para != "bruno.siqueira@walmart.com"){
+			$retorno_email =true;
+		}
+		else{
+			$retorno_email =  $this->mail->send();
+		}
+
+		if (!$retorno_email )
+		{
 		    $this->debug .=  '\n Message could not be sent.';
 		    $this->debug .= 'Mailer Error: ' . $this->mail->ErrorInfo;
 
+				echo "<BR>($para) ".'Mailer Error: ' . $this->mail->ErrorInfo;
+
+				return false;
+
 		} else {
 		    $this->debug .=  '\n Message has been sent';
+				return true;
 
 		}
 
-
-		echo $this->debug;
-		return $this->debug;
 
 
 	}
@@ -246,11 +257,11 @@ class Notificacoes{
 
 
         function notifica_sla_vencido($idsla,   $idnotificacao, $chave)
-	{
-
+				{
+					//echo "<BR>  idsla $idsla  idnotf $idnotificacao  chave $chave ";
             // puxa dados da notificacao
              $dados_notificacao = $this->LoadCampos($idnotificacao);
-          // echo "<Pre>"; var_dump($dados_notificacao);   echo "</Pre>";
+             //echo "<Pre>"; var_dump($dados_notificacao);   echo "</Pre>";
 
             // puxa dados do posto atual
             $data_atual = $this->LoadbyChave($chave, $idsla);
@@ -267,16 +278,22 @@ class Notificacoes{
             $de = $this->TraduzirEmail($dados_notificacao  [de], $data_atual);
             $para = $this->TraduzirEmail($dados_notificacao  [para], $data_atual);
 
-
-						$corpo = $corpo . " \n<BR> SLA reportado: $idsla";
+					//	$corpo = $corpo . " \n<BR> SLA reportado: $idsla";
 
 						if ($this->globais->ambiente == "dev")
 							$titulo = "[".$this->globais->ambiente."] " .$titulo;
 
-            if (  $this->registranotificacao($idsla,   $idnotificacao, $chave) )
+							echo "<BR> registrar notif = $de, $para, $titulo, $corpo";
+
+            if ($this->EnviaEmail($de, $para, $titulo, $corpo)  )
 						{
-							$this->EnviaEmail($de, $para, $titulo, $corpo);
-							return true;
+							if (  $this->registranotificacao($idsla,   $idnotificacao, $chave)){
+									return true;
+							}
+							else {
+									return false;
+							}
+
 						}
 			return false;
 	}
@@ -284,6 +301,24 @@ class Notificacoes{
 
 	function notifica_designacao_manual( $idnotificacao, $chave)
 {
+/*
+Olá {usuarioassociado},
+
+Um novo candidato do nosso processo de seleção submeteu seu teste e gostaríamos da sua ajuda para avaliá-lo.
+
+Processo Seletivo: {idprocesso}
+Candidato: {202}
+Github: {215}
+Tecnologia Utilizadas: {217}
+
+Lembramos que:
+1 - Você pode retornar sua avaliação neste mesmo email.
+2 - Favor considerar as métricas de avaliação do link https://confluence.wmxp.com.br/pages/viewpage.action?pageId=61099109
+
+Atenciosamente,
+Equipe de Contratação de Desenvolvedores
+*/
+
 
 			// puxa dados da notificacao
 			 $dados_notificacao = $this->LoadCampos($idnotificacao);
@@ -292,8 +327,7 @@ class Notificacoes{
 
 
 
-			//echo "<Pre>"; var_dump($data_atual);   echo "</Pre>";
-		 //exit;
+		//	echo "<Pre>"; var_dump($data_fetch);   echo "</Pre>"; exit;
 
 			$titulo = $this->TraduzirEmail($dados_notificacao  [titulo], $data_fetch);
 			$corpo = $this->TraduzirEmail($dados_notificacao [corpo], $data_fetch);
@@ -324,11 +358,11 @@ return false;
                        left join sla_notificacoes sn ON (sn.idsla = s.id)
                 where s.id=$idsla and sn.chave=  CAST ( $chave AS VARCHAR)   and NOW() < (sn.datanotificacao+CAST(s.sla_emhorascorridas || ' hours' AS INTERVAL))   " ;
        $this->con->executa( $sql);
-			 //echo "<BR> ( ".$this->con->nrw.") -------------$sql";
+			 echo "<BR> ( ".$this->con->nrw.") -------------$sql";
 
        if ($this->con->nrw==0)
        {
-        //    echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
+            echo "<BR> Notificacao registrada: idsla $idsla,  idnotif $idnotificacao, chave $chave";
             $sql ="insert into sla_notificacoes ( idsla, datanotificacao, chave) values ($idsla,  NOW(), $chave) ";
             $this->con->executa($sql);
 

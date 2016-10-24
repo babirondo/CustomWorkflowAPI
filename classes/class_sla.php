@@ -34,6 +34,8 @@ class SLA{
 
 	  while ($this->con->navega(0)){
 
+
+ 
 	      // notificacoes simples
 	          $sql = "select ".$this->con->dados["campo_localizador"]." chave ,  COUNT(*) as qtde
 	                  from ".$this->con->dados["tabela"]."
@@ -41,12 +43,13 @@ class SLA{
 	                        . (($this->con->dados["where_tabela"])?" and ".$this->con->dados["where_tabela"]:"")
 	                  ."  GROUP BY 1  ";
 	          $this->con2->executa( $sql);
-					//	echo "<BR>".$this->con2->nrw." = $sql";
+						echo "<BR>".$this->con2->nrw." = $sql";
 
 	          if ($this->con2->nrw >0)
 	          {
 	              while ($this->con2->navega(0)){
 
+									echo "<BR>".  $this->con->dados["id"]." =  ".$this->con->dados["idnotificacao"] ." =  ".$this->con2->dados["chave"] ;
 
 	                  if (
 	                      !$this->notificacoes->notifica_sla_vencido(
