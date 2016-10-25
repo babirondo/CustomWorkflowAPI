@@ -34,8 +34,7 @@ class SLA{
 
 	  while ($this->con->navega(0)){
 
-
- 
+			  
 	      // notificacoes simples
 	          $sql = "select ".$this->con->dados["campo_localizador"]." chave ,  COUNT(*) as qtde
 	                  from ".$this->con->dados["tabela"]."
