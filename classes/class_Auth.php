@@ -42,7 +42,7 @@ class Auth{
 			return false;
 		}
 
-		$sql = "SELECT * FROM usuarios WHERE login = '".$json["login"]."' and senha = '".$json[ "senha"]."'";
+		$sql = "SELECT * FROM usuarios WHERE login = '".$json["login"]."' and senha = '".$json[ "senha"]."' ";
 
 	 	$this->con->executa($sql);
  	 	if ( $this->con->nrw == 1 ){
@@ -61,7 +61,7 @@ class Auth{
 	 		// nao encontrado
  	 		$data = array("data"=>
  	 				array(	"resultado" =>  "ERRO",
- 	 						"erro" => "Usuário/Senha não encontrao")
+ 	 						"erro" => "Usuário/Senha não encontrado")
  	 		);
  	 		$app->render ('default.php',$data,500);
 

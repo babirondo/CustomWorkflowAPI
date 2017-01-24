@@ -7,12 +7,15 @@ require_Once("classes/class_workflow.php");
 require_Once("classes/class_postos.php");
 require_Once("classes/class_posto_usuario.php");
 require_Once("classes/class_Auth.php");
+require_Once("classes/class_usuarios.php");
 require_Once("classes/class_relatorios.php");
 require_Once("classes/class_processos.php");
 
 require_Once("classes/engine/class_engine_feature.php");
 require_Once("classes/engine/class_menus.php");
 require_Once("classes/engine/class_engine.php");
+
+
 
 require_Once("classes/recrutamento/class_vagas.php");
 
@@ -26,6 +29,12 @@ $app = new \Slim\Slim( array(
     'templates.path' => './templates'
 ) );
 \Slim\Slim::registerAutoloader();
+
+
+$app->post('/SolicitarAcesso/', function (  ) use ($app)  {
+	$Usuarios = new Usuarios(  );
+	$Usuarios->SolicitarAcesso($app, $app->request->getBody() );
+}  );
 
 
 
@@ -89,9 +98,9 @@ $app->get('/getWorkflows/', function () use ($app)  {
 	$Workflow->getWorkflows($app );
 }  );
 
-$app->get('/getMenus/', function () use ($app)  {
+$app->post('/getMenus/', function () use ($app)  {
 	$Menus = new Menus();
-	$Menus->getMenus($app );
+	$Menus->getMenus($app, $app->request->getBody() );
 }  );
 
 $app->post('/getSubMenus/:idmenu', function ($idmenu) use ($app)  {

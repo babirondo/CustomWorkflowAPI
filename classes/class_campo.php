@@ -43,7 +43,7 @@ class Campos{
 											}
 									}
 									else {
-										return  $valor_default_campo; /// salvar pra commit 
+										return  $valor_default_campo; /// salvar pra commit
 									}
 
 
@@ -53,7 +53,7 @@ class Campos{
 
 
 
-
+								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede_opcional"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] ):
 								case( $this->globais->SYS_DEPARA_CAMPOS["Tecnologias_do_teste"] ):
@@ -113,9 +113,9 @@ class Campos{
 
 							case("{configuracoes.tecnologias}"):
 
-									$this->con->executa( "select * from configuracoes.tecnologias");
+									$this->con->executa( "select * from configuracoes.tecnologias ORDER BY tecnologia");
 									while ($this->con->navega(0)){
-											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["id"]."-".$this->con->dados["tecnologia"] ;
+											$retorno[  $this->con->dados["id"]  ] =  $this->con->dados["tecnologia"] ;
 									}
 									return  $retorno;
 							break;

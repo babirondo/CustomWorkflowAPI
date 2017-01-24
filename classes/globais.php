@@ -50,6 +50,7 @@ class Globais{
 
 		$this->SYS_DEPARA_CAMPOS["Tecnologias_candidato_domina"] = 223; // 223
 		$this->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede"] = 203;
+		$this->SYS_DEPARA_CAMPOS["Tecnologias_vaga_pede_opcional"] = 212;
 
     $this->SYS_DEPARA_CAMPOS["Responsavel"] = -1;
     $this->SYS_DEPARA_CAMPOS["bt_handover"] = "Salvar e Avancar >";
@@ -63,6 +64,9 @@ class Globais{
 		$this->SYS_ADD_CAMPOS["email_usuarioassociado"] = "email_usuarioassociado";
     $this->SYS_ADD_CAMPOS["inicioprocesso"] = "p_inicio";
     $this->SYS_ADD_CAMPOS["atoresdoposto"] = "atoresdoposto";
+
+		$this->SYS_FEATURES_ADMIN["SOLICITAR_ACESSO"][CODIGO] = "solicitar-usuario";
+		$this->SYS_FEATURES_ADMIN["SOLICITAR_ACESSO"][CAMPOS][idtipousuario] = 2;
 
 		$this->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CODIGO] = "admin-criar-usuario";
 		$this->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CAMPOS]["nome"] = "nome";

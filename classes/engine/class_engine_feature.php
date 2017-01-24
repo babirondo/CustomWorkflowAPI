@@ -271,26 +271,31 @@ class Engine_Feature{
 													inner join eng_features ef ON (ef.id = m.irpara)
 													inner join engine_feature_campos efc ON (efc.idfeature = ef.id)
 													inner join engine_campos ec ON (ec.id = efc.idcampo)
-												where m.id = $idfeature  ";
-                 //echo ($sql);
+												where m.id = $idfeature
+												ORDER By efc.ordem_exibicao, ec.campo";
+                 //echo ($sql);exit;
+
+
 								 $this->con->executa($sql );
 
 
                 while ($this->con->navega(0)){
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["maxlenght"]  = $this->con->dados["maxlenght"];
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["inputtype"]  = $this->con->dados["inputtype"];
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["dica_preenchimento"]  = $this->con->dados["dica_preenchimento"];
+												$array["FETCH_FEATURE"]["campos_por_linha"]    = $this->con->dados["coluna_por_linha"];
+
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["obrigatorio"]  = $this->con->dados["obrigatorio"];
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["maxlenght"]  = $this->con->dados["maxlenght"];
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["inputtype"]  = $this->con->dados["inputtype"];
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["dica_preenchimento"]  = $this->con->dados["dica_preenchimento"];
 
                         if ($this->globais->Traduzir( $this->con->dados["valor_default"] ) == false )
-                                $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->con->dados["valor_default"];
+                                $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["valor_default"]  =  $this->con->dados["valor_default"];
                         else {
-                                $array["FETCH_CAMPO"][$this->con->dados["id"]] ["valor_default"]  =  $this->campo->BuscarValoresCampo( array( "valor_default" => $this->con->dados["valor_default"] ));
+                                $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["valor_default"]  =  $this->campo->BuscarValoresCampo( array( "valor_default" => $this->con->dados["valor_default"] ));
                         }
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_cols"]  = $this->con->dados["txtarea_cols"];
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["txtarea_rows"]  = $this->con->dados["txtarea_rows"];
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
-                        $array["FETCH_CAMPO"][$this->con->dados["id"]] ["idcampo"]  = $this->con->dados["id"];
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["txtarea_cols"]  = $this->con->dados["txtarea_cols"];
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["txtarea_rows"]  = $this->con->dados["txtarea_rows"];
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["campo"]  = $this->con->dados["campo"];
+                        $array["FETCH_CAMPO"][$this->con->dados["ordem_exibicao"]][$this->con->dados["id"]] ["idcampo"]  = $this->con->dados["id"];
                 }
             }
 
@@ -371,21 +376,22 @@ class Engine_Feature{
 
 		$where = ((is_array($and))?  " WHERE ".implode(" and ",$and): null);
 
-		$sql = "select   ec.id idcampo,  ec.campo, ed.valor, ed.id iddado
+		$sql = "select   efc.ordem_exibicao, ec.id idcampo,  ec.campo, ed.valor, ed.id iddado
 						from menus m
 							inner join eng_features ef ON (ef.id = m.irpara)
 							INNER JOIN engine_feature_campos efc ON (efc.idfeature = ef.id)
 							INNER JOIN engine_campos ec ON (ec.id = efc.idcampo)
 							LEFT JOIN engine_dados ed ON (ed.idfeaturecampo = ec.id )
-							$where";
+							$where
+							ORDER by efc.ordem_exibicao, ec.campo";
 							//echo $sql;
 		$this->con->executa( $sql, 0, __LINE__  );
 		//echo "\n SQL GERADO";
 
 		while ($this->con->navega(0) ){
 
-			$array["FETCH_CAMPO"] [$this->con->dados["idcampo"]]["valor"]   =   $this->con->dados["valor"] ;
-			$array["FETCH_CAMPO"] [$this->con->dados["idcampo"]]["idworkflowdado"]   =   $this->con->dados["iddado"] ;
+			$array["FETCH_CAMPO"] [$this->con->dados["ordem_exibicao"]][$this->con->dados["idcampo"]]["valor"]   =   $this->con->dados["valor"] ;
+			$array["FETCH_CAMPO"] [$this->con->dados["ordem_exibicao"]][$this->con->dados["idcampo"]]["idworkflowdado"]   =   $this->con->dados["iddado"] ;
 		}
 		return $array;
 	}

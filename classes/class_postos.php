@@ -85,7 +85,7 @@ class Postos{
                   inner join workflow wk ON (wk.id = wp.id_workflow)
                   left join   usuario_atores ua ON (ua.idator = wp.idator)
                   left join usuarios u ON (u.id = ua.idusuario)
-            WHere (wp.id_workflow = $idworkflow and wp.principal = 1) and (u.id = ".$json[idusuario]."  OR wp.idator is null)
+            WHere (wp.id_workflow = $idworkflow and wp.principal = 1 and ua.idusuario = ".$json[idusuario]."  ) OR (wp.idator is null and wp.principal = 1)
             ORDER BY ordem_cronologica ";
 	//echo $sql;exit;
 		$this->con->executa( $sql);

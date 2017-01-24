@@ -32,8 +32,10 @@ class Menus{
 //var_dump($json);exit;
 			$this->con->executa( "Select m.* , f.lista
 														from menus m
+															inner join menu_atores ma ON (ma.idmenu = m.id)
 															inner join eng_features f ON (f.id = m.irpara)
-														where m.idpai = $idmenu", null, __LINE__);
+														where ma.idator IN ( select idator from usuario_atores where idusuario =".  $json["idusuario"]." )
+														AND m.idpai = $idmenu", null, __LINE__);
 
 
 			while ($this->con->navega(0)){
@@ -83,12 +85,26 @@ class Menus{
 			}
 
 
-	function getMenus($app ){
+	function getMenus($app , $jsonRAW){
+
+		$json = json_decode( $jsonRAW, true );
+		IF ($json == NULL) {
+			$data = array("data"=>
+
+					array(	"resultado" =>  "ERRO",
+							"erro" => "JSON zuado - $jsonRAW" )
+			);
+
+
+			$app->render ('default.php',$data,500);
+			return false;
+		}
 
 		$this->con->executa( "Select m.*
 													from menus m
-
-													where m.idpai is null", null, __LINE__);
+															inner join menu_atores ma ON (ma.idmenu = m.id)
+													where ma.idator IN ( select idator from usuario_atores where idusuario =".  $json["idusuario"]." )
+													AND m.visivel = 1 and m.idpai is null", null, __LINE__);
 
 
 		while ($this->con->navega(0)){

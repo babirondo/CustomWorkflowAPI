@@ -19,6 +19,41 @@ class Usuarios{
 
 
 
+
+	function SolicitarAcesso($app, $preenchidoRAW)
+	{
+
+		$json = json_decode( $preenchidoRAW, true );
+		IF ($json == NULL) {
+			$data = array("data"=>
+
+					array(	"resultado" =>  "ERRO",
+							"erro" => "JSON zuado - $jsonRAW" )
+			);
+			return false;
+		}
+
+		$senha_gerada = md5(rand(1345,9999));
+
+		$sql = "INSERT INTO usuarios (email, nome, senha, login, aceito) VALUES ('".$json["email"]."','".$json["nome"]."',
+		'".$senha_gerada."','".$json["login"]."' , 0 )
+						RETURNING id       ";
+    //echo "\n".$sql." \n";
+		if (  $this->con->executa( $sql , 1 , __LINE__) === false )
+			return false;
+		else{
+
+			$data = array("data"=>
+					array(	"resultado" =>  "SUCESSO" )
+			);
+			$app->render ('default.php',$data,200);
+
+
+		}
+
+		return false;
+	}
+
 		function AlterarUsuario($jsonRAW)
 		{
 			$json = json_decode( $jsonRAW, true );

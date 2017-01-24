@@ -503,6 +503,45 @@ class Engine{
 							break;
 
 
+							case( $this->globais->SYS_FEATURES_ADMIN["SOLICITAR_ACESSO"][CODIGO] ):
+
+									$sql = "select ed.*, ec.administrativo
+													from engine_dados ed
+														inner join engine_campos ec ON (ec.id = ed.idfeaturecampo)
+													where idprocesso = $idprocesso";
+									$this->con->executa( $sql, 0, __LINE__  );
+
+									while ($this->con->navega(0) ){
+
+											$preenchido[ $this->con->dados["administrativo"] ] = $this->con->dados["valor"];
+									}
+									foreach ($this->globais->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CAMPOS] as $idx_tentativa => $tentativa)
+									{
+											if 	(empty($preenchido[ $idx_tentativa ]) ) {
+												$erro = 1;
+
+												return false;
+											}
+									}
+
+
+									//var_dump($json);
+
+									if (!$erro){
+										$preenchido[chave_primaria] = $idprocesso;
+										$preenchido["tipousuario"] = $this->globais->SYS_FEATURES_ADMIN["SOLICITAR_ACESSO"][CAMPOS][idtipousuario] ;
+
+
+										if ( $this->usuarios->CriarUsuario( json_encode( $preenchido) ) ){
+												return true;
+										}
+										else{
+											return false;
+										}
+									}
+							break;
+
+
 							case( $this->globais->SYS_FEATURES_ADMIN["USUARIOS"]["CRIAR"][CODIGO] ):
 
 									$sql = "select ed.*, ec.administrativo
