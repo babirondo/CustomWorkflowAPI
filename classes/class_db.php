@@ -12,7 +12,8 @@ class db
 		$this->globais = new Globais();
 
 
-		//		echo "\n Conectando no banco";
+			//	echo "\n Conectando no banco: ".$this->globais->banco ;
+
 		try {
 			$this->pdo = new PDO("pgsql:host=".$this->globais->localhost."
 			dbname=".  $this->globais->db ,
@@ -41,11 +42,12 @@ class db
 
 		$this->dados = null;
 
+
 		if (substr(TRIM(STRTOUPPER($sql)),0,strpos(TRIM(STRTOUPPER($sql)), " " )  ) == "SELECT")
 		{
 
 
-			
+
 
 			try {
 				//select
@@ -69,6 +71,8 @@ class db
 			catch(Exception $e) {
 
 				// if ($debug == 1)
+				echo "\n $sql";
+
 				echo 'Error EXCEPTION: ' . $e->getMessage();
 
 			}

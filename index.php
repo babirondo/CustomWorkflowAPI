@@ -2,7 +2,7 @@
 namespace raiz;
 error_reporting(E_ALL ^ E_DEPRECATED);
 
-//require_Once("classes/globais.php");
+require_Once("classes/globais.php");
 require_Once("classes/class_workflow.php");
 require_Once("classes/class_postos.php");
 require_Once("classes/class_posto_usuario.php");
@@ -29,6 +29,11 @@ $app = new \Slim\Slim( array(
     'templates.path' => './templates'
 ) );
 \Slim\Slim::registerAutoloader();
+
+$app->get('/getConfs/', function () use ($app)  {
+	$Globais = new Globais();
+	$Globais->getConfs($app );
+}  );
 
 
 $app->post('/SolicitarAcesso/', function (  ) use ($app)  {

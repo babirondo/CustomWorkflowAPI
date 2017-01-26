@@ -30,12 +30,13 @@ class Menus{
 				return false;
 			}
 //var_dump($json);exit;
-			$this->con->executa( "Select m.* , f.lista
-														from menus m
-															inner join menu_atores ma ON (ma.idmenu = m.id)
-															inner join eng_features f ON (f.id = m.irpara)
-														where ma.idator IN ( select idator from usuario_atores where idusuario =".  $json["idusuario"]." )
-														AND m.idpai = $idmenu", null, __LINE__);
+		$sql = "Select m.* , f.lista
+						from menus m
+							inner join menu_atores ma ON (ma.idmenu = m.id)
+							inner join eng_features f ON (f.id = m.irpara)
+						where ma.idator IN ( select idator from usuario_atores where idusuario =".  $json["idusuario"]." )
+						AND m.idpai = $idmenu";
+			$this->con->executa( $sql , null, __LINE__);
 
 
 			while ($this->con->navega(0)){

@@ -6,34 +6,31 @@ set_time_limit(2);
 class Globais{
 	function __construct( ){
 
-		$usar = "windows";
-		$usar = "mac";
+		$this->sourcecode = "local"; //local ou prod
+		$this->banco = "prod";//dev ou prod
+		$this->environment = "mac"; //mac ou windows
 
-		$this->ambiente = "dev";
-	//$this->ambiente = "prod";
+		if ($this->sourcecode == "prod"){
+		}
+		else if ($this->sourcecode == "local"){
+		}
 
-		if ($usar == "windows"){
-				// windows
+		if ($this->banco == "prod"){
 					$this->localhost = "127.0.0.1";
 					$this->username = "bsiquei";
 					$this->password = "rodr1gues";
+					$this->db ="customworkflow_prod";
+					$this->verbose=1;
 
 		}
-		else if ($usar == "mac"){
-								// mac
+		else if ($this->banco == "dev"){
 					 $this->localhost = "localhost";
 					 $this->username = "bsiquei";
 					 $this->password = "rodr1gues";
-
+					 $this->db ="customworkflow";
+					 $this->verbose=1;
 		}
 
-		if ($this->ambiente == "prod"){
-			$this->db ="customworkflow_prod";
-
-		}
-		else if ($this->ambiente == "dev"){
-			$this->db ="customworkflow";
-		}
 
 		$this->SYS_DEPARA_CAMPOS["SalvarAvaliadordoTeste"] = 229;
 
@@ -82,6 +79,22 @@ class Globais{
 
 
 
+	}
+
+
+	function getConfs($app   ){
+
+
+			$array["sourcecode"] = $this->sourcecode;
+			$array["banco"] =$this->banco ;
+			$array["environment"] =$this->environment;
+			$array["verbose"] =$this->verbose;
+
+			$array["resultado"] = "SUCESSO";
+
+			$data =  	$array;
+
+			$app->render ('default.php',$data,200);
 	}
 
 
